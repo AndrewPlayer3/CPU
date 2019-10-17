@@ -1,2 +1,29 @@
 This is where we will come up with some instructions.
 
+Arithmetic:
+
+    0xA...
+
+Conditionals:
+
+    0xC...
+
+Jumping:
+
+    0xD...
+
+Looping:
+
+    0xB...
+
+Output:
+
+    OxF...
+
+Input:
+
+    0xE...
+
+Registers:
+
+    0x1-0xF
