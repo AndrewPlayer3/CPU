@@ -220,7 +220,7 @@ int main() {
             int opcode;
             std::istringstream ss(line);
             if(ss >> std::hex >> opcode) {
-                std::cout << std::hex << opcode << " ";
+                //std::cout << std::hex << opcode << " ";
                 cpu.mem[counter++] = opcode;
             }
         }
