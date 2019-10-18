@@ -44,14 +44,14 @@ Output:
 
     OxF...
 
-        cout reg value 0xF00
+        cout 0xF0
         dump 0xF1
 
 Input:
 
     0xE...
 
-        mov int 0xE0
+        mov 0xE0
         mov from another reg 0xE1
 
 Registers:

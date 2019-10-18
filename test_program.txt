@@ -45,3 +45,6 @@ lable 0x1234
 Add r4 to r3 and print r3s value
 0xA034
 0xF003
+
+Dump
+0xF100

@@ -217,11 +217,13 @@ int main() {
         std::string line;
         int counter = 0;
         while(std::getline(file, line)) {
-            int opcode;
-            std::istringstream ss(line);
-            if(ss >> std::hex >> opcode) {
-                //std::cout << std::hex << opcode << " ";
-                cpu.mem[counter++] = opcode;
+            if(line[0] == '0') {
+                int opcode;
+                std::istringstream ss(line);
+                if(ss >> std::hex >> opcode) {
+                    //std::cout << std::hex << opcode << " ";
+                    cpu.mem[counter++] = opcode;
+                }
             }
         }
         std::cout << std::endl;
