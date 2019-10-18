@@ -1,24 +1,33 @@
+R1 = a ;; n = a
 0xE001
 0x0003
 
+R2 = 2
 0xE002
 0x0002
 
+If R1 < 2, jmp to Return 1
 0xD112
 0xD300
 0x1001
 
+Mov r3, r1
 0xE131
 
 Loop;
 0x1002
 
+R4 = 1
 0xE004
 0x0001
 
+R1 = R1 - 1 ;; n - 1
 0xA114
+
+R3 = R3 * R1 ;; n * (n - 1)
 0xA231
 
+If R1 < 2, jump to Finish, Else jump to Loop
 0xD112
 0xD300
 0x1003
