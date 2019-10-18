@@ -22,6 +22,8 @@ Conditionals:
 
 Jumping:
 
+    Lable 0x1234
+
     0xD...
 
         jmp 0xD0

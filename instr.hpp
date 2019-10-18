@@ -3,6 +3,7 @@
 #include <vector>
 #include <math.h>
 #include <stdio.h>
+#include <limits>
 
 class CPU {
 
@@ -21,4 +22,8 @@ public:
 
     int exec(int inst);
     void print(int reg);
+
+private:
+
+    int _cmp_flag;
 };
