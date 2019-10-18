@@ -44,7 +44,8 @@ Output:
 
     OxF...
 
-        cout reg value 0xF00  
+        cout reg value 0xF00
+        dump 0xF1
 
 Input:
 

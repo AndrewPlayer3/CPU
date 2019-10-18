@@ -219,9 +219,10 @@ int main() {
         while(std::getline(file, line)) {
             int opcode;
             std::istringstream ss(line);
-            ss >> std::hex >> opcode;
-            std::cout << std::hex << opcode << " ";
-            cpu.mem[counter++] = opcode;
+            if(ss >> std::hex >> opcode) {
+                std::cout << std::hex << opcode << " ";
+                cpu.mem[counter++] = opcode;
+            }
         }
         std::cout << std::endl;
         cpu.run();
