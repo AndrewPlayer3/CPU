@@ -52,7 +52,6 @@ void CPU::jmp() {
     bool found;
     for(int i = 0; i < 1024; i++) {
         if(mem[i] == lable && i != regs[0xf]) {
-            std::cout << std::hex << i << std::endl;
             regs[0xf] = i + 1;
             found = true;
             break;
@@ -154,7 +153,7 @@ int CPU::exec(int inst, bool intp) {
             std::cout << "CB" << std::endl;
             break;
         case 0xC:
-            std::cout << conditionals(B, C, D);
+            conditionals(B, C, D);
             break;
         case 0xD:
             jumping(B, C, D);
@@ -233,6 +232,8 @@ int main() {
         std::cout << "ERROR: Invalid Choice. Please run again." << std::endl;
     }
 
+    std::cout << std::endl;
+    
     return 0;
 
 
