@@ -12,7 +12,7 @@ bool CPU::arithmetic(int B, int C, int D) {
             regs[C] *= regs[D];
             break;
         case 0x3:
-            regs[C] /= regs[D];
+            regs[C] %= regs[D];
             break;
         default:
             return false;
@@ -184,6 +184,7 @@ int CPU::run() {
         //std::cout << "Running: " << std::hex << regs[0xf] + 1 << std::endl;
         exec(mem[regs[0xf]], false);
     }
+    return 0;
 }
 
 void menu(CPU& cpu) {
