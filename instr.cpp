@@ -49,8 +49,21 @@ bool CPU::conditionals(int B, int C, int D) {
 bool CPU::jumping(int B, int C, int D) {
     // This stuff doesn't make much sense for interpreter.
     switch(B){
-        case 0x0:
-            
+        case 0x0:           
+            int lable;          
+            lable = mem[regs[0xf]];
+            bool found;
+            for(int i = 0; i < 1024; i++) {
+                if(mem[i] == lable && i != regs[0xf]) {
+                    std::cout << std::hex << i << std::endl;
+                    regs[0xf] = i + 1;
+                    found = true;
+                    break;
+                }
+            }
+            if(!found) {
+                std::cout << "Lable not found..." << std::endl;
+            }
             break;
         case 0x1:
             if (regs[C] == regs[D]) {
@@ -84,18 +97,28 @@ bool CPU::jumping(int B, int C, int D) {
 }
 
 bool CPU::output(int B, int C, int D) {
-    std::cout << std::hex << regs[D] << std::endl;
+    switch(B) {
+        case 0x0:
+            std::cout << std::hex << regs[D] << std::endl;
+            break;
+        case 0x1:
+            dump();
+            break;
+    }
     return true;
 }
 
 bool CPU::input(int B, int C, int D) {
     switch(B) {
         case 0x0:
-            std::cout << ">> ";
-            std::cin >> regs[D];
+            regs[D] = mem[regs[0xf]];
             break;
         case 0x1:
             regs[C] = regs[D];
+            break;
+        case 0x2:
+            std::cout << ">> ";
+            std::cin >> regs[D];
             break;
         default:
             return false;
@@ -103,18 +126,21 @@ bool CPU::input(int B, int C, int D) {
     return true;
 }
 
-int CPU::exec(int inst) {
+int CPU::exec(int inst, bool intp) {
+
+    if(intp) {
+        mem[regs[0xf]++] = inst;
+    } else {
+        regs[0xf]++;
+    }
 
     int A = (inst >> 12); 
     int B = (inst >> 8 )&0xF; 
     int C = (inst >> 4 )&0xF; 
     int D = (inst >> 0 )&0xF;
 
-    mem[regs[0xF]++] == inst;
-
     switch(A) {
         case 0x1:
-            // LABLE CODE
             break;
         case 0xA:
             arithmetic(B, C, D);
@@ -126,7 +152,7 @@ int CPU::exec(int inst) {
             std::cout << conditionals(B, C, D);
             break;
         case 0xD:
-            std::cout << "CD" << std::endl;
+            jumping(B, C, D);
             break;
         case 0xE:
             input(B, C, D);
@@ -141,31 +167,59 @@ int CPU::exec(int inst) {
     return 0;
 }
 
-void menu() {
+void CPU::dump() {
+    for(int i = 0; i < 1024; i++) {
+        std::cout << i << ": " << std::hex << mem[i] << std::endl;
+    }
+}
+
+int CPU::run() {
+    int start = regs[0xf];
+    for(regs[0xf]; regs[0xf] < 1024;) {
+        std::cout << "Running: " << std::hex << regs[0xf] + 1 << std::endl;
+        exec(mem[regs[0xf]], false);
+    }
+}
+
+void menu(CPU& cpu) {
     int inst;
     do {
         std::cout << ">> ";
         std::cin >> std::hex >> inst;
         std::cin.clear();
         std::cin.ignore(INT_MAX, '\n');
+        std::cout << "0xF: " << cpu.regs[0xF] << std::endl;
     } while(!std::cin);
-    
     std::cout << std::hex << inst << std::endl;
-    CPU cpu;
-    cpu.exec(inst);
+    cpu.exec(inst, true);
 }
 
 int main() {
     std::string choice;
-    std::cout << "Enter \"File\" to use a file or \"Intp\" to use the Interpreter: ";
+    std::cout << "Enter \"file\" to use a file or \"intp\" to use the interpreter: ";
     std::cin >> choice;
 
-    if(choice == "Intp") {
+    CPU cpu;
+    if(choice == "intp") {
         while(1) {
-            menu();
+            menu(cpu);
         }
-    } else if(choice == "File") {
-
+    } else if(choice == "file") {
+        std::string filename;
+        std::cout << "Filename: ";
+        std::cin >> filename;
+        std::ifstream file(filename); 
+        std::string line;
+        int counter = 0;
+        while(std::getline(file, line)) {
+            int opcode;
+            std::istringstream ss(line);
+            ss >> std::hex >> opcode;
+            std::cout << std::hex << opcode << " ";
+            cpu.mem[counter++] = opcode;
+        }
+        std::cout << std::endl;
+        cpu.run();
     } else {
         std::cout << "ERROR: Invalid Choice. Please run again." << std::endl;
     }

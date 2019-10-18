@@ -1,5 +1,6 @@
 #include <iostream>
 #include <sstream>
+#include <fstream>
 #include <vector>
 #include <math.h>
 #include <stdio.h>
@@ -12,7 +13,14 @@ public:
     int regs[16];
     int mem[1024];
 
-    CPU() {}
+    CPU() {
+        for(int i = 0; i < 16; i++) {
+            regs[i] = 0;
+        }
+        for(int i = 0; i < 1024; i++) {
+            mem[i] = 0;
+        }
+    }
 
     bool arithmetic(int B, int C, int D);
     bool conditionals(int B, int C, int D);
@@ -20,7 +28,10 @@ public:
     bool output(int B, int C, int D);
     bool input(int B, int C, int D);
 
-    int exec(int inst);
+    void dump();
+
+    int exec(int inst, bool intp);
+    int run();
     void print(int reg);
 
 private:
