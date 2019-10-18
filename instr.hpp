@@ -29,7 +29,8 @@ public:
     bool input(int B, int C, int D);
     void jmp();
 
-    void dump();
+    void mem_dump();
+    void reg_dump();
 
     int exec(int inst, bool intp);
     int run();

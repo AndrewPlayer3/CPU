@@ -106,7 +106,10 @@ bool CPU::output(int B, int C, int D) {
             std::cout << std::hex << regs[D] << std::endl;
             break;
         case 0x1:
-            dump();
+            mem_dump();
+            break;
+        case 0x2:
+            reg_dump();
             break;
     }
     return true;
@@ -122,7 +125,7 @@ bool CPU::input(int B, int C, int D) {
             break;
         case 0x2:
             std::cout << ">> ";
-            std::cin >> regs[D];
+            std::cin >> std::hex >> regs[D];
             break;
         default:
             return false;
@@ -149,9 +152,6 @@ int CPU::exec(int inst, bool intp) {
         case 0xA:
             arithmetic(B, C, D);
             break;
-        case 0xB:
-            std::cout << "CB" << std::endl;
-            break;
         case 0xC:
             conditionals(B, C, D);
             break;
@@ -171,9 +171,15 @@ int CPU::exec(int inst, bool intp) {
     return 0;
 }
 
-void CPU::dump() {
+void CPU::mem_dump() {
     for(int i = 0; i < 1024; i++) {
         std::cout << i << ": " << std::hex << mem[i] << std::endl;
+    }
+}
+
+void CPU::reg_dump() {
+    for(int i = 0; i < 16; i++) {
+        std::cout << "Register[" << std::hex << i << "]: " << regs[i] << std::endl; 
     }
 }
 
