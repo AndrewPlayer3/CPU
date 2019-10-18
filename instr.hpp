@@ -27,6 +27,7 @@ public:
     bool jumping(int B, int C, int D);
     bool output(int B, int C, int D);
     bool input(int B, int C, int D);
+    void jmp();
 
     void dump();
 

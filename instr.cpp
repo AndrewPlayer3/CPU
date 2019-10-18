@@ -46,48 +46,53 @@ bool CPU::conditionals(int B, int C, int D) {
     }
 }
 
+void CPU::jmp() {
+    int lable;          
+    lable = mem[regs[0xf]];
+    bool found;
+    for(int i = 0; i < 1024; i++) {
+        if(mem[i] == lable && i != regs[0xf]) {
+            std::cout << std::hex << i << std::endl;
+            regs[0xf] = i + 1;
+            found = true;
+            break;
+        }
+    }
+    if(!found) {
+        std::cout << "Lable not found..." << std::endl;
+    }
+}
+
 bool CPU::jumping(int B, int C, int D) {
     // This stuff doesn't make much sense for interpreter.
     switch(B){
         case 0x0:           
-            int lable;          
-            lable = mem[regs[0xf]];
-            bool found;
-            for(int i = 0; i < 1024; i++) {
-                if(mem[i] == lable && i != regs[0xf]) {
-                    std::cout << std::hex << i << std::endl;
-                    regs[0xf] = i + 1;
-                    found = true;
-                    break;
-                }
-            }
-            if(!found) {
-                std::cout << "Lable not found..." << std::endl;
-            }
+            jmp();
             break;
         case 0x1:
-            if (regs[C] == regs[D]) {
-                _cmp_flag =  0;
-            } else if(regs[C] < regs[D]) {
-                _cmp_flag = -1;
-            } else {
-                _cmp_flag =  1;
-            }
+            if      (regs[C] == regs[D]) {_cmp_flag =  0;} 
+            else if (regs[C] < regs[D])  {_cmp_flag = -1;}
+            else                         {_cmp_flag =  1;}
             break;
         case 0x2:
-
+            if(_cmp_flag == 0) {jmp();}
+            else {regs[0xf]++;}
             break;
         case 0x3:
-            
+            if(_cmp_flag == -1) {jmp();}
+            else {regs[0xf]++;}
             break;
         case 0x4:
-            
+            if(_cmp_flag == 1) {jmp();}
+            else {regs[0xf]++;}
             break;
         case 0x5:
-            
+            if(_cmp_flag == 0 || _cmp_flag == -1) {jmp();}
+            else {regs[0xf]++;}
             break;
         case 0x6:
-            
+            if(_cmp_flag == 0 || _cmp_flag == 1) {jmp();}
+            else {regs[0xf]++;}
             break;
         default:
             return false;
@@ -176,7 +181,7 @@ void CPU::dump() {
 int CPU::run() {
     int start = regs[0xf];
     for(regs[0xf]; regs[0xf] < 1024;) {
-        std::cout << "Running: " << std::hex << regs[0xf] + 1 << std::endl;
+        //std::cout << "Running: " << std::hex << regs[0xf] + 1 << std::endl;
         exec(mem[regs[0xf]], false);
     }
 }
