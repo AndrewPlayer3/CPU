@@ -14,10 +14,53 @@ bool CPU::arithmetic(int B, int C, int D) {
         case 0x3:
             regs[C] %= regs[D];
             break;
+        case 0x4:
+            regs[D] += mem[regs[0xf]++];
+            break;
+        case 0x5:
+            regs[D] -= mem[regs[0xf]++];
+            break;
+        case 0x6:
+            regs[D] *= mem[regs[0xf]++];
+            break;
+        case 0x7:
+            regs[D] /= mem[regs[0xf]++];
+            break;
         default:
             return false;
     }
+    return true;
+}
 
+bool CPU::bitwise(int B, int C, int D) {
+    switch(B) {
+        case 0x0:
+            regs[C] &= regs[D];
+            break;
+        case 0x1:
+            regs[C] |= regs[D];
+            break;
+        case 0x2:
+            regs[C] <<= regs[D];
+            break;
+        case 0x3:
+            regs[C] >>= regs[D];
+            break;
+        case 0x4:
+            regs[D] &= mem[regs[0xf]++];
+            break;
+        case 0x5:
+            regs[D] |= mem[regs[0xf]++];
+            break;
+        case 0x6:
+            regs[D] <<= mem[regs[0xf]++];
+            break;
+        case 0x7:
+            regs[D] >>= mem[regs[0xf]++];
+            break;
+        default:
+            return false;
+    }
     return true;
 }
 
@@ -101,6 +144,8 @@ bool CPU::jumping(int B, int C, int D) {
 }
 
 bool CPU::output(int B, int C, int D) {
+    std::string str = "";
+    int loc;
     switch(B) {
         case 0x0:
             std::cout << std::hex << regs[D] << std::endl;
@@ -111,6 +156,24 @@ bool CPU::output(int B, int C, int D) {
         case 0x2:
             reg_dump();
             break;
+        case 0x3:
+            loc = regs[D];
+            while(mem[loc] != '0') {
+                str += (char)mem[loc];
+                loc++;
+            }
+            std::cout << str;
+            break;
+        case 0x4:
+            loc = regs[D];
+            while(mem[loc] != '0') {
+                str += (char)mem[loc];
+                loc++;
+            }
+            std::cout << str << std::endl;
+            break;
+        default:
+            return false;
     }
     return true;
 }
@@ -126,6 +189,12 @@ bool CPU::input(int B, int C, int D) {
         case 0x2:
             std::cout << ">> ";
             std::cin >> std::hex >> regs[D];
+            break;
+        case 0x3:
+            regs[D] = regs[0xf];
+            while(mem[regs[0xf]] != '0') {
+                regs[0xf]++;
+            }
             break;
         default:
             return false;
@@ -151,6 +220,9 @@ int CPU::exec(int inst, bool intp) {
             break;
         case 0xA:
             arithmetic(B, C, D);
+            break;
+        case 0xB:
+            bitwise(B, C, D);
             break;
         case 0xC:
             conditionals(B, C, D);
@@ -229,6 +301,11 @@ int main() {
                 if(ss >> std::hex >> opcode) {
                     //std::cout << std::hex << opcode << " ";
                     cpu.mem[counter++] = opcode;
+                } 
+            }
+            else if(line[0] != '#') {
+                for(char c : line) {
+                    cpu.mem[counter++] = c;
                 }
             }
         }

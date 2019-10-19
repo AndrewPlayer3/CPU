@@ -22,7 +22,7 @@ Conditionals:
 
 Jumping:
 
-    Lable 0x1234
+    Lable 0x1...
 
     0xD...
 
@@ -34,18 +34,13 @@ Jumping:
         jle 0xD5
         jge 0xD6
 
-Looping:
-
-    0xB...
-
-        Can just be done with jumping, right?
-
 Output:
 
     OxF...
 
-        cout 0xF0
-        dump 0xF1
+        cout     0xF0 (0xF00Reg)
+        mem dump 0xF1 (dumps all)
+        reg dump 0xF2 (dumps all)
 
 Input:
 
@@ -53,7 +48,8 @@ Input:
 
         mov 0xE0
         mov from another reg 0xE1
+        Cin to reg 0xE2
 
 Registers:
 
-    0x1-0xF
+    regs[0x0]->regs[0xF]
