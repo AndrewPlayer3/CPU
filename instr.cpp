@@ -184,7 +184,7 @@ void CPU::reg_dump() {
 int CPU::run() {
     int start = regs[0xf];
     for(regs[0xf]; regs[0xf] < space();) {
-        exec(mem[regs[0xf]], false);
+        exec(mem[regs[0xf]]);
     }
     return 0;
 }
