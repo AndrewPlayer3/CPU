@@ -157,14 +157,25 @@ int CPU::exec(int inst) {
     int C = (inst >> 4 )&0xF; 
     int D = (inst >> 0 )&0xF;
     switch(A) {
-        case 0x1: /* 0x1-9 are Lables */ break;             /* 0x1... */ 
+        case 0x0: /* 0x0-9 are Lables */ break;             /* 0x0... */  
+        case 0x1: /* 0x0-9 are Lables */ break;             /* 0x1... */ 
+        case 0x2: /* 0x0-9 are Lables */ break;             /* 0x2... */ 
+        case 0x3: /* 0x0-9 are Lables */ break;             /* 0x3... */ 
+        case 0x4: /* 0x0-9 are Lables */ break;             /* 0x4... */ 
+        case 0x5: /* 0x0-9 are Lables */ break;             /* 0x5... */ 
+        case 0x6: /* 0x0-9 are Lables */ break;             /* 0x6... */ 
+        case 0x7: /* 0x0-9 are Lables */ break;             /* 0x7... */ 
+        case 0x8: /* 0x0-9 are Lables */ break;             /* 0x8... */ 
+        case 0x9: /* 0x0-9 are Lables */ break;             /* 0x9... */ 
         case 0xA: arithmetic  (B, C, D); break;             /* 0xA... */
         case 0xB: bitwise     (B, C, D); break;             /* 0xB... */
         case 0xC: conditionals(B, C, D); break;             /* 0xC... */
         case 0xD: jumping     (B, C, D); break;             /* 0xD... */
         case 0xE: input       (B, C, D); break;             /* 0xE... */
         case 0xF: output      (B, C, D); break;             /* 0xF... */
-        default: return 1;
+        default: 
+            std::cout << "How'd you get here???\n";
+            return 1;
     }
     return 0;
 }
@@ -181,15 +192,16 @@ void CPU::reg_dump() {
     }
 }
 
-int CPU::run() {
+int  CPU::run() {
     int start = regs[0xf];
+    int retcode;
     for(regs[0xf]; regs[0xf] < space();) {
-        exec(mem[regs[0xf]]);
+        retcode = exec(mem[regs[0xf]]);
     }
-    return 0;
+    return retcode;
 }
 
-int main() {
+int  main() {
     std::string choice;
     CPU cpu;
     std::string filename;
@@ -213,7 +225,8 @@ int main() {
         }
     }
     std::cout << std::endl;
-    cpu.run();
+    int retcode = cpu.run();
+    std::cout << "\nProgram Exiting with Code " << retcode << std::endl;
     std::cout << std::endl;
     return 0;
 }
