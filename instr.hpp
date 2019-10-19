@@ -19,26 +19,21 @@ public:
     int mem[_memory];
 
     CPU() {
-        // Clean memory and registers
-        for(int i = 0; i < 16; i++) {
-            regs[i] = 0;
-        }
-        for(int i = 0; i < space(); i++) {
-            mem[i] = 0;
-        }
+        /* Set mem and regs to 0 */
+        for(int i = 0; i < 16; i++)      { regs[i] = 0; }
+        for(int i = 0; i < space(); i++) { mem[i]  = 0; }
     }
 
-    bool arithmetic(int B, int C, int D);
-    bool bitwise(int B, int C, int D);
-    bool conditionals(int B, int C, int D);
-    bool jumping(int B, int C, int D);
-    bool output(int B, int C, int D);
-    bool input(int B, int C, int D);
-    void jmp();
-    void mem_dump();
-    void reg_dump();
-    int space() {return _memory;}
-    int exec(int inst, bool intp);
+    bool arithmetic  (int B, int C, int D); /* 0xA... */
+    bool bitwise     (int B, int C, int D); /* 0xB... */
+    bool conditionals(int B, int C, int D); /* 0xC... */
+    bool jumping     (int B, int C, int D); /* 0xD... */
+    bool output      (int B, int C, int D); /* 0xF... */
+    bool input       (int B, int C, int D); /* 0xE... */
+    void jmp();                             /* 0xD000 */
+    void mem_dump();                        /* 0xF100 */
+    void reg_dump();                        /* 0xF200 */
+    int space()      {return _memory;}
+    int exec         (int inst);
     int run();
-    void print(int reg);
 };

@@ -1,7 +1,7 @@
 /*
-    INSTR Hex Instruction Set
-    Andrew Player
-    October 18, 2019
+INSTR Hex Instruction Set
+Andrew Player
+October 18, 2019
 */
 #include "instr.hpp"
 
@@ -150,7 +150,7 @@ bool CPU::input(int B, int C, int D) {
     return true;
 }
 
-int CPU::exec(int inst, bool intp) {
+int CPU::exec(int inst) {
     regs[0xf]++;
     int A = (inst >> 12); 
     int B = (inst >> 8 )&0xF; 
