@@ -35,12 +35,9 @@ public:
     bool output(int B, int C, int D);
     bool input(int B, int C, int D);
     void jmp();
-
     void mem_dump();
     void reg_dump();
-
     int space() {return _memory;}
-
     int exec(int inst, bool intp);
     int run();
     void print(int reg);
