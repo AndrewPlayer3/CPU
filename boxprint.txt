@@ -13,6 +13,7 @@ Filled (1) or Hollow (2)?0
 #Filled or Hollow
 0xE20C
 
+#test value
 0xE00D
 0x0001
 
@@ -30,6 +31,7 @@ Filled (1) or Hollow (2)?0
 #Column Loop:
 0x1002
 
+# go to Testing
 0xD000
 0x1003
 
@@ -39,6 +41,7 @@ Filled (1) or Hollow (2)?0
 x0
 0xF305
 
+#go to end loop
 0xD000
 0x1007
 
@@ -51,6 +54,7 @@ x0
 #End inside loop
 0x1007
 
+# col++
 0xA402
 0x0001
 
@@ -59,10 +63,12 @@ x0
 0xD500
 0x1002
 
+#new line
 0xE305
  0
 0xF405
 
+# row++
 0xA401
 0x0001
 
