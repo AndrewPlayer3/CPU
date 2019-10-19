@@ -2,20 +2,11 @@
 
 int main() {
 
-    int arr[4];
-    
-    arr[0] = 0x41;
-    arr[1] = 0x42;
-    arr[2] = 0x43;
-    arr[3] = 0x44;
+    int hex = 0xA;
 
-    int hex;
-    std::string str;
-    for(int i : arr) {
-        str += (char)i;
-    }
+    hex <<= 0x4;
 
-    std::cout << str << std::endl;
+    std::cout << std::hex << hex << std::endl;
 
     return 0;
 }
