@@ -84,6 +84,24 @@ bool CPU::conditionals(int B, int C, int D) {
         case 0x5:
             return regs[C] > regs[D];
             break;
+        case 0x6:
+            return regs[C] == mem[regs[0xf]++];
+            break;
+        case 0x7:
+            return regs[C] != mem[regs[0xf]++];
+            break;
+        case 0x8:
+            return regs[C] <= mem[regs[0xf]++];
+            break;
+        case 0x9:
+            return regs[C] >= mem[regs[0xf]++];
+            break;
+        case 0xA:
+            return regs[C] < mem[regs[0xf]++];
+            break;
+        case 0xB:
+            return regs[C] > mem[regs[0xf]++];
+            break;
         default:
             return false;
     }
