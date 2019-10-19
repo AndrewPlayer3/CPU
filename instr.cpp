@@ -157,13 +157,13 @@ int CPU::exec(int inst) {
     int C = (inst >> 4 )&0xF; 
     int D = (inst >> 0 )&0xF;
     switch(A) {
-        case 0x1: /* 0x1-9 are Lables */ break; /* 0x1... */ 
-        case 0xA: arithmetic  (B, C, D); break; /* 0xA... */
-        case 0xB: bitwise     (B, C, D); break; /* 0xB... */
-        case 0xC: conditionals(B, C, D); break; /* 0xC... */
-        case 0xD: jumping     (B, C, D); break; /* 0xD... */
-        case 0xE: input       (B, C, D); break; /* 0xE... */
-        case 0xF: output      (B, C, D); break; /* 0xF... */
+        case 0x1: /* 0x1-9 are Lables */ break;             /* 0x1... */ 
+        case 0xA: arithmetic  (B, C, D); break;             /* 0xA... */
+        case 0xB: bitwise     (B, C, D); break;             /* 0xB... */
+        case 0xC: conditionals(B, C, D); break;             /* 0xC... */
+        case 0xD: jumping     (B, C, D); break;             /* 0xD... */
+        case 0xE: input       (B, C, D); break;             /* 0xE... */
+        case 0xF: output      (B, C, D); break;             /* 0xF... */
         default: return 1;
     }
     return 0;
