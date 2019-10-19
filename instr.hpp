@@ -11,19 +11,19 @@ class CPU {
 private:
     // Flag after cmp -> 1 for >, 0 for ==, and -1 for <
     int _cmp_flag;
-    enum{_space=1024};
+    enum{_memory=0x300};
 
 public:
 
     int regs[16];
-    int mem[_space];
+    int mem[_memory];
 
     CPU() {
         // Clean memory and registers
         for(int i = 0; i < 16; i++) {
             regs[i] = 0;
         }
-        for(int i = 0; i < _space; i++) {
+        for(int i = 0; i < space(); i++) {
             mem[i] = 0;
         }
     }
@@ -38,6 +38,8 @@ public:
 
     void mem_dump();
     void reg_dump();
+
+    int space() {return _memory;}
 
     int exec(int inst, bool intp);
     int run();

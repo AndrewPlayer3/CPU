@@ -111,7 +111,7 @@ void CPU::jmp() {
     int lable;          
     lable = mem[regs[0xf]];
     bool found;
-    for(int i = 0; i < 1024; i++) {
+    for(int i = 0; i < space(); i++) {
         if(mem[i] == lable && i != regs[0xf]) {
             regs[0xf] = i + 1;
             found = true;
@@ -235,6 +235,7 @@ int CPU::exec(int inst, bool intp) {
 
     switch(A) {
         case 0x1:
+            // Lables
             break;
         case 0xA:
             arithmetic(B, C, D);
@@ -262,7 +263,7 @@ int CPU::exec(int inst, bool intp) {
 }
 
 void CPU::mem_dump() {
-    for(int i = 0; i < 1024; i++) {
+    for(int i = 0; i < space(); i++) {
         std::cout << i << ": " << std::hex << mem[i] << std::endl;
     }
 }
@@ -275,7 +276,7 @@ void CPU::reg_dump() {
 
 int CPU::run() {
     int start = regs[0xf];
-    for(regs[0xf]; regs[0xf] < 1024;) {
+    for(regs[0xf]; regs[0xf] < space();) {
         //std::cout << "Running: " << std::hex << regs[0xf] + 1 << std::endl;
         exec(mem[regs[0xf]], false);
     }
