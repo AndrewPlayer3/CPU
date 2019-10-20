@@ -41,25 +41,6 @@ void CPU::bitwise(int B, int C, int D) {
     }
 }
 
-bool CPU::conditionals(int B, int C, int D) {
-    switch(B) {
-        case 0x0: return regs[C] == regs[D]; break;         /* r[C] == r[D] 0xC0.. */
-        case 0x1: return regs[C] != regs[D]; break;         /* r[C] != r[D] 0xC1.. */
-        case 0x2: return regs[C] <= regs[D]; break;         /* r[C] <= r[D] 0xC2.. */
-        case 0x3: return regs[C] >= regs[D]; break;         /* r[C] >= r[D] 0xC3.. */
-        case 0x4: return regs[C] <  regs[D]; break;         /* r[C] <  r[D] 0xC4.. */
-        case 0x5: return regs[C] >  regs[D]; break;         /* r[C] >  r[D] 0xC5.. */
-        case 0x6: return regs[C] == mem[regs[0xf]++]; break;/* r[C] == r[D] 0xC6.. */
-        case 0x7: return regs[C] != mem[regs[0xf]++]; break;/* r[C] != r[D] 0xC7.. */
-        case 0x8: return regs[C] <= mem[regs[0xf]++]; break;/* r[C] <= r[D] 0xC8.. */
-        case 0x9: return regs[C] >= mem[regs[0xf]++]; break;/* r[C] >= r[D] 0xC9.. */
-        case 0xA: return regs[C] <  mem[regs[0xf]++]; break;/* r[C] <  r[D] 0xCA.. */
-        case 0xB: return regs[C] >  mem[regs[0xf]++]; break;/* r[C] >  r[D] 0xCB.. */
-        default: error(regs[0xf], 0xA, B, C, D); return false;
-    }
-    return false;
-}
-
 void CPU::jmp() {       
     int lable = mem[regs[0xf]];
     for(int i = 0; i < space(); i++) {
