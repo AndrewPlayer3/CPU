@@ -37,7 +37,7 @@ void CPU::bitwise(int B, int C, int D) {
         case 0x5: regs[D] |= mem[regs[0xf]++]; break;       /* r[C] |= int  0xB5.. */
         case 0x6: regs[D] <<= mem[regs[0xf]++]; break;      /* r[C] << int  0xB6.. */
         case 0x7: regs[D] >>= mem[regs[0xf]++]; break;      /* r[C] >> int  0xB7.. */
-        default: error(regs[0xf], 0xA, B, C, D);
+        default: error(regs[0xf], 0xB, B, C, D);
     }
 }
 
@@ -83,7 +83,7 @@ void CPU::jumping(int B, int C, int D) {
             || _cmp_flag == 1)  {jmp();}       
             else                {regs[0xf]++;}
             break;
-        default: error(regs[0xf], 0xA, B, C, D);
+        default: error(regs[0xf], 0xD, B, C, D);
     }
 }
 
@@ -114,7 +114,7 @@ void CPU::output(int B, int C, int D) {
         case 0x5:                                           /* cout@mem   0xF50. */
             std::cout << std::hex << mem[regs[D]] << std::endl;
             break;
-        default: error(regs[0xf], 0xA, B, C, D);
+        default: error(regs[0xf], 0xF, B, C, D);
     }
 }
 
@@ -131,8 +131,10 @@ void CPU::input(int B, int C, int D) {
                  && mem[regs[0xf]] != '0') {
                 regs[0xf]++;
             } break;
-        case 0x4: regs[C] = mem[regs[D]];                   /* mov r[D],mem  0xE4..  */
-        default: error(regs[0xf], 0xA, B, C, D);
+        case 0x4: regs[C] = mem[regs[D]];        break;     /* mov r[D],mem  0xE4..  */
+        case 0x5: mem[regs[C]] = mem[regs[D]];   break;     /* mov mem,r[C]  0xE5..  */
+        case 0x6: mem[regs[0xf]] = mem[regs[D]]; break;     /* mov mem,r[D]  0xE5..  */
+        default: error(regs[0xf], 0xE, B, C, D);
     }
 }
 
