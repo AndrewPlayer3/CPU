@@ -24,12 +24,12 @@ public:
         for(int i = 0; i < space(); i++) { mem[i]  = 0; }
     }
 
-    bool arithmetic  (int B, int C, int D); /* 0xA... */
-    bool bitwise     (int B, int C, int D); /* 0xB... */
+    void arithmetic  (int B, int C, int D); /* 0xA... */
+    void bitwise     (int B, int C, int D); /* 0xB... */
     bool conditionals(int B, int C, int D); /* 0xC... */
-    bool jumping     (int B, int C, int D); /* 0xD... */
-    bool output      (int B, int C, int D); /* 0xF... */
-    bool input       (int B, int C, int D); /* 0xE... */
+    void jumping     (int B, int C, int D); /* 0xD... */
+    void output      (int B, int C, int D); /* 0xF... */
+    void input       (int B, int C, int D); /* 0xE... */
     void jmp();                             /* 0xD000 */
     void mem_dump();                        /* 0xF100 */
     void reg_dump();                        /* 0xF200 */

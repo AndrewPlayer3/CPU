@@ -5,7 +5,14 @@ October 18, 2019
 */
 #include "instr.hpp"
 
-bool CPU::arithmetic(int B, int C, int D) {
+void error(int loc, int A, int B, int D, int C) {
+    int inst = (A << 12) | (B << 8) | (C << 4) | (D << 2);
+    std::string err = "Invalid OPCODE:";
+    std::cout << std::hex << err << " " << inst << " at " << loc << std::endl;
+    exit(1);
+}
+
+void CPU::arithmetic(int B, int C, int D) {
     switch(B) {
         case 0x0: regs[C] += regs[D]; break;                /* r[C] += r[D] 0xA0.. */
         case 0x1: regs[C] -= regs[D]; break;                /* r[C] -= r[D] 0xA1.. */
@@ -15,12 +22,11 @@ bool CPU::arithmetic(int B, int C, int D) {
         case 0x5: regs[D] -= mem[regs[0xf]++]; break;       /* r[C] -= int  0xA5.. */
         case 0x6: regs[D] *= mem[regs[0xf]++]; break;       /* r[C] *= int  0xA6.. */
         case 0x7: regs[D] %= mem[regs[0xf]++]; break;       /* r[C] %= int  0xA7.. */
-        default: return false;
+        default: error(regs[0xf], 0xA, B, C, D);
     }
-    return true;
 }
 
-bool CPU::bitwise(int B, int C, int D) {
+void CPU::bitwise(int B, int C, int D) {
     switch(B) {
         case 0x0: regs[C] &= regs[D]; break;                /* r[C] &= r[D] 0xB0.. */
         case 0x1: regs[C] |= regs[D]; break;                /* r[C] |= r[D] 0xB1.. */
@@ -30,9 +36,8 @@ bool CPU::bitwise(int B, int C, int D) {
         case 0x5: regs[D] |= mem[regs[0xf]++]; break;       /* r[C] |= int  0xB5.. */
         case 0x6: regs[D] <<= mem[regs[0xf]++]; break;      /* r[C] << int  0xB6.. */
         case 0x7: regs[D] >>= mem[regs[0xf]++]; break;      /* r[C] >> int  0xB7.. */
-        default: return false;
+        default: error(regs[0xf], 0xA, B, C, D);
     }
-    return true;
 }
 
 bool CPU::conditionals(int B, int C, int D) {
@@ -49,8 +54,9 @@ bool CPU::conditionals(int B, int C, int D) {
         case 0x9: return regs[C] >= mem[regs[0xf]++]; break;/* r[C] >= r[D] 0xC9.. */
         case 0xA: return regs[C] <  mem[regs[0xf]++]; break;/* r[C] <  r[D] 0xCA.. */
         case 0xB: return regs[C] >  mem[regs[0xf]++]; break;/* r[C] >  r[D] 0xCB.. */
-        default: return false;
+        default: error(regs[0xf], 0xA, B, C, D); return false;
     }
+    return false;
 }
 
 void CPU::jmp() {
@@ -66,7 +72,7 @@ void CPU::jmp() {
     if(!found) { std::cout << "Lable not found..." << std::endl; }
 }
 
-bool CPU::jumping(int B, int C, int D) {
+void CPU::jumping(int B, int C, int D) {
     switch(B){
         case 0x0:                                           /* jmp 0xD000 */           
             jmp();
@@ -98,12 +104,11 @@ bool CPU::jumping(int B, int C, int D) {
             || _cmp_flag == 1)  {jmp();}       
             else                {regs[0xf]++;}
             break;
-        default: return false;
+        default: error(regs[0xf], 0xA, B, C, D);
     }
-    return true;
 }
 
-bool CPU::output(int B, int C, int D) {
+void CPU::output(int B, int C, int D) {
     std::string str = "";
     int loc;
     switch(B) {
@@ -128,12 +133,11 @@ bool CPU::output(int B, int C, int D) {
             }
             std::cout << str << std::endl;
             break;
-        default: return false;
+        default: error(regs[0xf], 0xA, B, C, D);
     }
-    return true;
 }
 
-bool CPU::input(int B, int C, int D) {
+void CPU::input(int B, int C, int D) {
     switch(B) {
         case 0x0: regs[D] = mem[regs[0xf]]; break;          /* mov r[D],int  0xE0..  */
         case 0x1: regs[C] = regs[D];        break;          /* mov r[D],int  0xE1..  */
@@ -145,9 +149,8 @@ bool CPU::input(int B, int C, int D) {
             while(mem[regs[0xf]] != '0') {
                 regs[0xf]++;
             } break;
-        default: return false;
+        default: error(regs[0xf], 0xA, B, C, D);
     }
-    return true;
 }
 
 int CPU::exec(int inst) {
