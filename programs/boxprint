@@ -23,7 +23,7 @@ Filled (1) or Hollow (2)?\0
 
 #New Line
 0xE30D
-/0
+\0
 0xF40D
 
 #test value

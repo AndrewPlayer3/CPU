@@ -7,8 +7,9 @@ October 18, 2019
 
 void error(int loc, int A, int B, int D, int C) {
     int inst = (A << 12) | (B << 8) | (C << 4) | (D << 2);
-    std::string err = "Invalid OPCODE:";
+    std::string err = "\n\nERROR! Invalid OPCODE:";
     std::cout << std::hex << err << " " << inst << " at " << loc << std::endl;
+    std::cout << "Exiting Program with Code 1\n" << std::endl;
     exit(1);
 }
 
@@ -59,17 +60,14 @@ bool CPU::conditionals(int B, int C, int D) {
     return false;
 }
 
-void CPU::jmp() {
-    bool found;          
+void CPU::jmp() {       
     int lable = mem[regs[0xf]];
     for(int i = 0; i < space(); i++) {
         if(mem[i] == lable && i != regs[0xf]) {
-            regs[0xf] = i + 1;
-            found = true;
-            break;
+            regs[0xf] = i + 1; return;
         }
     }
-    if(!found) { std::cout << "Lable not found..." << std::endl; }
+    std::cout << "Lable not found..." << std::endl;
 }
 
 void CPU::jumping(int B, int C, int D) {
