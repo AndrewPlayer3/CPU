@@ -119,7 +119,7 @@ void CPU::output(int B, int C, int D) {
         case 0x2: reg_dump(); break;                        /* reg dump   0xF200 */
         case 0x3:                                           /* cout@ptr   0xF30D */
             loc = regs[D];
-            while(mem[loc] != '0') {
+            while(mem[loc] != '\\' && mem[loc+1] != '0') {
                 str += (char)mem[loc];
                 loc++;
             }
@@ -127,7 +127,7 @@ void CPU::output(int B, int C, int D) {
             break;
         case 0x4:                                           /* cout@ptr\n 0xF30D */
             loc = regs[D];
-            while(mem[loc] != '0') {
+            while(mem[loc] != '\\' && mem[loc+1] != '0') {
                 str += (char)mem[loc];
                 loc++;
             }
@@ -146,7 +146,8 @@ void CPU::input(int B, int C, int D) {
             std::cin >> std::hex >> regs[D]; 
             break;
         case 0x3: regs[D] = regs[0xf];                      /* mov r[D],str* 0xE30.  */
-            while(mem[regs[0xf]] != '0') {
+            while(mem[regs[0xf]-1] != '\\' 
+                 && mem[regs[0xf]] != '0') {
                 regs[0xf]++;
             } break;
         default: error(regs[0xf], 0xA, B, C, D);
@@ -176,9 +177,8 @@ int CPU::exec(int inst) {
         case 0xD: jumping     (B, C, D); break;             /* 0xD... */
         case 0xE: input       (B, C, D); break;             /* 0xE... */
         case 0xF: output      (B, C, D); break;             /* 0xF... */
-        default: 
-            std::cout << "How'd you get here???\n";
-            return 1;
+        default:  error(regs[0xf], 0xA, B, C, D); 
+        return 1;
     }
     return 0;
 }

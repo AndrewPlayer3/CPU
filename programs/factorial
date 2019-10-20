@@ -1,6 +1,6 @@
 0xE300
-Enter a Number 0
-0xF300
+Enter a Number:\0
+0xF400
 
 #R1 = a ;; n = a
 0xE201
