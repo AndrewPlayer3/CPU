@@ -5,10 +5,16 @@ October 18, 2019
 */
 #include "instr.hpp"
 
-void error(int loc, int A, int B, int D, int C) {
-    int inst = (A << 12) | (B << 8) | (C << 4) | (D << 2);
+int LINE_NUMBER = 0;
+
+void error(int loc, int A, int B, int C, int D) {
+    int inst = (A << 12) | (B << 8) | (C << 4) | (D << 0);
     std::string err = "\n\nERROR! Invalid OPCODE:";
-    std::cout << std::hex << err << " " << inst << " at " << loc << std::endl;
+    
+    std::cout << std::hex << err << " " << inst << 
+    ", mem[" << loc << "], at Line " << std::dec 
+    << LINE_NUMBER << std::endl;
+    
     std::cout << "Exiting Program with Code 1\n" << std::endl;
     exit(1);
 }
@@ -120,8 +126,8 @@ void CPU::output(int B, int C, int D) {
 
 void CPU::input(int B, int C, int D) {
     switch(B) {
-        case 0x0: regs[D] = mem[regs[0xf]]; break;          /* mov r[D],int  0xE0..  */
-        case 0x1: regs[C] = regs[D];        break;          /* mov r[D],int  0xE1..  */
+        case 0x0: regs[D] = mem[regs[0xf]];      break;     /* mov r[D],int  0xE0..  */
+        case 0x1: regs[C] = regs[D];             break;     /* mov r[D],int  0xE1..  */
         case 0x2:                                           /* cin r[D],int  0xE20.  */
             std::cout << ">> "; 
             std::cin >> std::hex >> regs[D]; 
@@ -134,6 +140,7 @@ void CPU::input(int B, int C, int D) {
         case 0x4: regs[C] = mem[regs[D]];        break;     /* mov r[D],mem  0xE4..  */
         case 0x5: mem[regs[C]] = mem[regs[D]];   break;     /* mov mem,r[C]  0xE5..  */
         case 0x6: mem[regs[0xf]] = mem[regs[D]]; break;     /* mov mem,r[D]  0xE5..  */
+        case 0x7: regs[D] = mem[mem[regs[0xf]]]; break;     /* mov mem,int   0xE5..  */
         default: error(regs[0xf], 0xE, B, C, D);
     }
 }
@@ -197,6 +204,7 @@ int  main() {
     std::string line;
     int counter = 0;
     while(std::getline(file, line)) {
+        LINE_NUMBER++;
         if(line[0] == '0') {
             int opcode;
             std::istringstream ss(line);
