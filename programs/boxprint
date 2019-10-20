@@ -1,4 +1,4 @@
-#Question
+#Width question
 0xE30A
 Width?\0
 0xF40A
@@ -6,6 +6,7 @@ Width?\0
 #Box Width
 0xE200
 
+#Height question
 0xE30A
 Height?\0
 0xF40A
@@ -20,6 +21,7 @@ Filled (1) or Hollow (2)?\0
 #Filled or Hollow
 0xE20C
 
+#New Line
 0xE30D
 /0
 0xF40D
