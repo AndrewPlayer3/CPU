@@ -91,12 +91,12 @@ void CPU::output(int B, int C, int D) {
     std::string str = "";
     int loc;
     switch(B) {
-        case 0x0:                                           /* cout r[D]  0xF00D */
+        case 0x0:                                           /* cout r[D]  0xF00. */
             std::cout << std::hex << regs[D] << std::endl;
             break;
         case 0x1: mem_dump(); break;                        /* mem dump   0xF100 */
         case 0x2: reg_dump(); break;                        /* reg dump   0xF200 */
-        case 0x3:                                           /* cout@ptr   0xF30D */
+        case 0x3:                                           /* cout@ptr   0xF30. */
             loc = regs[D];
             while(mem[loc] != '\\' && mem[loc+1] != '0') {
                 str += (char)mem[loc];
@@ -104,13 +104,15 @@ void CPU::output(int B, int C, int D) {
             }
             std::cout << str;
             break;
-        case 0x4:                                           /* cout@ptr\n 0xF30D */
+        case 0x4:                                           /* cout@ptr\n 0xF40. */
             loc = regs[D];
             while(mem[loc] != '\\' && mem[loc+1] != '0') {
                 str += (char)mem[loc];
                 loc++;
             }
-            std::cout << str << std::endl;
+            std::cout << str << std::endl; break;
+        case 0x5:                                           /* cout@mem   0xF50. */
+            std::cout << std::hex << mem[regs[D]] << std::endl;
             break;
         default: error(regs[0xf], 0xA, B, C, D);
     }
@@ -129,6 +131,7 @@ void CPU::input(int B, int C, int D) {
                  && mem[regs[0xf]] != '0') {
                 regs[0xf]++;
             } break;
+        case 0x4: regs[C] = mem[regs[D]];                   /* mov r[D],mem  0xE4..  */
         default: error(regs[0xf], 0xA, B, C, D);
     }
 }
