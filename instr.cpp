@@ -152,7 +152,6 @@ int CPU::exec(int inst) {
         case 0x9: /* 0x0-9 are Lables */ break;             /* 0x9... */ 
         case 0xA: arithmetic  (B, C, D); break;             /* 0xA... */
         case 0xB: bitwise     (B, C, D); break;             /* 0xB... */
-        case 0xC: conditionals(B, C, D); break;             /* 0xC... */
         case 0xD: jumping     (B, C, D); break;             /* 0xD... */
         case 0xE: input       (B, C, D); break;             /* 0xE... */
         case 0xF: output      (B, C, D); break;             /* 0xF... */
