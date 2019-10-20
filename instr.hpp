@@ -32,7 +32,7 @@ public:
     void jmp();                             /* 0xD000 */
     void mem_dump();                        /* 0xF100 */
     void reg_dump();                        /* 0xF200 */
-    int space()      {return _memory;}
-    int exec         (int inst);
-    int run();
+    int  space()     {return _memory;}
+    int  exec        (int inst);
+    int  run();
 };

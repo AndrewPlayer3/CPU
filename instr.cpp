@@ -5,8 +5,6 @@ October 18, 2019
 */
 #include "instr.hpp"
 
-int LINE_NUMBER = 0;
-
 void error(int loc, int A, int B, int C, int D) {
     int inst = (A << 12) | (B << 8) | (C << 4) | (D << 0);
     std::string err = "\n\nERROR! Invalid OPCODE:";
@@ -20,10 +18,10 @@ void error(int loc, int A, int B, int C, int D) {
 
 void CPU::arithmetic(int B, int C, int D) {
     switch(B) {
-        case 0x0: regs[C] += regs[D]; break;                /* r[C] += r[D] 0xA0.. */
-        case 0x1: regs[C] -= regs[D]; break;                /* r[C] -= r[D] 0xA1.. */
-        case 0x2: regs[C] *= regs[D]; break;                /* r[C] *= r[D] 0xA2.. */
-        case 0x3: regs[C] %= regs[D]; break;                /* r[C] %= r[D] 0xA3.. */
+        case 0x0: regs[C] += regs[D];          break;       /* r[C] += r[D] 0xA0.. */
+        case 0x1: regs[C] -= regs[D];          break;       /* r[C] -= r[D] 0xA1.. */
+        case 0x2: regs[C] *= regs[D];          break;       /* r[C] *= r[D] 0xA2.. */
+        case 0x3: regs[C] %= regs[D];          break;       /* r[C] %= r[D] 0xA3.. */
         case 0x4: regs[D] += mem[regs[0xf]++]; break;       /* r[C] += int  0xA4.. */
         case 0x5: regs[D] -= mem[regs[0xf]++]; break;       /* r[C] -= int  0xA5.. */
         case 0x6: regs[D] *= mem[regs[0xf]++]; break;       /* r[C] *= int  0xA6.. */
@@ -34,12 +32,12 @@ void CPU::arithmetic(int B, int C, int D) {
 
 void CPU::bitwise(int B, int C, int D) {
     switch(B) {
-        case 0x0: regs[C] &= regs[D]; break;                /* r[C] &= r[D] 0xB0.. */
-        case 0x1: regs[C] |= regs[D]; break;                /* r[C] |= r[D] 0xB1.. */
-        case 0x2: regs[C] <<= regs[D]; break;               /* r[C] << r[D] 0xB2.. */
-        case 0x3: regs[C] >>= regs[D]; break;               /* r[C] >> r[D] 0xB3.. */
-        case 0x4: regs[D] &= mem[regs[0xf]++]; break;       /* r[C] &= int  0xB4.. */
-        case 0x5: regs[D] |= mem[regs[0xf]++]; break;       /* r[C] |= int  0xB5.. */
+        case 0x0: regs[C] &=  regs[D];          break;      /* r[C] &= r[D] 0xB0.. */
+        case 0x1: regs[C] |=  regs[D];          break;      /* r[C] |= r[D] 0xB1.. */
+        case 0x2: regs[C] <<= regs[D];          break;      /* r[C] << r[D] 0xB2.. */
+        case 0x3: regs[C] >>= regs[D];          break;      /* r[C] >> r[D] 0xB3.. */
+        case 0x4: regs[D] &=  mem[regs[0xf]++]; break;      /* r[C] &= int  0xB4.. */
+        case 0x5: regs[D] |=  mem[regs[0xf]++]; break;      /* r[C] |= int  0xB5.. */
         case 0x6: regs[D] <<= mem[regs[0xf]++]; break;      /* r[C] << int  0xB6.. */
         case 0x7: regs[D] >>= mem[regs[0xf]++]; break;      /* r[C] >> int  0xB7.. */
         default: error(regs[0xf], 0xB, B, C, D);
@@ -194,7 +192,6 @@ int  CPU::run() {
 }
 
 int  main() {
-    std::string choice;
     CPU cpu;
     std::string filename;
     std::cout << "Filename: ";
