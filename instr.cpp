@@ -12,8 +12,7 @@ void error(int loc, int A, int B, int C, int D) {
     std::string err = "\n\nERROR! Invalid OPCODE:";
     
     std::cout << std::hex << err << " " << inst << 
-    ", mem[" << loc << "], at Line " << std::dec 
-    << LINE_NUMBER << std::endl;
+    " at mem[" << loc << "]." << std::endl;
     
     std::cout << "Exiting Program with Code 1\n" << std::endl;
     exit(1);
@@ -204,7 +203,6 @@ int  main() {
     std::string line;
     int counter = 0;
     while(std::getline(file, line)) {
-        LINE_NUMBER++;
         if(line[0] == '0') {
             int opcode;
             std::istringstream ss(line);
