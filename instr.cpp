@@ -63,29 +63,29 @@ void CPU::jumping(int B, int C, int D) {
         case 0x1:                                           /* cmp 0xD1.. */
             if      (regs[C] == regs[D]) {_cmp_flag =  0;}  // _cmp_flag is set in cpu,
             else if (regs[C] <  regs[D]) {_cmp_flag = -1;}  // so jmp before next cmp.
-            else                         {_cmp_flag =  1;}
+            else if (regs[C] >  regs[D]) {_cmp_flag =  1;}
             break;
         case 0x2:                                           /* je  0xD200 */
-            if(_cmp_flag == 0)  {jmp();}                  
-            else                {regs[0xf]++;}
+            if      (_cmp_flag == 0)     {jmp()      ;}                  
+            else                         {regs[0xf]++;}
             break;
         case 0x3:                                           /* jl  0xD300 */
-            if(_cmp_flag == -1) {jmp();}       
-            else                {regs[0xf]++;}
+            if      (_cmp_flag ==-1)     {jmp()      ;}       
+            else                         {regs[0xf]++;}
             break;
         case 0x4:                                           /* jg  0xD400 */
-            if(_cmp_flag == 1)  {jmp();}       
-            else                {regs[0xf]++;}
+            if      (_cmp_flag == 1)     {jmp()	     ;}       
+            else                         {regs[0xf]++;}
             break;
         case 0x5:                                           /* jle 0xD500 */
-            if(_cmp_flag == 0 
-            || _cmp_flag == -1) {jmp();}      
-            else                {regs[0xf]++;}
+            if      (_cmp_flag == 0 
+                    ||_cmp_flag==-1)     {jmp()      ;}      
+            else                         {regs[0xf]++;}
             break;
         case 0x6:                                           /* jge 0xD600 */
-            if(_cmp_flag == 0 
-            || _cmp_flag == 1)  {jmp();}       
-            else                {regs[0xf]++;}
+            if      (_cmp_flag == 0 
+                    || _cmp_flag==1)     {jmp()      ;}       
+            else                         {regs[0xf]++;}
             break;
         default: error(regs[0xf], 0xD, B, C, D);
     }
