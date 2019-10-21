@@ -45,13 +45,14 @@ void CPU::bitwise(int B, int C, int D) {
 }
 
 void CPU::jmp() {       
-    int lable = mem[regs[0xf]];
+    int label = mem[regs[0xf]];
     for(int i = 0; i < space(); i++) {
-        if(mem[i] == lable && i != regs[0xf]) {
+        if(mem[i] == label && i != regs[0xf]) {
             regs[0xf] = i + 1; return;
         }
     }
-    std::cout << "Lable not found..." << std::endl;
+    std::cout << "ERROR! No label found matching " 
+	      << std::hex << mem[regs[0xf]] << std::endl;
 }
 
 void CPU::jumping(int B, int C, int D) {
@@ -149,16 +150,16 @@ int CPU::exec(int inst) {
     int C = (inst >> 4 )&0xF; 
     int D = (inst >> 0 )&0xF;
     switch(A) {
-        case 0x0: /* 0x0-9 are Lables */ break;             /* 0x0... */  
-        case 0x1: /* 0x0-9 are Lables */ break;             /* 0x1... */ 
-        case 0x2: /* 0x0-9 are Lables */ break;             /* 0x2... */ 
-        case 0x3: /* 0x0-9 are Lables */ break;             /* 0x3... */ 
-        case 0x4: /* 0x0-9 are Lables */ break;             /* 0x4... */ 
-        case 0x5: /* 0x0-9 are Lables */ break;             /* 0x5... */ 
-        case 0x6: /* 0x0-9 are Lables */ break;             /* 0x6... */ 
-        case 0x7: /* 0x0-9 are Lables */ break;             /* 0x7... */ 
-        case 0x8: /* 0x0-9 are Lables */ break;             /* 0x8... */ 
-        case 0x9: /* 0x0-9 are Lables */ break;             /* 0x9... */ 
+        case 0x0: /* 0x0-9 are Labels */ break;             /* 0x0... */  
+        case 0x1: /* 0x0-9 are Labels */ break;             /* 0x1... */ 
+        case 0x2: /* 0x0-9 are Labels */ break;             /* 0x2... */ 
+        case 0x3: /* 0x0-9 are Labels */ break;             /* 0x3... */ 
+        case 0x4: /* 0x0-9 are Labels */ break;             /* 0x4... */ 
+        case 0x5: /* 0x0-9 are Labels */ break;             /* 0x5... */ 
+        case 0x6: /* 0x0-9 are Labels */ break;             /* 0x6... */ 
+        case 0x7: /* 0x0-9 are Labels */ break;             /* 0x7... */ 
+        case 0x8: /* 0x0-9 are Labels */ break;             /* 0x8... */ 
+        case 0x9: /* 0x0-9 are Labels */ break;             /* 0x9... */ 
         case 0xA: arithmetic  (B, C, D); break;             /* 0xA... */
         case 0xB: bitwise     (B, C, D); break;             /* 0xB... */
         case 0xD: jumping     (B, C, D); break;             /* 0xD... */
