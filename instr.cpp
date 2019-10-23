@@ -201,14 +201,18 @@ int  main() {
     std::string line;
     int counter = 0;
     while(std::getline(file, line)) {
-        if(line[0] == '0') {
+        int position = 0;
+        while(line[position] == '\t' || line[position] == ' ') {
+            position++;
+        }
+        if(line[position] == '0') {
             int opcode;
             std::istringstream ss(line);
             if(ss >> std::hex >> opcode) {
                 cpu.mem[counter++] = opcode;
             } 
         }
-        else if(line[0] != '#') {
+        else if(line[position] != '#') {
             for(char c : line) {
                 cpu.mem[counter++] = c;
             }
