@@ -5,6 +5,7 @@ October 18, 2019
 */
 #include "instr.hpp"
 
+/* Prints the location and instruction and exits with code 1 */
 void error(int loc, int A, int B, int C, int D) {
     int inst = (A << 12) | (B << 8) | (C << 4) | (D << 0);
     std::string err = "\n\nERROR! Invalid OPCODE:";
@@ -16,6 +17,7 @@ void error(int loc, int A, int B, int C, int D) {
     exit(1);
 }
 
+/* Does arithmetic with registers and ints in memory */
 void CPU::arithmetic(int B, int C, int D) {
     switch(B) {
         case 0x0: regs[C] += regs[D];          break;       /* r[C] += r[D] 0xA0.. */
@@ -30,6 +32,7 @@ void CPU::arithmetic(int B, int C, int D) {
     }
 }
 
+/* Does bitwise operations with registers and ints in memory */
 void CPU::bitwise(int B, int C, int D) {
     switch(B) {
         case 0x0: regs[C] &=  regs[D];          break;      /* r[C] &= r[D] 0xB0.. */
@@ -44,6 +47,7 @@ void CPU::bitwise(int B, int C, int D) {
     }
 }
 
+/* Sets program counter to the location of a label (+1) */
 void CPU::jmp() {       
     int label = mem[regs[0xf]];
     for(int i = 0; i < space(); i++) {
@@ -55,6 +59,7 @@ void CPU::jmp() {
 	      << std::hex << mem[regs[0xf]] << std::endl;
 }
 
+/* Conditional Jumping, Jumping, and Compares */
 void CPU::jumping(int B, int C, int D) {
     switch(B){
         case 0x0:                                           /* jmp 0xD000 */           
@@ -91,6 +96,7 @@ void CPU::jumping(int B, int C, int D) {
     }
 }
 
+/* Outputs regs, strings, and dumps */
 void CPU::output(int B, int C, int D) {
     std::string str = "";
     int loc;
@@ -122,6 +128,7 @@ void CPU::output(int B, int C, int D) {
     }
 }
 
+/* Move things into registers and memory */
 void CPU::input(int B, int C, int D) {
     switch(B) {
         case 0x0: regs[D] = mem[regs[0xf]];      break;     /* mov r[D],int  0xE0..  */
@@ -143,6 +150,8 @@ void CPU::input(int B, int C, int D) {
     }
 }
 
+/* Breaks off each piece of the instructions and goes to the correct */
+/* instruction function.                                             */
 int CPU::exec(int inst) {
     regs[0xf]++;
     int A = (inst >> 12); 
@@ -171,18 +180,21 @@ int CPU::exec(int inst) {
     return 0;
 }
 
+/* Prints each memory location and its contents */
 void CPU::mem_dump() {
     for(int i = 0; i < space(); i++) {
         std::cout << i << ": " << std::hex << mem[i] << std::endl;
     }
 }
 
+/* Prints each register and its contents */
 void CPU::reg_dump() {
     for(int i = 0; i < 16; i++) {
         std::cout << "Register[" << std::hex << i << "]: " << regs[i] << std::endl; 
     }
 }
 
+/* Excecutes each instruction in memory */
 int  CPU::run() {
     int start = regs[0xf];
     int retcode;
