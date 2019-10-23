@@ -6,21 +6,27 @@ Arithmetic:
 
     0xA...
 
-        + 0xA0
-        - 0xA1
-        * 0xA2
-        % 0xA3
+        /* r[C] += r[D] 0xA0.. */
+        /* r[C] -= r[D] 0xA1.. */
+        /* r[C] *= r[D] 0xA2.. */
+        /* r[C] %= r[D] 0xA3.. */
+        /* r[C] += int  0xA4.. */
+        /* r[C] -= int  0xA5.. */
+        /* r[C] *= int  0xA6.. */
+        /* r[C] %= int  0xA7.. */
 
 Conditionals:
 
     0xC...
 
-        == 0xC0
-        != 0xC1
-        <= 0xC2
-        >= 0xC3
-        <  0xC4
-        >  0xC5
+        /* r[C] &= r[D] 0xB0.. */
+        /* r[C] |= r[D] 0xB1.. */
+        /* r[C] << r[D] 0xB2.. */
+        /* r[C] >> r[D] 0xB3.. */
+        /* r[C] &= int  0xB4.. */
+        /* r[C] |= int  0xB5.. */
+        /* r[C] << int  0xB6.. */
+        /* r[C] >> int  0xB7.. */
 
 Jumping:
 
@@ -28,29 +34,40 @@ Jumping:
 
     0xD...
 
-        jmp 0xD0
-        cmp 0xD1        
-        je  0xD2
-        jl  0xD3
-        jg  0xD4
-        jle 0xD5
-        jge 0xD6
+        /* jmp 0xD000 */
+        /* cmp 0xD1.. */
+        /* jl  0xD300 */
+        /* jg  0xD400 */
+        /* jle 0xD500 */
+        /* jge 0xD600 */
 
 Output:
 
     OxF...
 
-        cout     0xF0 (0xF00Reg)
-        mem dump 0xF1 (dumps all)
-        reg dump 0xF2 (dumps all)
+       /* cout r[D]  0xF00. */
+       /* mem dump   0xF100 */
+       /* reg dump   0xF200 */
+       /* cout@ptr   0xF30. */
+       /* cout@ptr\n 0xF40. */
+       /* cout@mem   0xF50. */
 
 Input:
 
     0xE...
 
-        mov 0xE0
-        mov from another reg 0xE1
-        Cin to reg 0xE2
+        /* mov r[D],int  0xE0..  */
+        /* mov r[D],int  0xE1..  */
+        /* cin r[D],int  0xE20.  */
+        /* mov r[D],str* 0xE30.  */
+        /* mov r[D],mem  0xE4..  */
+        /* mov mem,r[C]  0xE5..  */
+        /* mov mem,r[D]  0xE5..  */
+        /* mov mem,int   0xE5..  */
+
+Labels:
+
+    0x0 - 0x9 are labels for now
 
 Registers:
 
