@@ -11,7 +11,7 @@ class CPU {
 private:
     // Flag after cmp -> 1 for >, 0 for ==, and -1 for <
     int _cmp_flag;
-    enum{_memory=0x300};
+    enum{_memory=0x3000};
 
 public:
 
@@ -22,6 +22,7 @@ public:
         /* Set mem and regs to 0 */
         for(int i = 0; i < 16; i++)      { regs[i] = 0; }
         for(int i = 0; i < space(); i++) { mem[i]  = 0; }
+        _cmp_flag = 0;
     }
 
     void arithmetic  (int B, int C, int D); /* 0xA... */
