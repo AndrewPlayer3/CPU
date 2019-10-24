@@ -13,3 +13,4 @@ parser.cpp
 .vscode/launch.json
 .vscode/tasks.json
 testing.cpp
+testing.exe
