@@ -10,3 +10,5 @@ main
 programs/unix
 programs/.boxprint.swp
 parser.cpp
+.vscode/launch.json
+.vscode/tasks.json
