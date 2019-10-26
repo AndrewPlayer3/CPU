@@ -3,6 +3,7 @@ INSTR Hex Instruction Set
 Andrew Player
 October 18, 2019
 */
+
 #include "instr.hpp"
 
 /* Prints the location and instruction and exits with code 1 */
