@@ -14,11 +14,12 @@ Height?\0
 #Box Height
 0xE20A
 
+#Box Type question
 0xE30D
 Filled (1) or Hollow (2)?\0
 0xF40D
 
-#Filled or Hollow
+#Box Type
 0xE20C
 
 #New Line
@@ -44,7 +45,7 @@ Filled (1) or Hollow (2)?\0
 #Column Loop:
 0x1002
 
-# go to Testing
+#Go to Testing
 0xD000
 0x1003
 
