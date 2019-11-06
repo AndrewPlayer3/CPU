@@ -4,6 +4,9 @@ Andrew, Robert, Gannon
 October 18, 2019
 */
 
+/* This is a 16-bit hex instruction-set that runs on an "emulated" cpu  */
+/* refer to the readme for a list of the instructions                   */
+
 #include "instr.hpp"
 
 int  main() {
