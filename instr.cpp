@@ -213,11 +213,7 @@ void CPU::run() {
     }
 }
 
-int  main() {
-    CPU cpu;
-    std::string filename;
-    std::cout << "Filename: ";
-    std::cin >> filename;
+void parse_file(CPU& cpu, std::string& filename) {
     std::ifstream file(filename); 
     std::string line;
     int mem_loc = 0;
@@ -243,9 +239,4 @@ int  main() {
             }
         }
     }
-    std::cout << std::endl;
-    cpu.run();
-    std::cout << "\nProgram Exited Successfully" << std::endl;
-    std::cout << std::endl;
-    return 0;
 }

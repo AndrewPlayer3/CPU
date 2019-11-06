@@ -37,3 +37,7 @@ public:
     void exec        (int inst);
     void run         ();
 };
+
+void error(int loc, int inst);
+void error(int loc, int A, int B, int C, int D);
+void parse_file(CPU& cpu, std::string& filename);
