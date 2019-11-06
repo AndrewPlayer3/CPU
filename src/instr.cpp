@@ -6,27 +6,31 @@ October 18, 2019
 
 #include "instr.hpp"
 
-/* Prints the location and instruction and exits with code 1 */
-void error(int loc, int A, int B, int C, int D) {
-    int inst = (A << 12) | (B << 8) | (C << 4) | (D << 0);
-    std::string err = "\n\nERROR! Invalid OPCODE:";
-    
-    std::cout << std::hex << err << " " << inst << 
-    " at mem[" << loc << "]." << std::endl;
-    
-    std::cout << "Program Exited Unsuccessfully\n" << std::endl;
-    exit(1);
-}
-
-/* Prints the location and instruction and exits with code 1 */
-void error(int loc, int inst) {
-    std::string err = "\n\nERROR! Invalid OPCODE:";
-    
-    std::cout << std::hex << err << " " << inst << 
-    " at mem[" << loc << "]." << std::endl;
-    
-    std::cout << "Exiting Program with Code 1\n" << std::endl;
-    exit(1);
+/* Breaks off each piece of the instructions and goes to the correct */
+/* instruction function.                                             */
+void CPU::exec(int inst) {
+    int A = (inst >> 12); 
+    int B = (inst >> 8 )&0xF; 
+    int C = (inst >> 4 )&0xF; 
+    int D = (inst >> 0 )&0xF;
+    switch(A) {
+        case 0x0: /* 0x0-9 are Labels */ break;             /* 0x0... */  
+        case 0x1: /* for now          */ break;             /* 0x1... */ 
+        case 0x2: /* ...              */ break;             /* 0x2... */ 
+        case 0x3: /* ...              */ break;             /* 0x3... */ 
+        case 0x4: /* ...              */ break;             /* 0x4... */ 
+        case 0x5: /* ...              */ break;             /* 0x5... */ 
+        case 0x6: /* ...              */ break;             /* 0x6... */ 
+        case 0x7: /* ...              */ break;             /* 0x7... */ 
+        case 0x8: /* ...              */ break;             /* 0x8... */ 
+        case 0x9: /* ...              */ break;             /* 0x9... */ 
+        case 0xA: arithmetic  (B, C, D); break;             /* 0xA... */
+        case 0xB: bitwise     (B, C, D); break;             /* 0xB... */
+        case 0xD: jumping     (B, C, D); break;             /* 0xD... */
+        case 0xE: input       (B, C, D); break;             /* 0xE... */
+        case 0xF: output      (B, C, D); break;             /* 0xF... */
+        default:  error(regs[0xf],inst); break;
+    }
 }
 
 /* Does arithmetic with registers and ints in memory */
@@ -108,6 +112,27 @@ void CPU::jumping(int B, int C, int D) {
     }
 }
 
+/* Move things into registers and memory */
+void CPU::input(int B, int C, int D) {
+    switch(B) {                                             /* Input:                */
+        case 0x0: regs[D] = mem[regs[0xf]];      break;     /* mov r[D],int  0xE0..  */
+        case 0x1: regs[C] = regs[D];             break;     /* mov r[D],int  0xE1..  */
+        case 0x2:                                           /* cin r[D],int  0xE20.  */
+            std::cout << ">> "; 
+            std::cin >> std::hex >> regs[D];     break;
+        case 0x3: regs[D] = regs[0xf];                      /* mov r[D],str* 0xE30.  */
+            while(mem[regs[0xf]-1] != '\\' 
+                 && mem[regs[0xf]] != '0') {
+                regs[0xf]++;
+            }                                    break;
+        case 0x4: regs[C] = mem[regs[D]];        break;     /* mov r[D],mem  0xE4..  */
+        case 0x5: mem[regs[C]] = mem[regs[D]];   break;     /* mov mem,r[C]  0xE5..  */
+        case 0x6: mem[regs[0xf]] = mem[regs[D]]; break;     /* mov mem,r[D]  0xE6..  */
+        case 0x7: regs[D] = mem[mem[regs[0xf]]]; break;     /* mov mem,int   0xE7..  */
+        default: error(regs[0xf], 0xE, B, C, D);
+    }
+}
+
 /* Outputs regs, strings, and dumps */
 void CPU::output(int B, int C, int D) {
     std::string str = "";
@@ -139,54 +164,6 @@ void CPU::output(int B, int C, int D) {
         case 0x6:                                           /* new line   0xF600 */
             std::cout << std::endl; break;                                      
         default: error(regs[0xf], 0xF, B, C, D);
-    }
-}
-
-/* Move things into registers and memory */
-void CPU::input(int B, int C, int D) {
-    switch(B) {                                             /* Input:                */
-        case 0x0: regs[D] = mem[regs[0xf]];      break;     /* mov r[D],int  0xE0..  */
-        case 0x1: regs[C] = regs[D];             break;     /* mov r[D],int  0xE1..  */
-        case 0x2:                                           /* cin r[D],int  0xE20.  */
-            std::cout << ">> "; 
-            std::cin >> std::hex >> regs[D];     break;
-        case 0x3: regs[D] = regs[0xf];                      /* mov r[D],str* 0xE30.  */
-            while(mem[regs[0xf]-1] != '\\' 
-                 && mem[regs[0xf]] != '0') {
-                regs[0xf]++;
-            }                                    break;
-        case 0x4: regs[C] = mem[regs[D]];        break;     /* mov r[D],mem  0xE4..  */
-        case 0x5: mem[regs[C]] = mem[regs[D]];   break;     /* mov mem,r[C]  0xE5..  */
-        case 0x6: mem[regs[0xf]] = mem[regs[D]]; break;     /* mov mem,r[D]  0xE6..  */
-        case 0x7: regs[D] = mem[mem[regs[0xf]]]; break;     /* mov mem,int   0xE7..  */
-        default: error(regs[0xf], 0xE, B, C, D);
-    }
-}
-
-/* Breaks off each piece of the instructions and goes to the correct */
-/* instruction function.                                             */
-void CPU::exec(int inst) {
-    int A = (inst >> 12); 
-    int B = (inst >> 8 )&0xF; 
-    int C = (inst >> 4 )&0xF; 
-    int D = (inst >> 0 )&0xF;
-    switch(A) {
-        case 0x0: /* 0x0-9 are Labels */ break;             /* 0x0... */  
-        case 0x1: /* for now          */ break;             /* 0x1... */ 
-        case 0x2: /* ...              */ break;             /* 0x2... */ 
-        case 0x3: /* ...              */ break;             /* 0x3... */ 
-        case 0x4: /* ...              */ break;             /* 0x4... */ 
-        case 0x5: /* ...              */ break;             /* 0x5... */ 
-        case 0x6: /* ...              */ break;             /* 0x6... */ 
-        case 0x7: /* ...              */ break;             /* 0x7... */ 
-        case 0x8: /* ...              */ break;             /* 0x8... */ 
-        case 0x9: /* ...              */ break;             /* 0x9... */ 
-        case 0xA: arithmetic  (B, C, D); break;             /* 0xA... */
-        case 0xB: bitwise     (B, C, D); break;             /* 0xB... */
-        case 0xD: jumping     (B, C, D); break;             /* 0xD... */
-        case 0xE: input       (B, C, D); break;             /* 0xE... */
-        case 0xF: output      (B, C, D); break;             /* 0xF... */
-        default:  error(regs[0xf],inst); break;
     }
 }
 
@@ -240,4 +217,27 @@ void parse_file(CPU& cpu, std::string& filename) {
             }
         }
     }
+}
+
+/* Prints the location and instruction and exits with code 1 */
+void error(int loc, int A, int B, int C, int D) {
+    int inst = (A << 12) | (B << 8) | (C << 4) | (D << 0);
+    std::string err = "\n\nERROR! Invalid OPCODE:";
+    
+    std::cout << std::hex << err << " " << inst << 
+    " at mem[" << loc << "]." << std::endl;
+    
+    std::cout << "Program Exited Unsuccessfully\n" << std::endl;
+    exit(1);
+}
+
+/* Prints the location and instruction and exits with code 1 */
+void error(int loc, int inst) {
+    std::string err = "\n\nERROR! Invalid OPCODE:";
+    
+    std::cout << std::hex << err << " " << inst << 
+    " at mem[" << loc << "]." << std::endl;
+    
+    std::cout << "Exiting Program with Code 1\n" << std::endl;
+    exit(1);
 }
