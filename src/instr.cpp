@@ -213,6 +213,7 @@ void CPU::run() {
     }
 }
 
+/* Goes through the file and puts the opcodes and strings into memory */
 void parse_file(CPU& cpu, std::string& filename) {
     std::ifstream file(filename); 
     std::string line;
