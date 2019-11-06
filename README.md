@@ -1,6 +1,8 @@
 # AssemblyProject
 
-This is where we will come up with some instructions.
+This is a 16-bit instruction set that operates on an "emulated" 32bit cpu.
+
+These are the instructions:
 
 Arithmetic:
 
@@ -45,12 +47,13 @@ Output:
 
     OxF...
 
-       /* cout r[D]  0xF00. */
-       /* mem dump   0xF100 */
-       /* reg dump   0xF200 */
-       /* cout@ptr   0xF30. */
-       /* cout@ptr\n 0xF40. */
-       /* cout@mem   0xF50. */
+    /* cout r[D]  0xF00. */
+    /* mem dump   0xF100 */
+    /* reg dump   0xF200 */
+    /* cout@ptr   0xF30. */
+    /* cout@ptr\n 0xF40. */
+    /* cout@mem   0xF50. */
+    /* new line   0xF600 */
 
 Input:
 
