@@ -13,13 +13,24 @@ void error(int loc, int A, int B, int C, int D) {
     std::cout << std::hex << err << " " << inst << 
     " at mem[" << loc << "]." << std::endl;
     
+    std::cout << "Program Exited Unsuccessfully\n" << std::endl;
+    exit(1);
+}
+
+/* Prints the location and instruction and exits with code 1 */
+void error(int loc, int inst) {
+    std::string err = "\n\nERROR! Invalid OPCODE:";
+    
+    std::cout << std::hex << err << " " << inst << 
+    " at mem[" << loc << "]." << std::endl;
+    
     std::cout << "Exiting Program with Code 1\n" << std::endl;
     exit(1);
 }
 
 /* Does arithmetic with registers and ints in memory */
 void CPU::arithmetic(int B, int C, int D) {
-    switch(B) {
+    switch(B) {                                             /* Arithmetic:         */
         case 0x0: regs[C] += regs[D];          break;       /* r[C] += r[D] 0xA0.. */
         case 0x1: regs[C] -= regs[D];          break;       /* r[C] -= r[D] 0xA1.. */
         case 0x2: regs[C] *= regs[D];          break;       /* r[C] *= r[D] 0xA2.. */
@@ -34,7 +45,7 @@ void CPU::arithmetic(int B, int C, int D) {
 
 /* Does bitwise operations with registers and ints in memory */
 void CPU::bitwise(int B, int C, int D) {
-    switch(B) {
+    switch(B) {                                             /* Bitwise:            */
         case 0x0: regs[C] &=  regs[D];          break;      /* r[C] &= r[D] 0xB0.. */
         case 0x1: regs[C] |=  regs[D];          break;      /* r[C] |= r[D] 0xB1.. */
         case 0x2: regs[C] <<= regs[D];          break;      /* r[C] << r[D] 0xB2.. */
@@ -61,13 +72,13 @@ void CPU::jmp() {
 
 /* Conditional Jumping, Jumping, and Compares */
 void CPU::jumping(int B, int C, int D) {
-    switch(B){
+    switch(B){                                              /* Jumping:   */
         case 0x0:                                           /* jmp 0xD000 */           
             jmp();
             break;
         case 0x1:                                           /* cmp 0xD1.. */
-            if      (regs[C] == regs[D]) {_cmp_flag =  0;}  // _cmp_flag is set in cpu,
-            else if (regs[C] <  regs[D]) {_cmp_flag = -1;}  // so jmp before next cmp.
+            if      (regs[C] == regs[D]) {_cmp_flag =  0;}  
+            else if (regs[C] <  regs[D]) {_cmp_flag = -1;}  
             else if (regs[C] >  regs[D]) {_cmp_flag =  1;}
             break;
         case 0x2:                                           /* je  0xD200 */
@@ -100,7 +111,7 @@ void CPU::jumping(int B, int C, int D) {
 void CPU::output(int B, int C, int D) {
     std::string str = "";
     int loc;
-    switch(B) {
+    switch(B) {                                             /* Output:           */
         case 0x0:                                           /* cout r[D]  0xF00. */
             std::cout << std::hex << regs[D] << std::endl;
             break;
@@ -124,84 +135,81 @@ void CPU::output(int B, int C, int D) {
         case 0x5:                                           /* cout@mem   0xF50. */
             std::cout << std::hex << mem[regs[D]] << std::endl;
             break;
+        case 0x6:                                           /* new line   0xF600 */
+            std::cout << std::endl; break;                                      
         default: error(regs[0xf], 0xF, B, C, D);
     }
 }
 
 /* Move things into registers and memory */
 void CPU::input(int B, int C, int D) {
-    switch(B) {
+    switch(B) {                                             /* Input:                */
         case 0x0: regs[D] = mem[regs[0xf]];      break;     /* mov r[D],int  0xE0..  */
         case 0x1: regs[C] = regs[D];             break;     /* mov r[D],int  0xE1..  */
         case 0x2:                                           /* cin r[D],int  0xE20.  */
             std::cout << ">> "; 
-            std::cin >> std::hex >> regs[D]; 
-            break;
+            std::cin >> std::hex >> regs[D];     break;
         case 0x3: regs[D] = regs[0xf];                      /* mov r[D],str* 0xE30.  */
             while(mem[regs[0xf]-1] != '\\' 
                  && mem[regs[0xf]] != '0') {
                 regs[0xf]++;
-            } break;
+            }                                    break;
         case 0x4: regs[C] = mem[regs[D]];        break;     /* mov r[D],mem  0xE4..  */
         case 0x5: mem[regs[C]] = mem[regs[D]];   break;     /* mov mem,r[C]  0xE5..  */
-        case 0x6: mem[regs[0xf]] = mem[regs[D]]; break;     /* mov mem,r[D]  0xE5..  */
-        case 0x7: regs[D] = mem[mem[regs[0xf]]]; break;     /* mov mem,int   0xE5..  */
+        case 0x6: mem[regs[0xf]] = mem[regs[D]]; break;     /* mov mem,r[D]  0xE6..  */
+        case 0x7: regs[D] = mem[mem[regs[0xf]]]; break;     /* mov mem,int   0xE7..  */
         default: error(regs[0xf], 0xE, B, C, D);
     }
 }
 
 /* Breaks off each piece of the instructions and goes to the correct */
 /* instruction function.                                             */
-int CPU::exec(int inst) {
-    regs[0xf]++;
+void CPU::exec(int inst) {
     int A = (inst >> 12); 
     int B = (inst >> 8 )&0xF; 
     int C = (inst >> 4 )&0xF; 
     int D = (inst >> 0 )&0xF;
     switch(A) {
         case 0x0: /* 0x0-9 are Labels */ break;             /* 0x0... */  
-        case 0x1: /* 0x0-9 are Labels */ break;             /* 0x1... */ 
-        case 0x2: /* 0x0-9 are Labels */ break;             /* 0x2... */ 
-        case 0x3: /* 0x0-9 are Labels */ break;             /* 0x3... */ 
-        case 0x4: /* 0x0-9 are Labels */ break;             /* 0x4... */ 
-        case 0x5: /* 0x0-9 are Labels */ break;             /* 0x5... */ 
-        case 0x6: /* 0x0-9 are Labels */ break;             /* 0x6... */ 
-        case 0x7: /* 0x0-9 are Labels */ break;             /* 0x7... */ 
-        case 0x8: /* 0x0-9 are Labels */ break;             /* 0x8... */ 
-        case 0x9: /* 0x0-9 are Labels */ break;             /* 0x9... */ 
+        case 0x1: /* for now          */ break;             /* 0x1... */ 
+        case 0x2: /* ...              */ break;             /* 0x2... */ 
+        case 0x3: /* ...              */ break;             /* 0x3... */ 
+        case 0x4: /* ...              */ break;             /* 0x4... */ 
+        case 0x5: /* ...              */ break;             /* 0x5... */ 
+        case 0x6: /* ...              */ break;             /* 0x6... */ 
+        case 0x7: /* ...              */ break;             /* 0x7... */ 
+        case 0x8: /* ...              */ break;             /* 0x8... */ 
+        case 0x9: /* ...              */ break;             /* 0x9... */ 
         case 0xA: arithmetic  (B, C, D); break;             /* 0xA... */
         case 0xB: bitwise     (B, C, D); break;             /* 0xB... */
         case 0xD: jumping     (B, C, D); break;             /* 0xD... */
         case 0xE: input       (B, C, D); break;             /* 0xE... */
         case 0xF: output      (B, C, D); break;             /* 0xF... */
-        default:  error(regs[0xf], 0xA, B, C, D); 
-        return 1;
+        default:  error(regs[0xf],inst); break;
     }
-    return 0;
 }
 
 /* Prints each memory location and its contents */
 void CPU::mem_dump() {
     for(int i = 0; i < space(); i++) {
-        std::cout << i << ": " << std::hex << mem[i] << std::endl;
+        /* Memory[x]: y */
+        std::cout << "Memory[" << i << "]: " << std::hex << mem[i] << std::endl;
     }
 }
 
 /* Prints each register and its contents */
 void CPU::reg_dump() {
     for(int i = 0; i < 16; i++) {
+        /* Register[x]: y */
         std::cout << "Register[" << std::hex << i << "]: " << regs[i] << std::endl; 
     }
 }
 
 /* Excecutes each instruction in memory */
-int  CPU::run() {
-    int start = regs[0xf];
-    int retcode;
+void CPU::run() {
     for(regs[0xf]; regs[0xf] < space();) {
-        retcode = exec(mem[regs[0xf]]);
+        exec(mem[regs[0xf]++]);
     }
-    return retcode;
 }
 
 int  main() {
@@ -211,28 +219,32 @@ int  main() {
     std::cin >> filename;
     std::ifstream file(filename); 
     std::string line;
-    int counter = 0;
+    int mem_loc = 0;
     while(std::getline(file, line)) {
-        int position = 0;
-        while(line[position] == '\t' || line[position] == ' ') {
-            position++;
+        int line_pos = 0;
+        /* For opcodes, preceeding whitespace is ignored */
+        while(line[line_pos] == '\t' || line[line_pos] == ' ') {
+            line_pos++;
         }
-        if(line[position] == '0') {
+        /* Opcodes must start with a 0 */
+        if(line[line_pos] == '0') {
             int opcode;
             std::istringstream ss(line);
             if(ss >> std::hex >> opcode) {
-                cpu.mem[counter++] = opcode;
+                cpu.mem[mem_loc++] = opcode;
             } 
         }
-        else if(line[position] != '#') {
+        /* Strings are entered char by char into memory
+           the chars are implicitly cast as ints       */
+        else if(line[line_pos] != '#') { /* Lines that start with # are comments */
             for(char c : line) {
-                cpu.mem[counter++] = c;
+                cpu.mem[mem_loc++] = c;
             }
         }
     }
     std::cout << std::endl;
-    int retcode = cpu.run();
-    std::cout << "\nProgram Exiting with Code " << retcode << std::endl;
+    cpu.run();
+    std::cout << "\nProgram Exited Successfully" << std::endl;
     std::cout << std::endl;
     return 0;
 }
