@@ -1,6 +1,7 @@
 # AssemblyProject
 
 This is a 16-bit instruction set that operates on an "emulated" 32bit cpu.
+There are two included test programs: boxprint and factorial.
 
 These are the instructions:
 
