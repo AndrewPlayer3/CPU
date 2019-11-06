@@ -1,3 +1,9 @@
+/*
+INSTR Hex Instruction Set
+Andrew, Robert, Gannon
+October 18, 2019
+*/
+
 #include <iostream>
 #include <sstream>
 #include <fstream>
