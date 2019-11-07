@@ -115,6 +115,7 @@ void CPU::jumping(int B, int C, int D) {
     }
 }
 
+/* Reads strings from memory */
 void read_memory(int* memory) {
     int loc = 0;
     std::string str = "";
@@ -133,6 +134,7 @@ void read_memory(int* memory) {
     std::cout << str;
 }
 
+/* Inserts strs into mem. 4 chars in each mem location. */
 void CPU::parse_string(std::string& str) {
     int joinedChars = 0;
     for(int i = 0; i < str.size(); i++) {
