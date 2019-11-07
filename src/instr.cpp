@@ -115,47 +115,6 @@ void CPU::jumping(int B, int C, int D) {
     }
 }
 
-/* Reads strings from memory */
-void read_memory(int* memory) {
-    int loc = 0;
-    std::string str = "";
-    while(memory[loc] != 0x5c30) {
-        int X = memory[loc];
-        char A = (X >> 24)&0xFF;
-        char B = (X >> 16)&0xFF;
-        char C = (X >>  8)&0xFF;
-        char D = (X >>  0)&0xFF;
-        if(A != 0) str += A;
-        if(B != 0) str += B;
-        if(C != 0) str += C;
-        if(D != 0) str += D;
-        ++loc;
-    }
-    std::cout << str;
-}
-
-/* Inserts strs into mem. 4 chars in each mem location. */
-void CPU::parse_string(std::string& str) {
-    int joinedChars = 0;
-    for(int i = 0; i < str.size(); i++) {
-        if(str[i-1] == '\\' && str[i] == '0') {
-            int entry = (int) (str[i-1] << 8) | (str[i] << 0); 
-            mem[_mem_loc++] = entry;
-            return;
-        }
-        if((i > 0 && i % 4 == 0) || str[i] == '\\') {
-            mem[_mem_loc++] = joinedChars;
-            joinedChars = (int) str[i];
-        } else {
-            if(joinedChars == 0) {
-                joinedChars = (int) str[i];
-            } else {
-                joinedChars = (joinedChars << 8) | ((int) str[i] << 0);
-            }
-        }
-    }
-}
-
 /* Move things into registers and memory */
 void CPU::input(int B, int C, int D) {
     std::string input = "";
@@ -232,6 +191,47 @@ void CPU::reg_dump() {
 void CPU::run() {
     for(regs[0xf]; regs[0xf] < space();) {
         exec(mem[regs[0xf]++]);
+    }
+}
+
+/* Reads strings from memory */
+void read_memory(int* memory) {
+    int loc = 0;
+    std::string str = "";
+    while(memory[loc] != 0x5c30) {
+        int X = memory[loc];
+        char A = (X >> 24)&0xFF;
+        char B = (X >> 16)&0xFF;
+        char C = (X >>  8)&0xFF;
+        char D = (X >>  0)&0xFF;
+        if(A != 0) str += A;
+        if(B != 0) str += B;
+        if(C != 0) str += C;
+        if(D != 0) str += D;
+        ++loc;
+    }
+    std::cout << str;
+}
+
+/* Inserts strs into mem. 4 chars in each mem location. */
+void CPU::parse_string(std::string& str) {
+    int joinedChars = 0;
+    for(int i = 0; i < str.size(); i++) {
+        if(str[i-1] == '\\' && str[i] == '0') {
+            int entry = (int) (str[i-1] << 8) | (str[i] << 0); 
+            mem[_mem_loc++] = entry;
+            return;
+        }
+        if((i > 0 && i % 4 == 0) || str[i] == '\\') {
+            mem[_mem_loc++] = joinedChars;
+            joinedChars = (int) str[i];
+        } else {
+            if(joinedChars == 0) {
+                joinedChars = (int) str[i];
+            } else {
+                joinedChars = (joinedChars << 8) | ((int) str[i] << 0);
+            }
+        }
     }
 }
 

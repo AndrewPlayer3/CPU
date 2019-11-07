@@ -57,5 +57,6 @@ public:
     void parse_string(std::string& str);
 };
 
+void read_memory(int* memory);
 void error(int loc, int inst);
 void error(int loc, int A, int B, int C, int D);
