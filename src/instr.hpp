@@ -1,6 +1,6 @@
 /*
 INSTR Hex Instruction Set
-Andrew, Robert, Gannon
+Andrew Player, Robert Lawton, Gannon Higgins
 October 18, 2019
 */
 
