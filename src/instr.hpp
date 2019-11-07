@@ -54,6 +54,7 @@ public:
     void exec        (int inst);
     void run         ();
     void parse_file  (std::string& filename);
+    void parse_string(std::string& str);
 };
 
 void error(int loc, int inst);

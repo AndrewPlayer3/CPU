@@ -32,7 +32,7 @@ void CPU::exec(int inst) {
         case 0xD: jumping     (B, C, D); break;             /* 0xD... */
         case 0xE: input       (B, C, D); break;             /* 0xE... */
         case 0xF: output      (B, C, D); break;             /* 0xF... */
-        default:  error(regs[0xf],inst); break;
+        default:  error(regs[0xf], inst);break;
     }
 }
 
@@ -115,9 +115,49 @@ void CPU::jumping(int B, int C, int D) {
     }
 }
 
+void read_memory(int* memory) {
+    int loc = 0;
+    std::string str = "";
+    while(memory[loc] != 0x5c30) {
+        int X = memory[loc];
+        char A = (X >> 24)&0xFF;
+        char B = (X >> 16)&0xFF;
+        char C = (X >>  8)&0xFF;
+        char D = (X >>  0)&0xFF;
+        if(A != 0) str += A;
+        if(B != 0) str += B;
+        if(C != 0) str += C;
+        if(D != 0) str += D;
+        ++loc;
+    }
+    std::cout << str;
+}
+
+void CPU::parse_string(std::string& str) {
+    int joinedChars = 0;
+    for(int i = 0; i < str.size(); i++) {
+        if((i > 0 && i % 4 == 0) || str[i] == '\\') {
+            mem[_mem_loc++] = joinedChars;
+            joinedChars = (int) str[i];
+        } else {
+            if(joinedChars == 0) {
+                joinedChars = (int) str[i];
+            } else {
+                joinedChars = (joinedChars << 8) | ((int) str[i] << 0);
+            }
+        }
+        if(str[i] == '\\' && str[i+1] == '0') {
+            int entry = (int) (str[i] << 8) | (str[i+1] << 0); 
+            mem[++_mem_loc] = entry;
+            return;
+        }
+    }
+}
+
 /* Move things into registers and memory */
 void CPU::input(int B, int C, int D) {
     std::string input = "";
+    int loc;
     switch(B) {                                             /* Input:                */
         case 0x0: regs[D] = mem[regs[0xf]];      break;     /* mov r[D],int  0xE0..  */
         case 0x1: regs[C] = regs[D];             break;     /* mov r[D],int  0xE1..  */
@@ -125,8 +165,7 @@ void CPU::input(int B, int C, int D) {
                   std::cout << ">> "; 
                   std::cin >>std::hex>> regs[D]; break;
         case 0x3: regs[D] = regs[0xf];                      /* mov r[D],str* 0xE30.  */
-                  while(mem[regs[0xf]-1] != '\\' 
-                    && mem[regs[0xf]] != '0') {
+                  while(mem[regs[0xf]] != 0x5c30) {
                     regs[0xf]++;
                   }                              break;
         case 0x4: regs[C] = mem[regs[D]];        break;     /* mov r[D],mem  0xE4..  */
@@ -138,9 +177,8 @@ void CPU::input(int B, int C, int D) {
                   std::cin.ignore(INT_MAX, '\n');
                   std::cout << ">> " ;
                   std::getline(std::cin, input);
-                  for(char c : input) {
-                      mem[_mem_loc++] = (int) c;
-                  }                              break;
+                  parse_string(input);           break;
+        case 0xF: regs[0xf] = _memory-1;         break;
         default: error(regs[0xf], 0xE, B, C, D);
     }
 }
@@ -157,19 +195,12 @@ void CPU::output(int B, int C, int D) {
         case 0x2: reg_dump(); break;                        /* reg dump   0xF200 */
         case 0x3:                                           /* cout@ptr   0xF30. */
             loc = regs[D];
-            while(mem[loc] != '\\' && mem[loc+1] != '0') {
-                str += (char)mem[loc];
-                loc++;
-            }
-            std::cout << str;
+            read_memory(&mem[loc]);
             break;
         case 0x4:                                           /* cout@ptr\n 0xF40. */
             loc = regs[D];
-            while(mem[loc] != '\\' && mem[loc+1] != '0') {
-                str += (char)mem[loc];
-                loc++;
-            }
-            std::cout << str << std::endl; break;
+            read_memory(&mem[loc]);
+            std::cout << std::endl; break;
         case 0x5:                                           /* cout@mem   0xF50. */
             std::cout << std::hex << mem[regs[D]] << std::endl;
             break;
@@ -223,9 +254,8 @@ void CPU::parse_file(std::string& filename) {
         /*Strings are entered char by char into memory
            the chars are implicitly cast as ints      */
         else if(line[line_pos] != '#') { /* Lines that start with # are comments */
-            for(char c : line) {
-                mem[_mem_loc++] = c;
-            }
+            parse_string(line);
+            _mem_loc++;
         }
     }
 }
@@ -251,4 +281,24 @@ void error(int loc, int inst) {
     
     std::cout << "Exiting Program with Code 1\n" << std::endl;
     exit(1);
+}
+
+int  main() {
+    
+    CPU cpu;
+    
+    std::string filename;
+    std::cout << "Filename: ";
+    std::cin >> filename;
+    
+    cpu.parse_file(filename);
+    
+    std::cout << std::endl;
+    
+    cpu.run();
+    
+    std::cout << "\nProgram Exited Successfully" << std::endl;
+    std::cout << std::endl;
+    
+    return 0;
 }
