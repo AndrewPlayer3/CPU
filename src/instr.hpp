@@ -10,6 +10,8 @@ October 18, 2019
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <string>
+#include <limits>
 
 /* 32-bit CPU emulator */
 class CPU {
@@ -22,6 +24,10 @@ private:
     /* Memory Size */
     enum{_memory=0xff};
 
+    /* Current free memory location */
+    int _mem_loc;
+
+
 public:
 
     /* reg count is hardcoded to 16 to have 1 digit reg numbers */
@@ -30,8 +36,9 @@ public:
 
     CPU() {
         /* Set mem and regs to 0 */
-        for(int i = 0; i < 16; i++)      { regs[i] = 0; }
+        for(int i = 0; i < 16     ; i++) { regs[i] = 0; }
         for(int i = 0; i < _memory; i++) { mem [i] = 0; }
+        _mem_loc  = 0;
         _cmp_flag = 0;
     }
 
@@ -46,8 +53,9 @@ public:
     int  space       (){return _memory;}
     void exec        (int inst);
     void run         ();
+
+    void parse_file(std::string& filename);
 };
 
 void error(int loc, int inst);
 void error(int loc, int A, int B, int C, int D);
-void parse_file(CPU& cpu, std::string& filename);
