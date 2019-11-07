@@ -53,8 +53,7 @@ public:
     int  space       (){return _memory;}
     void exec        (int inst);
     void run         ();
-
-    void parse_file(std::string& filename);
+    void parse_file  (std::string& filename);
 };
 
 void error(int loc, int inst);
