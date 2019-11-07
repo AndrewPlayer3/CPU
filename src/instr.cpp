@@ -133,7 +133,7 @@ void CPU::input(int B, int C, int D) {
         case 0x5: mem[regs[C]] = mem[regs[D]];   break;     /* mov mem,r[C]  0xE5..  */
         case 0x6: mem[regs[0xf]] = mem[regs[D]]; break;     /* mov mem,r[D]  0xE6..  */
         case 0x7: regs[D] = mem[mem[regs[0xf]]]; break;     /* mov mem,int   0xE7..  */
-        case 0x8: regs[D] = _mem_loc;
+        case 0x8: regs[D] = _mem_loc;                       /* mov cin str   0xE80.  */
                   std::cin.clear();
                   std::cin.ignore(INT_MAX, '\n');
                   std::cout << ">> " ;
@@ -220,8 +220,8 @@ void CPU::parse_file(std::string& filename) {
                 mem[_mem_loc++] = opcode;
             } 
         }
-        /* Strings are entered char by char into memory
-           the chars are implicitly cast as ints       */
+        /*Strings are entered char by char into memory
+           the chars are implicitly cast as ints      */
         else if(line[line_pos] != '#') { /* Lines that start with # are comments */
             for(char c : line) {
                 mem[_mem_loc++] = c;
