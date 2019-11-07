@@ -284,23 +284,3 @@ void error(int loc, int inst) {
     std::cout << "Exiting Program with Code 1\n" << std::endl;
     exit(1);
 }
-
-int  main() {
-    
-    CPU cpu;
-    
-    std::string filename;
-    std::cout << "Filename: ";
-    std::cin >> filename;
-    
-    cpu.parse_file(filename);
-    
-    std::cout << std::endl;
-    
-    cpu.run();
-    
-    std::cout << "\nProgram Exited Successfully" << std::endl;
-    std::cout << std::endl;
-    
-    return 0;
-}
