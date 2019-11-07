@@ -117,21 +117,30 @@ void CPU::jumping(int B, int C, int D) {
 
 /* Move things into registers and memory */
 void CPU::input(int B, int C, int D) {
+    std::string input = "";
     switch(B) {                                             /* Input:                */
         case 0x0: regs[D] = mem[regs[0xf]];      break;     /* mov r[D],int  0xE0..  */
         case 0x1: regs[C] = regs[D];             break;     /* mov r[D],int  0xE1..  */
         case 0x2:                                           /* cin r[D],int  0xE20.  */
-            std::cout << ">> "; 
-            std::cin >> std::hex >> regs[D];     break;
+                  std::cout << ">> "; 
+                  std::cin >>std::hex>> regs[D]; break;
         case 0x3: regs[D] = regs[0xf];                      /* mov r[D],str* 0xE30.  */
-            while(mem[regs[0xf]-1] != '\\' 
-                 && mem[regs[0xf]] != '0') {
-                regs[0xf]++;
-            }                                    break;
+                  while(mem[regs[0xf]-1] != '\\' 
+                    && mem[regs[0xf]] != '0') {
+                    regs[0xf]++;
+                  }                              break;
         case 0x4: regs[C] = mem[regs[D]];        break;     /* mov r[D],mem  0xE4..  */
         case 0x5: mem[regs[C]] = mem[regs[D]];   break;     /* mov mem,r[C]  0xE5..  */
         case 0x6: mem[regs[0xf]] = mem[regs[D]]; break;     /* mov mem,r[D]  0xE6..  */
         case 0x7: regs[D] = mem[mem[regs[0xf]]]; break;     /* mov mem,int   0xE7..  */
+        case 0x8: regs[D] = _mem_loc;
+                  std::cin.clear();
+                  std::cin.ignore(INT_MAX, '\n');
+                  std::cout << ">> " ;
+                  std::getline(std::cin, input);
+                  for(char c : input) {
+                      mem[_mem_loc++] = (int) c;
+                  }                              break;
         default: error(regs[0xf], 0xE, B, C, D);
     }
 }
@@ -194,10 +203,9 @@ void CPU::run() {
 }
 
 /* Goes through the file and puts the opcodes and strings into memory */
-void parse_file(CPU& cpu, std::string& filename) {
+void CPU::parse_file(std::string& filename) {
     std::ifstream file(filename); 
     std::string line;
-    int mem_loc = 0;
     while(std::getline(file, line)) {
         int line_pos = 0;
         /* For opcodes, preceeding whitespace is ignored */
@@ -209,14 +217,14 @@ void parse_file(CPU& cpu, std::string& filename) {
             int opcode;
             std::istringstream ss(line);
             if(ss >> std::hex >> opcode) {
-                cpu.mem[mem_loc++] = opcode;
+                mem[_mem_loc++] = opcode;
             } 
         }
         /* Strings are entered char by char into memory
            the chars are implicitly cast as ints       */
         else if(line[line_pos] != '#') { /* Lines that start with # are comments */
             for(char c : line) {
-                cpu.mem[mem_loc++] = c;
+                mem[_mem_loc++] = c;
             }
         }
     }

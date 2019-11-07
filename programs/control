@@ -1,11 +1,11 @@
 # Testing Features
 
 0xE305 
-This is a string 
-that is more than 
-one line in the
- file.\0
+Enter a string:\0
 0xF405
+
+0xE806
+0xF406
 
 0xE00f
 0x003b
