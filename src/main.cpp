@@ -17,7 +17,7 @@ int  main() {
     std::cout << "Filename: ";
     std::cin >> filename;
     
-    parse_file(cpu, filename);
+    cpu.parse_file(filename);
     
     std::cout << std::endl;
     
