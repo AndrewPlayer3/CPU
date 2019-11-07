@@ -136,6 +136,11 @@ void read_memory(int* memory) {
 void CPU::parse_string(std::string& str) {
     int joinedChars = 0;
     for(int i = 0; i < str.size(); i++) {
+        if(str[i-1] == '\\' && str[i] == '0') {
+            int entry = (int) (str[i-1] << 8) | (str[i] << 0); 
+            mem[_mem_loc++] = entry;
+            return;
+        }
         if((i > 0 && i % 4 == 0) || str[i] == '\\') {
             mem[_mem_loc++] = joinedChars;
             joinedChars = (int) str[i];
@@ -145,11 +150,6 @@ void CPU::parse_string(std::string& str) {
             } else {
                 joinedChars = (joinedChars << 8) | ((int) str[i] << 0);
             }
-        }
-        if(str[i] == '\\' && str[i+1] == '0') {
-            int entry = (int) (str[i] << 8) | (str[i+1] << 0); 
-            mem[++_mem_loc] = entry;
-            return;
         }
     }
 }
