@@ -66,8 +66,10 @@ Input:
         /* mov r[D],str* 0xE30.  */
         /* mov r[D],mem  0xE4..  */
         /* mov mem,r[C]  0xE5..  */
-        /* mov mem,r[D]  0xE5..  */
-        /* mov mem,int   0xE5..  */
+        /* mov mem,r[D]  0xE6..  */
+        /* mov mem,int   0xE7..  */
+        /* cin r[D],str* 0xE80.  */
+
 
 Labels:
 
