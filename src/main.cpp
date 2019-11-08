@@ -10,14 +10,14 @@ October 18, 2019
 #include "instr.hpp"
 
 int  main() {
-    
+
     CPU cpu;
     
     std::string filename;
     std::cout << "Filename: ";
     std::cin >> filename;
     
-    cpu.parse_file(filename);
+    parse_file(filename, &cpu.mem[0], cpu.next_free_location);
     
     std::cout << std::endl;
     
