@@ -212,7 +212,9 @@ void read_memory(int* memory) {
     std::cout << str;
 }
 
-/* Inserts strs into mem. 4 chars in each mem location. */
+/* Inserts strs into mem. 4 chars in each mem location.                          */
+/* This uses \0 as the ending characters instead of just using str.size() or "". */
+/* I have found this to be the simplest way that allows multiline strings.       */
 void CPU::parse_string(std::string& str) {
     int joinedChars = 0;
     for(int i = 0; i < str.size(); i++) {
@@ -221,7 +223,7 @@ void CPU::parse_string(std::string& str) {
             mem[_mem_loc++] = entry;
             return;
         }
-        if((i > 0 && i % 4 == 0) || str[i] == '\\') {
+        if((i > 0 && i % 4 == 0) || (str[i] == '\\' && str[i+1] == '0')) {
             mem[_mem_loc++] = joinedChars;
             joinedChars = (int) str[i];
         } else {
