@@ -190,7 +190,8 @@ void CPU::reg_dump() {
 
 /* Excecutes each instruction in memory */
 void CPU::run() {
-    for(regs[0xf]; regs[0xf] < space();) {
+    int prog_end = _mem_loc;
+    for(regs[0xf]; regs[0xf] < prog_end;) {
         exec(mem[regs[0xf]++]);
     }
 }
