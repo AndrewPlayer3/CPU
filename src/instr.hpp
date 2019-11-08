@@ -49,7 +49,8 @@ public:
     void jmp         ();                    /* 0xD000 */
     void mem_dump    ();                    /* 0xF100 */
     void reg_dump    ();                    /* 0xF200 */
-    int  space       (){return _memory;}
+    int  space       (){return _memory ;}
+    int  loc         (){return _mem_loc;}
     void exec        (int inst);
     void run         ();
     void parse_file  (std::string& filename);
