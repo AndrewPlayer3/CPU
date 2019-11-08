@@ -198,17 +198,15 @@ void CPU::run() {
 /* Reads strings from memory */
 void read_memory(int* memory) {
     int loc = 0;
-    std::string str = "";
+    int shift = 24;
+    int mask = 0xFF;
+    std::string str;
     while(memory[loc] != 0x5c30) {
-        int X = memory[loc];
-        char A = (X >> 24)&0xFF;
-        char B = (X >> 16)&0xFF;
-        char C = (X >>  8)&0xFF;
-        char D = (X >>  0)&0xFF;
-        if(A != 0) str += A;
-        if(B != 0) str += B;
-        if(C != 0) str += C;
-        if(D != 0) str += D;
+        int chars = memory[loc];
+        for(int i = shift; i >= 0; i-=8) {
+            int character = (chars >> i)&mask;
+            if(character != 0) str+=character;
+        }
         ++loc;
     }
     std::cout << str;
@@ -227,8 +225,8 @@ void CPU::parse_string(std::string& str) {
             mem[_mem_loc++] = joinedChars;
             joinedChars = (int) str[i];
         } else {
-            if(joinedChars == 0) {
-                joinedChars = (int) str[i];
+            if(joinedChars == 0) { 
+                joinedChars = (int) str[i]; 
             } else {
                 joinedChars = (joinedChars << 8) | ((int) str[i] << 0);
             }
@@ -254,8 +252,8 @@ void CPU::parse_file(std::string& filename) {
                 mem[_mem_loc++] = opcode;
             } 
         }
-        /*Strings are entered char by char into memory
-           the chars are implicitly cast as ints      */
+        /*Strings are entered in 4 char chunks into memory
+          the chars are implicitly cast as ints           */
         else if(line[line_pos] != '#') { /* Lines that start with # are comments */
             parse_string(line);
             _mem_loc++;
