@@ -15,3 +15,11 @@ parser.cpp
 testing.cpp
 testing.exe
 programs/control
+src/instr.exe
+src/main.exe
+src/instr
+src/main
+out/instr.exe
+out/main.exe
+out/instr
+out/main
