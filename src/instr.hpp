@@ -26,9 +26,6 @@ private:
     /* Memory Size */
     enum{_memory=0xff};
 
-    /* Current free memory location */
-    int _mem_loc;
-
 
 public:
 
@@ -36,11 +33,14 @@ public:
     int regs[16];
     int mem[_memory];
 
+    /* The next free memory location to write to */
+    int next_free_location;
+
     CPU() {
         /* Set mem and regs to 0 */
         for(int i = 0; i < 16     ; i++) { regs[i] = 0; }
         for(int i = 0; i < _memory; i++) { mem [i] = 0; }
-        _mem_loc  = 0;
+        next_free_location  = 0;
         _cmp_flag = 0;
     }
 
@@ -53,14 +53,14 @@ public:
     void mem_dump    ();                    /* 0xF100 */
     void reg_dump    ();                    /* 0xF200 */
     int  space       (){return _memory ;}
-    int  loc         (){return _mem_loc;}
+    int& loc         (){return next_free_location;}
     void exec        (int inst);
     void run         ();
-    void parse_file  (std::string& filename);
-    void parse_string(std::string& str);
 };
 
-void read_memory(int* memory);
+void parse_file  (std::string& filename, int* mem, int& next_free_location);
+void parse_string(std::string& str, int* mem, int& next_free_location);
+std::string read_memory(int* memory);
 void error(int loc, int inst);
 void error(int loc, int A, int B, int C, int D);
 

@@ -132,13 +132,14 @@ void CPU::input(int B, int C, int D) {
         case 0x5: mem[regs[C]] = mem[regs[D]];   break;     /* mov mem,r[C]  0xE5..  */
         case 0x6: mem[regs[0xf]] = mem[regs[D]]; break;     /* mov mem,r[D]  0xE6..  */
         case 0x7: regs[D] = mem[mem[regs[0xf]]]; break;     /* mov mem,int   0xE7..  */
-        case 0x8: regs[D] = _mem_loc;                       /* mov cin str   0xE80.  */
+        case 0x8: regs[D] = next_free_location;                       /* mov cin str   0xE80.  */
                   std::cin.clear();
                   std::cin.ignore(INT8_MAX, '\n');
                   std::cout << ">> " ;
                   std::getline(std::cin, input);
                   input += "\\0";
-                  parse_string(input);           break;
+                  parse_string(input, &mem[0], next_free_location);           
+                                                 break;
         case 0xF: regs[0xf] = _memory;           break;
         default: error(regs[0xf], 0xE, B, C, D);
     }
@@ -156,14 +157,15 @@ void CPU::output(int B, int C, int D) {
         case 0x2: reg_dump(); break;                        /* reg dump   0xF200 */
         case 0x3:                                           /* cout@ptr   0xF30. */
             loc = regs[D];
-            read_memory(&mem[loc]);
+            std::cout<<read_memory(&mem[loc]);
             break;
         case 0x4:                                           /* cout@ptr\n 0xF40. */
             loc = regs[D];
-            read_memory(&mem[loc]);
-            std::cout << std::endl; break;
+            std::cout<<read_memory(&mem[loc])<<std::endl;
+            break;
         case 0x5:                                           /* cout@mem   0xF50. */
-            std::cout << std::hex << mem[regs[D]] << std::endl;
+            std::cout << std::hex 
+            << mem[regs[D]] << std::endl;
             break;
         case 0x6:                                           /* new line   0xF600 */
             std::cout << std::endl; break;                                      
@@ -175,7 +177,8 @@ void CPU::output(int B, int C, int D) {
 void CPU::mem_dump() {
     for(int i = 0; i < space(); i++) {
         /* Memory[x]: y */
-        std::cout << "Memory[" << i << "]: " << std::hex << mem[i] << std::endl;
+        std::cout << "Memory[" << i << "]: " 
+        << std::hex << mem[i] << std::endl;
     }
 }
 
@@ -183,20 +186,21 @@ void CPU::mem_dump() {
 void CPU::reg_dump() {
     for(int i = 0; i < 16; i++) {
         /* Register[x]: y */
-        std::cout << "Register[" << std::hex << i << "]: " << regs[i] << std::endl; 
+        std::cout << "Register[" << std::hex << i << "]: " 
+        << regs[i] << std::endl; 
     }
 }
 
 /* Excecutes each instruction in memory */
 void CPU::run() {
-    int prog_end = _mem_loc;
+    int prog_end = next_free_location;
     while(regs[0xf] < prog_end) {
         exec(mem[regs[0xf]++]);
     }
 }
 
 /* Reads strings from memory */
-void read_memory(int* memory) {
+std::string read_memory(int* memory) {
     int loc = 0;
     int shift = 24;
     int mask = 0xFF;
@@ -209,23 +213,23 @@ void read_memory(int* memory) {
         }
         ++loc;
     }
-    std::cout << str;
+    return str;
 }
 
 /* Inserts strs into mem. 4 chars in each mem location.                          */
 /* This uses \0 as the ending characters instead of just using str.size() or "". */
 /* I have found this to be the simplest way that allows multiline strings.       */
-void CPU::parse_string(std::string& str) {
+void parse_string(std::string& str, int* mem, int& next_free_location) {
     int joinedChars = 0;
     int str_size = str.size();
     for(int i = 0; i < str_size; i++) {
         if(str[i-1] == '\\' && str[i] == '0') {
             int entry = (int) (str[i-1] << 8) | (str[i] << 0); 
-            mem[_mem_loc++] = entry;
+            mem[next_free_location++] = entry;
             return;
         }
         if((i > 0 && i % 4 == 0) || (str[i] == '\\' && str[i+1] == '0')) {
-            mem[_mem_loc++] = joinedChars;
+            mem[next_free_location++] = joinedChars;
             joinedChars = (int) str[i];
         } else {
             if(joinedChars == 0) { 
@@ -238,7 +242,7 @@ void CPU::parse_string(std::string& str) {
 }
 
 /* Goes through the file and puts the opcodes and strings into memory */
-void CPU::parse_file(std::string& filename) {
+void parse_file(std::string& filename, int* mem, int& next_free_location) {
     std::ifstream file(filename); 
     std::string line;
     while(std::getline(file, line)) {
@@ -252,14 +256,14 @@ void CPU::parse_file(std::string& filename) {
             int opcode;
             std::istringstream ss(line);
             if(ss >> std::hex >> opcode) {
-                mem[_mem_loc++] = opcode;
+                mem[next_free_location++] = opcode;
             } 
         }
         /*Strings are entered in 4 char chunks into memory
           the chars are implicitly cast as ints           */
         else if(line[line_pos] != '#') { /* Lines that start with # are comments */
-            parse_string(line);
-            _mem_loc++;
+            parse_string(line, &mem[0], next_free_location);
+            next_free_location++;
         }
     }
 }
