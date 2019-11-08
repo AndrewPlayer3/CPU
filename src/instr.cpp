@@ -140,7 +140,7 @@ void CPU::input(int B, int C, int D) {
                   std::getline(std::cin, input);
                   input += "\\0";
                   parse_string(input);           break;
-        case 0xF: regs[0xf] = _memory-1;         break;
+        case 0xF: regs[0xf] = _memory;           break;
         default: error(regs[0xf], 0xE, B, C, D);
     }
 }
