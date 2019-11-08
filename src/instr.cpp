@@ -117,8 +117,7 @@ void CPU::jumping(int B, int C, int D) {
 
 /* Move things into registers and memory */
 void CPU::input(int B, int C, int D) {
-    std::string input = "";
-    int loc;
+    std::string input;
     switch(B) {                                             /* Input:                */
         case 0x0: regs[D] = mem[regs[0xf]];      break;     /* mov r[D],int  0xE0..  */
         case 0x1: regs[C] = regs[D];             break;     /* mov r[D],int  0xE1..  */
@@ -191,7 +190,7 @@ void CPU::reg_dump() {
 /* Excecutes each instruction in memory */
 void CPU::run() {
     int prog_end = _mem_loc;
-    for(regs[0xf]; regs[0xf] < prog_end;) {
+    while(regs[0xf] < prog_end) {
         exec(mem[regs[0xf]++]);
     }
 }
@@ -218,7 +217,8 @@ void read_memory(int* memory) {
 /* I have found this to be the simplest way that allows multiline strings.       */
 void CPU::parse_string(std::string& str) {
     int joinedChars = 0;
-    for(int i = 0; i < str.size(); i++) {
+    int str_size = str.size();
+    for(int i = 0; i < str_size; i++) {
         if(str[i-1] == '\\' && str[i] == '0') {
             int entry = (int) (str[i-1] << 8) | (str[i] << 0); 
             mem[_mem_loc++] = entry;
