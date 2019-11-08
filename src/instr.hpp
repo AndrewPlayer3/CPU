@@ -53,7 +53,6 @@ public:
     void mem_dump    ();                    /* 0xF100 */
     void reg_dump    ();                    /* 0xF200 */
     int  space       (){return _memory ;}
-    int& loc         (){return next_free_location;}
     void exec        (int inst);
     void run         ();
 };
