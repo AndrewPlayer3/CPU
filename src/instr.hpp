@@ -4,6 +4,9 @@ Andrew Player, Robert Lawton, Gannon Higgins
 October 18, 2019
 */
 
+#ifndef _INSTR_H_
+#define _INSTR_H_
+
 /* This is a 16-bit hex instruction-set that runs on an "emulated" cpu  */
 /* refer to the readme for a list of the instructions                   */
 
@@ -60,3 +63,5 @@ public:
 void read_memory(int* memory);
 void error(int loc, int inst);
 void error(int loc, int A, int B, int C, int D);
+
+#endif
