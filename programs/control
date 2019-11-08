@@ -1,19 +1,19 @@
 # Testing Features
-
+#
 # Ask the user for input
 0xE305 
-This is a string that is in the memory of this program. Enter a string that will get entered after: \0
+This is a string that is in the memory of this program. Enter a string that will get entered after:\0
 0xF405
-
+#
 # Get the input from the user
 0xE806
 0xF406
-
+#
 # Register Dump
-0xF200
-
+# 0xF200
+#
 # Memory Dump
-0xF100
-
+# 0xF100
+#
 # Exit the program
-0xEF00
+# 0xEFFF
