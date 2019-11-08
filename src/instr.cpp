@@ -135,9 +135,10 @@ void CPU::input(int B, int C, int D) {
         case 0x7: regs[D] = mem[mem[regs[0xf]]]; break;     /* mov mem,int   0xE7..  */
         case 0x8: regs[D] = _mem_loc;                       /* mov cin str   0xE80.  */
                   std::cin.clear();
-                  std::cin.ignore(INT_MAX, '\n');
+                  std::cin.ignore(INT8_MAX, '\n');
                   std::cout << ">> " ;
                   std::getline(std::cin, input);
+                  input += "\\0";
                   parse_string(input);           break;
         case 0xF: regs[0xf] = _memory-1;         break;
         default: error(regs[0xf], 0xE, B, C, D);

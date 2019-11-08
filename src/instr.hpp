@@ -11,7 +11,6 @@ October 18, 2019
 #include <sstream>
 #include <fstream>
 #include <string>
-#include <limits>
 
 /* 32-bit CPU emulator */
 class CPU {
