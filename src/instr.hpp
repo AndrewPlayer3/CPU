@@ -4,16 +4,23 @@ Andrew Player, Robert Lawton, Gannon Higgins
 October 18, 2019
 */
 
-#ifndef _INSTR_H_
-#define _INSTR_H_
-
 /* This is a 16-bit hex instruction-set that runs on an "emulated" cpu  */
 /* refer to the readme for a list of the instructions                   */
+
+#ifndef _INSTR_H_
+#define _INSTR_H_
 
 #include <iostream>
 #include <sstream>
 #include <fstream>
 #include <string>
+
+/* Using defines because I think they look nicer than enums */
+#define REGISTER_COUNT 0x10
+#define MEMORY_SIZE    0xFF
+
+/* Program Counter Register will be the last register */
+#define PCTR           REGISTER_COUNT - 1
 
 /* 32-bit CPU emulator */
 class CPU {
@@ -23,23 +30,19 @@ private:
     /* If we need more flags, we can make a flag register. */
     int _cmp_flag;
 
-    /* Memory Size */
-    enum{_memory=0xFF};
-
-
 public:
 
     /* reg count is hardcoded to 16 to have 1 digit reg numbers */
-    int regs[0x10];
-    int mem[_memory];
+    int regs[REGISTER_COUNT];
+    int mem [MEMORY_SIZE];
 
     /* The next free memory location to write to */
     int next_free_location;
 
     CPU() {
         /* Set mem and regs to 0 */
-        for(int i = 0; i < 0x10   ; i++) { regs[i] = 0; }
-        for(int i = 0; i < _memory; i++) { mem [i] = 0; }
+        for(int i = 0; i < REGISTER_COUNT; i++) { regs[i] = 0; }
+        for(int i = 0; i < MEMORY_SIZE   ; i++) { mem [i] = 0; }
         next_free_location  = 0;
         _cmp_flag = 0;
     }
@@ -52,13 +55,12 @@ public:
     void jmp         ();                    /* 0xD000 */
     void mem_dump    ();                    /* 0xF100 */
     void reg_dump    ();                    /* 0xF200 */
-    int  space       (){return _memory ;}
     void exec        (int inst);
     void run         ();
 };
 
 void parse_file  (std::string& filename, int* mem, int& next_free_location);
-void parse_string(std::string& str, int* mem, int& next_free_location);
+void parse_string(std::string& str,      int* mem, int& next_free_location);
 std::string read_memory(int* memory);
 void error(int loc, int inst);
 void error(int loc, int A, int B, int C, int D);
