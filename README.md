@@ -60,15 +60,16 @@ Input:
 
     0xE...
 
-        /* mov r[D],int  0xE0..  */
-        /* mov r[D],int  0xE1..  */
-        /* cin r[D],int  0xE20.  */
-        /* mov r[D],str* 0xE30.  */
-        /* mov r[D],mem  0xE4..  */
-        /* mov mem,r[C]  0xE5..  */
-        /* mov mem,r[D]  0xE6..  */
-        /* mov mem,int   0xE7..  */
-        /* cin r[D],str* 0xE80.  */
+        /* mov r[D],int    0xE0.. */
+        /* mov r[D],int    0xE1.. */
+        /* cin r[D],int    0xE20. */
+        /* mov r[D],str*   0xE30. */
+        /* mov r[D],mem    0xE4.. */
+        /* mov mem,r[C]    0xE5.. */
+        /* mov mem,r[D]    0xE6.. */
+        /* mov mem,int     0xE7.. */
+        /* cin r[D],str*   0xE80. */
+        /* mov r[D],*int[] 0xE90. */
 
 
 Labels:
