@@ -69,7 +69,8 @@ void CPU::bitwise(int B, int C, int D) {
 /* Sets program counter to the location of a label (+1) */
 void CPU::jmp() {       
     int label = mem[regs[0xf]];
-    for(int i = 0; i < space(); i++) {
+    int mem_size = space();
+    for(int i = 0; i < mem_size; i++) {
         if(mem[i] == label && i != regs[0xf]) {
             regs[0xf] = i + 1; return;
         }
