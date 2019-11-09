@@ -12,10 +12,10 @@ October 18, 2019
 /* Breaks off each piece of the instructions and goes to the correct */
 /* instruction function.                                             */
 void CPU::exec(int inst) {
-    int A = (inst >> 12); 
-    int B = (inst >> 8 )&0xF; 
-    int C = (inst >> 4 )&0xF; 
-    int D = (inst >> 0 )&0xF;
+    int A = (inst >> 12);     /* First  4 Bits 0xA... */
+    int B = (inst >> 8 )&0xF; /* Second 4 Bits 0x.B.. */    
+    int C = (inst >> 4 )&0xF; /* Third  4 Bits 0x..C. */   
+    int D = (inst >> 0 )&0xF; /* Fourth 4 Bits 0x...D */
     switch(A) {
         case 0x0: /* 0x0-9 are Labels */ break;             /* 0x0... */  
         case 0x1: /* for now          */ break;             /* 0x1... */ 
@@ -133,7 +133,7 @@ void CPU::input(int B, int C, int D) {
         case 0x5: mem[regs[C]] = mem[regs[D]];   break;     /* mov mem,r[C]  0xE5..  */
         case 0x6: mem[regs[0xf]] = mem[regs[D]]; break;     /* mov mem,r[D]  0xE6..  */
         case 0x7: regs[D] = mem[mem[regs[0xf]]]; break;     /* mov mem,int   0xE7..  */
-        case 0x8: regs[D] = next_free_location;                       /* mov cin str   0xE80.  */
+        case 0x8: regs[D] = next_free_location;             /* mov cin str   0xE80.  */
                   std::cin.clear();
                   std::cin.ignore(INT8_MAX, '\n');
                   std::cout << ">> " ;
@@ -265,7 +265,6 @@ void parse_file(std::string& filename, int* mem, int& next_free_location) {
           the chars are implicitly cast as ints           */
         else if(line[line_pos] != '#') { /* Lines that start with # are comments */
             parse_string(line, &mem[0], next_free_location);
-            next_free_location++;
         }
     }
 }
