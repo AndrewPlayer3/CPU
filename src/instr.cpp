@@ -176,7 +176,8 @@ void CPU::output(int B, int C, int D) {
 
 /* Prints each memory location and its contents */
 void CPU::mem_dump() {
-    for(int i = 0; i < space(); i++) {
+    int mem_size = space();
+    for(int i = 0; i < mem_size; i++) {
         /* Memory[x]: y */
         std::cout << "Memory[" << i << "]: " 
         << std::hex << mem[i] << std::endl;
