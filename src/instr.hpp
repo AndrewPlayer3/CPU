@@ -30,7 +30,7 @@ private:
 public:
 
     /* reg count is hardcoded to 16 to have 1 digit reg numbers */
-    int regs[16];
+    int regs[0x10];
     int mem[_memory];
 
     /* The next free memory location to write to */
@@ -38,7 +38,7 @@ public:
 
     CPU() {
         /* Set mem and regs to 0 */
-        for(int i = 0; i < 16     ; i++) { regs[i] = 0; }
+        for(int i = 0; i < 0x10   ; i++) { regs[i] = 0; }
         for(int i = 0; i < _memory; i++) { mem [i] = 0; }
         next_free_location  = 0;
         _cmp_flag = 0;

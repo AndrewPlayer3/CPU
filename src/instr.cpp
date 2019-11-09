@@ -119,6 +119,7 @@ void CPU::jumping(int B, int C, int D) {
 /* Move things into registers and memory */
 void CPU::input(int B, int C, int D) {
     std::string input;
+    int size;
     switch(B) {                                             /* Input:                */
         case 0x0: regs[D] = mem[regs[0xF]];      break;     /* mov r[D],int  0xE0..  */
         case 0x1: regs[C] = regs[D];             break;     /* mov r[D],int  0xE1..  */
@@ -129,11 +130,11 @@ void CPU::input(int B, int C, int D) {
                   while(mem[regs[0xF]] != 0x5C30) {
                     regs[0xF]++;
                   }                              break;
-        case 0x4: regs[C] = mem[regs[D]];        break;     /* mov r[D],mem  0xE4..  */
-        case 0x5: mem[regs[C]] = mem[regs[D]];   break;     /* mov mem,r[C]  0xE5..  */
-        case 0x6: mem[regs[0xF]] = mem[regs[D]]; break;     /* mov mem,r[D]  0xE6..  */
-        case 0x7: regs[D] = mem[mem[regs[0xF]]]; break;     /* mov mem,int   0xE7..  */
-        case 0x8: regs[D] = next_free_location;             /* mov cin str   0xE80.  */
+        case 0x4: regs[C] = mem[regs[D]];        break;     /* mov r[D],mem    0xE4.. */
+        case 0x5: mem[regs[C]] = mem[regs[D]];   break;     /* mov mem,r[C]    0xE5.. */
+        case 0x6: mem[regs[0xF]] = mem[regs[D]]; break;     /* mov mem,r[D]    0xE6.. */
+        case 0x7: regs[D] = mem[mem[regs[0xF]]]; break;     /* mov mem,int     0xE7.. */
+        case 0x8: regs[D] = next_free_location;             /* mov cin str     0xE80. */
                   std::cin.clear();
                   std::cin.ignore(INT8_MAX, '\n');
                   std::cout << ">> " ;
@@ -141,6 +142,11 @@ void CPU::input(int B, int C, int D) {
                   input += "\\0";
                   parse_string(input, &mem[0], next_free_location);           
                                                  break;
+        case 0x9: size = mem[regs[0xF]++];                  /* mov r[D],*int[] 0xE90. */
+                  regs[D] = regs[0xF];
+                  for(int i = 0; i < size-1; i++) {
+                    ++regs[0xF];
+                  }                              break;
         case 0xF: regs[0xF] = _memory;           break;
         default: error(regs[0xF], 0xE, B, C, D);
     }
