@@ -17,21 +17,21 @@ void CPU::exec(int inst) {
     int C = (inst >> 4 )&0xF; /* Third  4 Bits 0x..C. */   
     int D = (inst >> 0 )&0xF; /* Fourth 4 Bits 0x...D */
     switch(A) {
-        case 0x0: /* 0x0-9 are Labels */ break;             /* 0x0... */  
-        case 0x1: /* for now          */ break;             /* 0x1... */ 
-        case 0x2: /* ...              */ break;             /* 0x2... */ 
-        case 0x3: /* ...              */ break;             /* 0x3... */ 
-        case 0x4: /* ...              */ break;             /* 0x4... */ 
-        case 0x5: /* ...              */ break;             /* 0x5... */ 
-        case 0x6: /* ...              */ break;             /* 0x6... */ 
-        case 0x7: /* ...              */ break;             /* 0x7... */ 
-        case 0x8: /* ...              */ break;             /* 0x8... */ 
-        case 0x9: /* ...              */ break;             /* 0x9... */ 
-        case 0xA: arithmetic  (B, C, D); break;             /* 0xA... */
-        case 0xB: bitwise     (B, C, D); break;             /* 0xB... */
-        case 0xD: jumping     (B, C, D); break;             /* 0xD... */
-        case 0xE: input       (B, C, D); break;             /* 0xE... */
-        case 0xF: output      (B, C, D); break;             /* 0xF... */
+        case 0x0: /* 0x0-9 are Labels */ break;              /* 0x0... */  
+        case 0x1: /* for now          */ break;              /* 0x1... */ 
+        case 0x2: /* ...              */ break;              /* 0x2... */ 
+        case 0x3: /* ...              */ break;              /* 0x3... */ 
+        case 0x4: /* ...              */ break;              /* 0x4... */ 
+        case 0x5: /* ...              */ break;              /* 0x5... */ 
+        case 0x6: /* ...              */ break;              /* 0x6... */ 
+        case 0x7: /* ...              */ break;              /* 0x7... */ 
+        case 0x8: /* ...              */ break;              /* 0x8... */ 
+        case 0x9: /* ...              */ break;              /* 0x9... */ 
+        case 0xA: arithmetic  (B, C, D); break;              /* 0xA... */
+        case 0xB: bitwise     (B, C, D); break;              /* 0xB... */
+        case 0xD: jumping     (B, C, D); break;              /* 0xD... */
+        case 0xE: input       (B, C, D); break;              /* 0xE... */
+        case 0xF: output      (B, C, D); break;              /* 0xF... */
         default:error(regs[PCTR], inst); break;
     }
 }
@@ -154,25 +154,25 @@ void CPU::input(int B, int C, int D) {
 void CPU::output(int B, int C, int D) {
     std::string str = "";
     int loc;
-    switch(B) {                                             /* Output:           */
-        case 0x0:                                           /* cout r[D]  0xF00. */
+    switch(B) {                                              /* Output:           */
+        case 0x0:                                            /* cout r[D]  0xF00. */
             std::cout << std::hex << regs[D] << std::endl;
             break;
-        case 0x1: mem_dump(); break;                        /* mem dump   0xF100 */
-        case 0x2: reg_dump(); break;                        /* reg dump   0xF200 */
-        case 0x3:                                           /* cout@ptr   0xF30. */
+        case 0x1: mem_dump(); break;                         /* mem dump   0xF100 */
+        case 0x2: reg_dump(); break;                         /* reg dump   0xF200 */
+        case 0x3:                                            /* cout@ptr   0xF30. */
             loc = regs[D];
             std::cout<<read_memory(&mem[loc]);
             break;
-        case 0x4:                                           /* cout@ptr\n 0xF40. */
+        case 0x4:                                            /* cout@ptr\n 0xF40. */
             loc = regs[D];
             std::cout<<read_memory(&mem[loc])<<std::endl;
             break;
-        case 0x5:                                           /* cout@mem   0xF50. */
+        case 0x5:                                            /* cout@mem   0xF50. */
             std::cout << std::hex 
             << mem[regs[D]] << std::endl;
             break;
-        case 0x6:                                           /* new line   0xF600 */
+        case 0x6:                                            /* new line   0xF600 */
             std::cout << std::endl; break;                                      
         default: error(regs[PCTR], 0xF, B, C, D);
     }
@@ -281,10 +281,10 @@ void error(int loc, int A, int B, int C, int D) {
     int inst = (A << 12) | (B << 8) | (C << 4) | (D << 0);
     std::string err = "\n\nERROR! Invalid OPCODE:";
     
-    std::cout << std::hex << err << " " << inst << 
+    std::cout  << std::hex << err << " " << inst << 
     " at mem[" << loc << "]." << std::endl;
     
-    std::cout << "Program Exited Unsuccessfully\n" << std::endl;
+    std::cout  << "Program Exited Unsuccessfully\n" << std::endl;
     exit(1);
 }
 
@@ -292,9 +292,9 @@ void error(int loc, int A, int B, int C, int D) {
 void error(int loc, int inst) {
     std::string err = "\n\nERROR! Invalid OPCODE:";
     
-    std::cout << std::hex << err << " " << inst << 
+    std::cout  << std::hex << err << " " << inst << 
     " at mem[" << loc << "]." << std::endl;
     
-    std::cout << "Exiting Program with Code 1\n" << std::endl;
+    std::cout  << "Exiting Program with Code 1\n" << std::endl;
     exit(1);
 }
