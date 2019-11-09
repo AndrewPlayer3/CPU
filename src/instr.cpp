@@ -32,7 +32,7 @@ void CPU::exec(int inst) {
         case 0xD: jumping     (B, C, D); break;             /* 0xD... */
         case 0xE: input       (B, C, D); break;             /* 0xE... */
         case 0xF: output      (B, C, D); break;             /* 0xF... */
-        default:  error(regs[0xf], inst);break;
+        default:  error(regs[0xF], inst);break;
     }
 }
 
@@ -43,11 +43,11 @@ void CPU::arithmetic(int B, int C, int D) {
         case 0x1: regs[C] -= regs[D];          break;       /* r[C] -= r[D] 0xA1.. */
         case 0x2: regs[C] *= regs[D];          break;       /* r[C] *= r[D] 0xA2.. */
         case 0x3: regs[C] %= regs[D];          break;       /* r[C] %= r[D] 0xA3.. */
-        case 0x4: regs[D] += mem[regs[0xf]++]; break;       /* r[C] += int  0xA4.. */
-        case 0x5: regs[D] -= mem[regs[0xf]++]; break;       /* r[C] -= int  0xA5.. */
-        case 0x6: regs[D] *= mem[regs[0xf]++]; break;       /* r[C] *= int  0xA6.. */
-        case 0x7: regs[D] %= mem[regs[0xf]++]; break;       /* r[C] %= int  0xA7.. */
-        default: error(regs[0xf], 0xA, B, C, D);
+        case 0x4: regs[D] += mem[regs[0xF]++]; break;       /* r[C] += int  0xA4.. */
+        case 0x5: regs[D] -= mem[regs[0xF]++]; break;       /* r[C] -= int  0xA5.. */
+        case 0x6: regs[D] *= mem[regs[0xF]++]; break;       /* r[C] *= int  0xA6.. */
+        case 0x7: regs[D] %= mem[regs[0xF]++]; break;       /* r[C] %= int  0xA7.. */
+        default: error(regs[0xF], 0xA, B, C, D);
     }
 }
 
@@ -58,25 +58,25 @@ void CPU::bitwise(int B, int C, int D) {
         case 0x1: regs[C] |=  regs[D];          break;      /* r[C] |= r[D] 0xB1.. */
         case 0x2: regs[C] <<= regs[D];          break;      /* r[C] << r[D] 0xB2.. */
         case 0x3: regs[C] >>= regs[D];          break;      /* r[C] >> r[D] 0xB3.. */
-        case 0x4: regs[D] &=  mem[regs[0xf]++]; break;      /* r[C] &= int  0xB4.. */
-        case 0x5: regs[D] |=  mem[regs[0xf]++]; break;      /* r[C] |= int  0xB5.. */
-        case 0x6: regs[D] <<= mem[regs[0xf]++]; break;      /* r[C] << int  0xB6.. */
-        case 0x7: regs[D] >>= mem[regs[0xf]++]; break;      /* r[C] >> int  0xB7.. */
-        default: error(regs[0xf], 0xB, B, C, D);
+        case 0x4: regs[D] &=  mem[regs[0xF]++]; break;      /* r[C] &= int  0xB4.. */
+        case 0x5: regs[D] |=  mem[regs[0xF]++]; break;      /* r[C] |= int  0xB5.. */
+        case 0x6: regs[D] <<= mem[regs[0xF]++]; break;      /* r[C] << int  0xB6.. */
+        case 0x7: regs[D] >>= mem[regs[0xF]++]; break;      /* r[C] >> int  0xB7.. */
+        default: error(regs[0xF], 0xB, B, C, D);
     }
 }
 
 /* Sets program counter to the location of a label (+1) */
 void CPU::jmp() {       
-    int label = mem[regs[0xf]];
+    int label = mem[regs[0xF]];
     int mem_size = space();
     for(int i = 0; i < mem_size; i++) {
-        if(mem[i] == label && i != regs[0xf]) {
-            regs[0xf] = i + 1; return;
+        if(mem[i] == label && i != regs[0xF]) {
+            regs[0xF] = i + 1; return;
         }
     }
     std::cout << "ERROR! No label found matching " 
-	      << std::hex << mem[regs[0xf]] << std::endl;
+	      << std::hex << mem[regs[0xF]] << std::endl;
 }
 
 /* Conditional Jumping, Jumping, and Compares */
@@ -92,27 +92,27 @@ void CPU::jumping(int B, int C, int D) {
             break;
         case 0x2:                                           /* je  0xD200 */
             if      (_cmp_flag == 0)     {jmp()      ;}                  
-            else                         {regs[0xf]++;}
+            else                         {regs[0xF]++;}
             break;
         case 0x3:                                           /* jl  0xD300 */
             if      (_cmp_flag ==-1)     {jmp()      ;}       
-            else                         {regs[0xf]++;}
+            else                         {regs[0xF]++;}
             break;
         case 0x4:                                           /* jg  0xD400 */
             if      (_cmp_flag == 1)     {jmp()	     ;}       
-            else                         {regs[0xf]++;}
+            else                         {regs[0xF]++;}
             break;
         case 0x5:                                           /* jle 0xD500 */
             if      (_cmp_flag == 0 
                     ||_cmp_flag==-1)     {jmp()      ;}      
-            else                         {regs[0xf]++;}
+            else                         {regs[0xF]++;}
             break;
         case 0x6:                                           /* jge 0xD600 */
             if      (_cmp_flag == 0 
                     || _cmp_flag==1)     {jmp()      ;}       
-            else                         {regs[0xf]++;}
+            else                         {regs[0xF]++;}
             break;
-        default: error(regs[0xf], 0xD, B, C, D);
+        default: error(regs[0xF], 0xD, B, C, D);
     }
 }
 
@@ -120,19 +120,19 @@ void CPU::jumping(int B, int C, int D) {
 void CPU::input(int B, int C, int D) {
     std::string input;
     switch(B) {                                             /* Input:                */
-        case 0x0: regs[D] = mem[regs[0xf]];      break;     /* mov r[D],int  0xE0..  */
+        case 0x0: regs[D] = mem[regs[0xF]];      break;     /* mov r[D],int  0xE0..  */
         case 0x1: regs[C] = regs[D];             break;     /* mov r[D],int  0xE1..  */
         case 0x2:                                           /* cin r[D],int  0xE20.  */
                   std::cout << ">> "; 
                   std::cin >>std::hex>> regs[D]; break;
-        case 0x3: regs[D] = regs[0xf];                      /* mov r[D],str* 0xE30.  */
-                  while(mem[regs[0xf]] != 0x5c30) {
-                    regs[0xf]++;
+        case 0x3: regs[D] = regs[0xF];                      /* mov r[D],str* 0xE30.  */
+                  while(mem[regs[0xF]] != 0x5C30) {
+                    regs[0xF]++;
                   }                              break;
         case 0x4: regs[C] = mem[regs[D]];        break;     /* mov r[D],mem  0xE4..  */
         case 0x5: mem[regs[C]] = mem[regs[D]];   break;     /* mov mem,r[C]  0xE5..  */
-        case 0x6: mem[regs[0xf]] = mem[regs[D]]; break;     /* mov mem,r[D]  0xE6..  */
-        case 0x7: regs[D] = mem[mem[regs[0xf]]]; break;     /* mov mem,int   0xE7..  */
+        case 0x6: mem[regs[0xF]] = mem[regs[D]]; break;     /* mov mem,r[D]  0xE6..  */
+        case 0x7: regs[D] = mem[mem[regs[0xF]]]; break;     /* mov mem,int   0xE7..  */
         case 0x8: regs[D] = next_free_location;             /* mov cin str   0xE80.  */
                   std::cin.clear();
                   std::cin.ignore(INT8_MAX, '\n');
@@ -141,8 +141,8 @@ void CPU::input(int B, int C, int D) {
                   input += "\\0";
                   parse_string(input, &mem[0], next_free_location);           
                                                  break;
-        case 0xF: regs[0xf] = _memory;           break;
-        default: error(regs[0xf], 0xE, B, C, D);
+        case 0xF: regs[0xF] = _memory;           break;
+        default: error(regs[0xF], 0xE, B, C, D);
     }
 }
 
@@ -170,7 +170,7 @@ void CPU::output(int B, int C, int D) {
             break;
         case 0x6:                                           /* new line   0xF600 */
             std::cout << std::endl; break;                                      
-        default: error(regs[0xf], 0xF, B, C, D);
+        default: error(regs[0xF], 0xF, B, C, D);
     }
 }
 
@@ -186,7 +186,7 @@ void CPU::mem_dump() {
 
 /* Prints each register and its contents */
 void CPU::reg_dump() {
-    for(int i = 0; i < 16; i++) {
+    for(int i = 0; i < 0x10; i++) {
         /* Register[x]: y */
         std::cout << "Register[" << std::hex << i << "]: " 
         << regs[i] << std::endl; 
@@ -196,8 +196,8 @@ void CPU::reg_dump() {
 /* Excecutes each instruction in memory */
 void CPU::run() {
     int prog_end = next_free_location;
-    while(regs[0xf] < prog_end) {
-        exec(mem[regs[0xf]++]);
+    while(regs[0xF] < prog_end) {
+        exec(mem[regs[0xF]++]);
     }
 }
 
@@ -207,7 +207,7 @@ std::string read_memory(int* memory) {
     int shift = 24;
     int mask = 0xFF;
     std::string str;
-    while(memory[loc] != 0x5c30) {
+    while(memory[loc] != 0x5C30) {
         int chars = memory[loc];
         for(int i = shift; i >= 0; i-=8) {
             int character = (chars >> i)&mask;
@@ -225,11 +225,15 @@ void parse_string(std::string& str, int* mem, int& next_free_location) {
     int joinedChars = 0;
     int str_size = str.size();
     for(int i = 0; i < str_size; i++) {
+        /* Adds \0 aka 0x5C30 to its own location in memory and return */
         if(str[i-1] == '\\' && str[i] == '0') {
             int entry = (int) (str[i-1] << 8) | (str[i] << 0); 
             mem[next_free_location++] = entry;
             return;
         }
+        /* Adds 4 char chunks into memory if it can  */
+        /* If / has been reached without getting to  */
+        /* 4 chars it adds whats left into memory.   */
         if((i > 0 && i % 4 == 0) || (str[i] == '\\' && str[i+1] == '0')) {
             mem[next_free_location++] = joinedChars;
             joinedChars = (int) str[i];
@@ -261,8 +265,8 @@ void parse_file(std::string& filename, int* mem, int& next_free_location) {
                 mem[next_free_location++] = opcode;
             } 
         }
-        /*Strings are entered in 4 char chunks into memory
-          the chars are implicitly cast as ints           */
+        /* Strings are entered in 4 char chunks into memory */
+        /* the chars are implicitly cast as ints            */
         else if(line[line_pos] != '#') { /* Lines that start with # are comments */
             parse_string(line, &mem[0], next_free_location);
         }

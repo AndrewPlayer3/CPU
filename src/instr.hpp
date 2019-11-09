@@ -24,7 +24,7 @@ private:
     int _cmp_flag;
 
     /* Memory Size */
-    enum{_memory=0xff};
+    enum{_memory=0xFF};
 
 
 public:
