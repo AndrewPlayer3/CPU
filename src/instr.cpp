@@ -131,10 +131,10 @@ void CPU::input(int B, int C, int D) {
                     regs[0xF]++;
                   }                              break;
         case 0x4: regs[C] = mem[regs[D]];        break;     /* mov r[D],mem    0xE4.. */
-        case 0x5: mem[regs[C]] = mem[regs[D]];   break;     /* mov mem,r[C]    0xE5.. */
-        case 0x6: mem[regs[0xF]] = mem[regs[D]]; break;     /* mov mem,r[D]    0xE6.. */
-        case 0x7: regs[D] = mem[mem[regs[0xF]]]; break;     /* mov mem,int     0xE7.. */
-        case 0x8: regs[D] = next_free_location;             /* mov cin str     0xE80. */
+        case 0x5: mem[regs[C]] = mem[regs[D]];   break;     /* mov mem, r[C]   0xE5.. */
+        case 0x6: mem[regs[0xF]] = mem[regs[D]]; break;     /* mov mem, r[D]   0xE6.. */
+        case 0x7: regs[D] = mem[mem[regs[0xF]]]; break;     /* mov mem, int    0xE7.. */
+        case 0x8: regs[D] = next_free_location;             /* mov cin, str    0xE80. */
                   std::cin.clear();
                   std::cin.ignore(INT8_MAX, '\n');
                   std::cout << ">> " ;
