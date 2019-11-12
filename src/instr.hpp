@@ -47,16 +47,16 @@ public:
         _cmp_flag = 0;
     }
 
-    void arithmetic  (int B, int C, int D); /* 0xA... */
-    void bitwise     (int B, int C, int D); /* 0xB... */
-    void jumping     (int B, int C, int D); /* 0xD... */
-    void output      (int B, int C, int D); /* 0xF... */
-    void input       (int B, int C, int D); /* 0xE... */
-    void jmp         ();                    /* 0xD000 */
-    void mem_dump    ();                    /* 0xF100 */
-    void reg_dump    ();                    /* 0xF200 */
-    void exec        (int inst);
-    void run         ();
+    void arithmetic(int B, int C, int D); /* 0xA... */
+    void bitwise   (int B, int C, int D); /* 0xB... */
+    void jumping   (int B, int C, int D); /* 0xD... */
+    void output    (int B, int C, int D); /* 0xF... */
+    void input     (int B, int C, int D); /* 0xE... */
+    void jmp       ();                    /* 0xD000 */
+    void mem_dump  ();                    /* 0xF100 */
+    void reg_dump  ();                    /* 0xF200 */
+    void exec      (int inst);
+    void run       ();
 };
 
 void parse_file  (std::string& filename, int* mem, int& next_free_location);
