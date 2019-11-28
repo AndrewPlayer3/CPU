@@ -26,3 +26,4 @@ out/instr
 out/main
 src/main.cpp
 out/test.exe
+out/assembler.exe
