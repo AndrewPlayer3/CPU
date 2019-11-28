@@ -1,6 +1,7 @@
 #ifndef _CONSTANTS_HPP_
 #define _CONSTANTS_HPP_
 
+// TODO: Add the actual numbers for these opcodes
 enum OPCODE_MNEMONIC {
     MOV = 0x1,
     JMP,
@@ -12,11 +13,12 @@ enum OPCODE_MNEMONIC {
     OR,
     RSH,
     LSH,
+    IN,
     OUT,
     NOP
 };
 
-enum REGISTER {
+enum REGISTERS {
     R0  = 0x0,
     R1  = 0x1,
     R2  = 0x2,
@@ -34,5 +36,20 @@ enum REGISTER {
     R14 = 0xE,
     R15 = 0xF
 };
+
+enum ARG_TYPE {
+    INTEGER = 0x1,
+    OPCODE,
+    REGISTER,
+    POINTER,
+    STRING,
+    CHARACTER
+};
+
+// enum TOKEN_TYPE {
+//     OPCODE = 0x1,
+//     OPERAND,
+//     LABEL
+// };
 
 #endif

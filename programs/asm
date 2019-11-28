@@ -1,0 +1,6 @@
+#this is a comment
+mov r0, 1234
+add r0, 1234
+mov r10, 8158158
+dingdong
+nop

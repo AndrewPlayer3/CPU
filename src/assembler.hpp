@@ -25,7 +25,7 @@ map<string, OPCODE_MNEMONIC> str_to_op = {
     {"out", OUT},
 };
 
-map<string, REGISTER> str_to_reg = {
+map<string, REGISTERS> str_to_reg = {
     {"r0",  R0 },
     {"r1",  R1 },
     {"r2",  R2 },
