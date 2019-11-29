@@ -180,16 +180,165 @@ std::string mov(vector<pair<std::string, ARG_TYPE>> instr) {
         os << str_arg << '\n';
     }
     return os.str();
-} 
+}
+
+// Add: reg=0x0, int=0x4
+// Sub: reg=0x1, int=0x5
+// Mul: reg=0x2, int=0x6
+// Mod: reg=0x3, int=0x7
+std::string arithmetic(vector<pair<std::string, ARG_TYPE>> instr, int int_bit, int reg_bit) {
+    int A = 0xA;
+    int B = 0x0;
+    int C = 0x0;
+    int D = 0x0;
+    bool is_int_arg = false;
+    int int_arg = 0x0;
+    if(instr.size() == 3) {
+        switch(instr[2].second) {
+            case INTEGER:
+                B = int_bit;
+                C = 0x0;
+                D = str_to_reg[instr[1].first];
+                int_arg = to_int(instr[2].first);
+                is_int_arg = true;
+                break;
+            case REGISTER:
+                B = reg_bit;
+                C = str_to_reg[instr[1].first];
+                D = str_to_reg[instr[2].first];
+                break;
+            default:
+                std::cout << "Something wrong with arithmetic" << std::endl;
+                exit(1);
+        }
+    }
+    int inst = (A << 12) | (B << 8) | (C << 4) | (D << 0);
+    std::ostringstream os;
+    os << std::hex << inst << '\n';
+    if(is_int_arg) {
+        os << int_arg << '\n';
+    }
+    return os.str();
+}
+
+// And: reg=0x0, int=0x4
+// Or:  reg=0x1, int=0x5
+// LSH: reg=0x2, int=0x6
+// RSH: reg=0x3, int=0x7
+std::string bitwise(vector<pair<std::string, ARG_TYPE>> instr, int int_bit, int reg_bit) {
+    int A = 0xB;
+    int B = 0x0;
+    int C = 0x0;
+    int D = 0x0;
+    bool is_int_arg = false;
+    int int_arg = 0x0;
+    if(instr.size() == 3) {
+        switch(instr[2].second) {
+            case INTEGER:
+                B = int_bit;
+                C = 0x0;
+                D = str_to_reg[instr[1].first];
+                int_arg = to_int(instr[2].first);
+                is_int_arg = true;
+                break;
+            case REGISTER:
+                B = reg_bit;
+                C = str_to_reg[instr[1].first];
+                D = str_to_reg[instr[2].first];
+                break;
+            default:
+                std::cout << "Something wrong with bitwise" << std::endl;
+                exit(1);
+        }
+    }
+    int inst = (A << 12) | (B << 8) | (C << 4) | (D << 0);
+    std::ostringstream os;
+    os << std::hex << inst << '\n';
+    if(is_int_arg) {
+        os << int_arg << '\n';
+    }
+    return os.str();
+}
+
+// Jmp:  int=0x0
+// cmp:  int=0x1
+// JE:   int=0x2
+// JL:   int=0x3
+// JG:   int=0x4
+// JLE:  int=0x5
+// JGE:  int=0x6
+std::string jumping(vector<pair<std::string, ARG_TYPE>> instr, int int_bit) {
+    int A = 0xD;
+    int B = 0x0;
+    int C = 0x0;
+    int D = 0x0;
+    bool is_int_arg = false;
+    int int_arg = 0x0;
+    if(instr.size() == 3) {
+        switch(instr[2].second) {
+            case INTEGER:
+                B = int_bit;
+                C = 0x0;
+                D = str_to_reg[instr[1].first];
+                int_arg = to_int(instr[2].first);
+                is_int_arg = true;
+                break;
+            default:
+                std::cout << "Something wrong with jumping" << std::endl;
+                exit(1);
+        }
+    }
+    int inst = (A << 12) | (B << 8) | (C << 4) | (D << 0);
+    std::ostringstream os;
+    os << std::hex << inst << '\n';
+    if(is_int_arg) {
+        os << int_arg << '\n';
+    }
+    return os.str();
+}
+
+// Add: reg=0x0, int=0x4
+// Sub: reg=0x1, int=0x5
+// Mul: reg=0x2, int=0x6
+// Mod: reg=0x3, int=0x7
+std::string output(vector<pair<std::string, ARG_TYPE>> instr, int reg_bit) {
+    int A = 0xF;
+    int B = 0x0;
+    int C = 0x0;
+    int D = 0x0;
+    bool is_int_arg = false;
+    int int_arg = 0x0;
+    if(instr.size() == 3) {
+        switch(instr[2].second) {
+            case REGISTER:
+                B = reg_bit;
+                C = 0x0;
+                D = str_to_reg[instr[1].first];
+                int_arg = to_int(instr[2].first);
+                is_int_arg = true;
+                break;
+            default:
+                std::cout << "Something wrong with jumping" << std::endl;
+                exit(1);
+        }
+    }
+    int inst = (A << 12) | (B << 8) | (C << 4) | (D << 0);
+    std::ostringstream os;
+    os << std::hex << inst << '\n';
+    if(is_int_arg) {
+        os << int_arg << '\n';
+    }
+    return os.str();
+}
 
 int main() {
     
-    std::string instruction_line = "mov r10, string";
+    std::string instruction_line = "add r10, 1234";
 
     if(is_instruction(instruction_line)) {
         vector<std::string> instruction_vector = parseInstruction(instruction_line);
         auto arg_type_vector = parseArgTypes(instruction_vector);
-        std::string machine_code = mov(arg_type_vector);
+        std::string machine_code = arithmetic(arg_type_vector, 0x0, 0x4);
         std::cout << machine_code;
     } else if(is_comment(instruction_line)) {
         std::cout << "comment" << std::endl;

@@ -5,6 +5,11 @@
 enum OPCODE_MNEMONIC {
     MOV = 0x1,
     JMP,
+    JE,
+    JL,
+    JG,
+    JLE,
+    JGE,
     CMP,
     ADD,
     SUB,
@@ -13,8 +18,10 @@ enum OPCODE_MNEMONIC {
     OR,
     RSH,
     LSH,
-    IN,
+    INP,
     OUT,
+    MDP,
+    RDP,
     NOP
 };
 

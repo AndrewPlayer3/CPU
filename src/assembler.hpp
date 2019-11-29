@@ -14,6 +14,11 @@ using std::vector;
 map<string, OPCODE_MNEMONIC> str_to_op = {
     {"mov", MOV},
     {"jmp", JMP},
+    {"je" , JE },
+    {"jl" , JL },
+    {"jg" , JG },
+    {"jle", JLE},
+    {"jge", JGE},
     {"cmp", CMP},
     {"add", ADD},
     {"sub", SUB},
@@ -22,7 +27,11 @@ map<string, OPCODE_MNEMONIC> str_to_op = {
     {"or" , OR },
     {"rsh", RSH},
     {"lsh", LSH},
+    {"inp", INP},
     {"out", OUT},
+    {"mdp", MDP},
+    {"rdp", RDP},
+    {"nop", NOP}
 };
 
 map<string, REGISTERS> str_to_reg = {
