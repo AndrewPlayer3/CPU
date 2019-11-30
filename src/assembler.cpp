@@ -94,16 +94,22 @@ vector<std::string> parseInstruction(std::string line) {
     }
     std::string arg0 = "";
     std::string arg1 = "";
-    while(line_trimmed[pos] != ' ' && line_trimmed[pos] != '\t' && line_trimmed[pos] != ',') {
+    while(line_trimmed[pos] != ' ' && line_trimmed[pos] != '\t' && line_trimmed[pos] != ',' && pos != line_trimmed.size()) {
         arg0 += line_trimmed[pos++];
     }
-    while(line_trimmed[pos] == ' ' || line_trimmed[pos] == '\t' || line_trimmed[pos] == ',') {
+    while(line_trimmed[pos] == ' ' || line_trimmed[pos] == '\t' || line_trimmed[pos] == ',' && pos != line_trimmed.size()) {
         pos++;
     }
-    while(pos != line_trimmed.size() && line_trimmed[pos] != ' ' && line_trimmed[pos] != '\t') {
+    while(pos != line_trimmed.size() && line_trimmed[pos] != ' ' && line_trimmed[pos] != '\t' && pos != line_trimmed.size()) {
         arg1 += line_trimmed[pos++];
     }
+    if(!is_int(arg1) && !is_pointer(arg1) && !is_register(arg1) && pos != line_trimmed.size()) {
+        while(pos != line_trimmed.size() && (line_trimmed[pos-1] != '0' && line_trimmed[pos-2] != '\\')) {
+            arg1 += line_trimmed[pos++];
+        }
+    }
     vector<std::string> instruction_plus_args = {op, arg0, arg1};
+    std::cout << "op: " << op << " arg0: " << arg0 << " arg1: " << arg1 << std::endl;
     return instruction_plus_args;
 }
 
@@ -172,9 +178,9 @@ std::string mov(vector<pair<std::string, ARG_TYPE>> instr) {
     }
     int inst = (A << 12) | (B << 8) | (C << 4) | (D << 0);
     std::ostringstream os;
-    os << std::hex << inst << '\n';
+    os << "0x" << std::hex << inst << '\n';
     if(is_int_arg) {
-        os << int_arg << '\n';
+        os << "0x" << int_arg << '\n';
     }
     if(is_str_arg) {
         os << str_arg << '\n';
@@ -214,9 +220,9 @@ std::string arithmetic(vector<pair<std::string, ARG_TYPE>> instr, int int_bit, i
     }
     int inst = (A << 12) | (B << 8) | (C << 4) | (D << 0);
     std::ostringstream os;
-    os << std::hex << inst << '\n';
+    os << "0x" << std::hex << inst << '\n';
     if(is_int_arg) {
-        os << int_arg << '\n';
+        os << "0x" << int_arg << '\n';
     }
     return os.str();
 }
@@ -253,9 +259,9 @@ std::string bitwise(vector<pair<std::string, ARG_TYPE>> instr, int int_bit, int 
     }
     int inst = (A << 12) | (B << 8) | (C << 4) | (D << 0);
     std::ostringstream os;
-    os << std::hex << inst << '\n';
+    os << "0x" << std::hex << inst << '\n';
     if(is_int_arg) {
-        os << int_arg << '\n';
+        os << "0x" << int_arg << '\n';
     }
     return os.str();
 }
@@ -278,10 +284,15 @@ std::string jumping(vector<pair<std::string, ARG_TYPE>> instr, int int_bit) {
         switch(instr[2].second) {
             case INTEGER:
                 B = int_bit;
-                C = 0x0;
-                D = str_to_reg[instr[1].first];
+                C = 0x0; 
+                D = 0x0;
                 int_arg = to_int(instr[2].first);
                 is_int_arg = true;
+                break;
+            case REGISTER:
+                B = 0x1;
+                C = str_to_reg[instr[1].first];
+                D = str_to_reg[instr[2].first];
                 break;
             default:
                 std::cout << "Something wrong with jumping" << std::endl;
@@ -290,9 +301,9 @@ std::string jumping(vector<pair<std::string, ARG_TYPE>> instr, int int_bit) {
     }
     int inst = (A << 12) | (B << 8) | (C << 4) | (D << 0);
     std::ostringstream os;
-    os << std::hex << inst << '\n';
+    os << "0x" << std::hex << inst << '\n';
     if(is_int_arg) {
-        os << int_arg << '\n';
+        os << "0x" << int_arg << '\n';
     }
     return os.str();
 }
@@ -301,7 +312,7 @@ std::string jumping(vector<pair<std::string, ARG_TYPE>> instr, int int_bit) {
 // Sub: reg=0x1, int=0x5
 // Mul: reg=0x2, int=0x6
 // Mod: reg=0x3, int=0x7
-std::string output(vector<pair<std::string, ARG_TYPE>> instr, int reg_bit) {
+std::string output(vector<pair<std::string, ARG_TYPE>> instr, int inst_bit, int reg_bit) {
     int A = 0xF;
     int B = 0x0;
     int C = 0x0;
@@ -324,29 +335,95 @@ std::string output(vector<pair<std::string, ARG_TYPE>> instr, int reg_bit) {
     }
     int inst = (A << 12) | (B << 8) | (C << 4) | (D << 0);
     std::ostringstream os;
-    os << std::hex << inst << '\n';
+    os << "0x" << std::hex << inst << '\n';
     if(is_int_arg) {
-        os << int_arg << '\n';
+        os << "0x" << int_arg << '\n';
     }
     return os.str();
 }
 
-int main() {
-    
-    std::string instruction_line = "add r10, 1234";
+std::ostringstream functionName(std::string filename) {
 
-    if(is_instruction(instruction_line)) {
-        vector<std::string> instruction_vector = parseInstruction(instruction_line);
-        auto arg_type_vector = parseArgTypes(instruction_vector);
-        std::string machine_code = arithmetic(arg_type_vector, 0x0, 0x4);
-        std::cout << machine_code;
-    } else if(is_comment(instruction_line)) {
-        std::cout << "comment" << std::endl;
-    } else if(is_label(instruction_line)) {
-        std::cout << "label" << std::endl;
-    } else {
-        std::cout << "invalid line" << std::endl;
+    std::ostringstream os;
+    std::ifstream file(filename); 
+    std::string line = "";
+
+    while(std::getline(file, line)) {
+            
+        if(is_instruction(line)) {
+            std::cout << line << std::endl;
+            vector<std::string> instruction_vector = parseInstruction(line);
+            auto arg_type_vector = parseArgTypes(instruction_vector);
+            std::string op = arg_type_vector[0].first;
+            if(op == "mov") {
+                os << mov(arg_type_vector);
+            } else if(op == "ini") {
+                int inst = (0xE20 << 4) | (str_to_reg[arg_type_vector[1].first]);
+                os << "0x" << inst << '\n';
+            } else if(op == "ins") {
+                int inst = (0xE80 << 4) | (str_to_reg[arg_type_vector[1].first]);
+                os << "0x" << inst << '\n';
+            } else if(op == "out") {
+                int inst = (0xF00 << 4) | (str_to_reg[arg_type_vector[1].first]);
+                os << "0x" << std::hex << inst << '\n';
+            } else if(op == "put") {
+                int inst = (0xF30 << 4) | (str_to_reg[arg_type_vector[1].first]);
+                os << "0x" << std::hex << inst << '\n';
+            } else if(op == "pln") {
+                int inst = (0xF40 << 4) | (str_to_reg[arg_type_vector[1].first]);
+                os << "0x" << std::hex << inst << '\n';
+            } else if(op == "add") {
+                os << arithmetic(arg_type_vector, 0x4, 0x0);
+            } else if(op == "sub") {
+                os << arithmetic(arg_type_vector, 0x5, 0x1);
+            } else if(op == "mul") {
+                os << arithmetic(arg_type_vector, 0x6, 0x2);
+            } else if(op == "mod") {
+                os << arithmetic(arg_type_vector, 0x7, 0x3);
+            } else if(op == "and") {
+                os << bitwise(arg_type_vector, 0x4, 0x0);
+            } else if(op == "or" ) {
+                os << bitwise(arg_type_vector, 0x5, 0x1);
+            } else if(op == "lsh") {
+                os << bitwise(arg_type_vector, 0x6, 0x2);
+            } else if(op == "rsh") {
+                os << bitwise(arg_type_vector, 0x7, 0x3);
+            } else if(op == "cmp") {
+                os << jumping(arg_type_vector, 0x1);
+            } else if(op == "jmp") {
+                os << jumping(arg_type_vector, 0x0);
+            } else if(op == "je" ) {
+                os << jumping(arg_type_vector, 0x2);
+            } else if(op == "jl" ) {
+                os << jumping(arg_type_vector, 0x3);
+            } else if(op == "jg" ) {
+                os << jumping(arg_type_vector, 0x4);
+            } else if(op == "jle") {
+                os << jumping(arg_type_vector, 0x5);
+            } else if(op == "jge") {
+                os << jumping(arg_type_vector, 0x6);
+            } else if(op == "mdp") {
+                os << "0x" << std::hex << 0xF100 << '\n';
+            } else if(op == "rdp") {
+                os << "0x" << std::hex << 0xF200 << '\n';
+            } else if(op == "nop") {
+                os << "0x" << std::hex << 0x0000;
+            } else {
+                std::cout << "Invalid instruction: " << line << std::endl;
+                exit(1);
+            }
+        } else {
+            os << "#comment\n";
+        }
+
     }
+    return os;
+}
 
+int main() {
+    std::string filename = "programs/asm";
+    std::ostringstream machine_code = functionName(filename);
+    std::cout << std::endl;
+    std::cout << machine_code.str() << std::endl;
     return 0;
 }

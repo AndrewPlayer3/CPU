@@ -1,6 +1,15 @@
 #this is a comment
 mov r0, 1234
-add r0, 1234
-mov r10, 8158158
-dingdong
-nop
+add r9, r14
+add r11, 1234
+sub r11, 69
+mov r8, 420
+mul r8, 1
+mov r10, 815
+mov r13, this is a string\0
+pln r13
+ini r1
+ins r1
+pln r1
+rdp 0
+mdp 0
