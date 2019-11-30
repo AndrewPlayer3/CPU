@@ -1,15 +1,13 @@
 #this is a comment
-mov r0, 1234
-add r9, r14
-add r11, 1234
-sub r11, 69
-mov r8, 420
-mul r8, 1
-mov r10, 815
-mov r13, this is a string\0
-pln r13
-ini r1
-ins r1
-pln r1
-rdp 0
-mdp 0
+mov r14, dont loop\0
+mov r13, loop this\0
+mov r0, 15
+mov r1, 16
+cmp r0, r1
+jg loop
+jmp dont_loop
+loop:
+put r13
+jmp loop
+dont_loop:
+put r14

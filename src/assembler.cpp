@@ -1,5 +1,9 @@
 #include "assembler.hpp"
 
+std::map<std::string, int> LABEL_MAP;
+int CURRENT_LABEL_VALUE = 0x0001;
+
+/* Remove ws from beginning and end of line*/
 std::string trim(std::string s) {
     std::size_t s_begin = s.find_first_not_of(" \t");
     std::size_t s_end   = s.find_last_not_of(" \t");
@@ -10,13 +14,46 @@ std::string trim(std::string s) {
     return s_trimmed;
 }
 
-bool is_register(std::string str) {
-    if(str_to_reg.find(str)->second == 0) {
+/* check if line is a label */
+bool is_label(std::string line) {
+    int pos = 0;
+    std::string line_trimmed = trim(line);
+    while(++pos != line_trimmed.size() && line_trimmed[pos] != ':');
+    if(line_trimmed[pos] != ':') {
         return false;
     }
     return true;
 }
 
+/* gets just the label name before the ':' */
+std::string trim_label(std::string label) {
+    int pos = 0;
+    std::string label_no_ws = trim(label);
+    std::string label_trimmed = "";
+    while(pos != label_no_ws.size() && label_no_ws[pos] != ':') {
+        label_trimmed += label_no_ws[pos];
+        pos++;
+    }
+    return label_trimmed;
+}
+
+/* check if line is a comment */
+bool is_comment(std::string line) {
+    if(trim(line)[0] != '#') {
+        return false;
+    } 
+    return true;
+} 
+
+/* check if str is a register */
+bool is_register(std::string str) {
+    if(str_to_reg.count(str) == 0) {
+        return false;
+    }
+    return true;
+}
+
+/* check if str is an instruction */
 bool is_instruction(std::string line) {
     bool prop = str_to_op.find(trim(line.substr(0, 3)))->second != 0;
     if(prop) {
@@ -25,6 +62,7 @@ bool is_instruction(std::string line) {
     return false;
 }
 
+/* check if str is an integer */
 bool is_int(std::string str) {
     int num;
     std::istringstream is(str);
@@ -34,6 +72,7 @@ bool is_int(std::string str) {
     return false;
 }
 
+/* check if arg is a pointer */
 bool is_pointer(std::string arg) {
     if(arg[0] == '[' && arg[arg.size() - 1] == ']') {
         if(is_int(arg.substr(0, arg.size() - 1))) {
@@ -43,11 +82,20 @@ bool is_pointer(std::string arg) {
     return false;
 }
 
+/* convert str to an integer if possible */
 int to_int(std::string str) {
-    int number;
-    std::istringstream is(str);
-    is >> number;
-    return number;
+    if(is_int(str)) {
+        int number;
+        std::istringstream is(str);
+        is >> number;
+        return number;
+    }
+    std::cout << "ERROR: Tried to convert " << str << "to an int." << std::endl;
+    exit(1);
+}
+
+void parseLineTypes(std::string line) {
+
 }
 
 vector<std::string> parseInstruction(std::string line) {
@@ -90,6 +138,7 @@ vector<pair<std::string, ARG_TYPE>> parseArgTypes(vector<std::string> arg_vector
     vector<pair<std::string, ARG_TYPE>> arg_type_vec;
 
     for(std::string arg : arg_vector) {
+        std::cout << "\"" << arg << "\"" << std::endl;
         if(str_to_op.find(arg)->second != 0) {
             arg_type_vec.push_back(pair<std::string, ARG_TYPE>(arg, OPCODE));
         } else if(is_int(arg)) {
@@ -97,6 +146,7 @@ vector<pair<std::string, ARG_TYPE>> parseArgTypes(vector<std::string> arg_vector
         } else if(is_pointer(arg)) {
             arg_type_vec.push_back(pair<std::string, ARG_TYPE>(arg, POINTER));
         } else if(is_register(arg)) {
+            std::cout << "\"" << arg << "\"" << std::endl;
             arg_type_vec.push_back(pair<std::string, ARG_TYPE>(arg, REGISTER));
         } else {
             arg_type_vec.push_back(pair<std::string, ARG_TYPE>(arg, STRING));
@@ -252,19 +302,35 @@ std::string jumping(vector<pair<std::string, ARG_TYPE>> instr, int int_bit) {
     int D = 0x0;
     bool is_int_arg = false;
     int int_arg = 0x0;
+    std::string str_arg = "";
     if(instr.size() == 3) {
-        switch(instr[2].second) {
+        switch(instr[1].second) {
             case INTEGER:
                 B = int_bit;
                 C = 0x0; 
                 D = 0x0;
-                int_arg = to_int(instr[2].first);
+                int_arg = to_int(instr[1].first);
                 is_int_arg = true;
                 break;
             case REGISTER:
+                std::cout << instr[1].first << ", " << instr[2].first << std::endl;
                 B = 0x1;
                 C = str_to_reg[instr[1].first];
                 D = str_to_reg[instr[2].first];
+                break;
+            case STRING:
+                B = int_bit;
+                C = 0x0; 
+                D = 0x0;
+                str_arg = instr[1].first;
+                if(LABEL_MAP.find(str_arg)->second == 0) {
+                    std::cout << str_arg << ", " << LABEL_MAP.find(str_arg)->second << "!!" << std::endl; 
+                    LABEL_MAP.insert({str_arg, CURRENT_LABEL_VALUE});
+                    int_arg = CURRENT_LABEL_VALUE++;
+                } else {
+                    int_arg = LABEL_MAP.find(str_arg)->second;
+                }
+                is_int_arg = true;
                 break;
             default:
                 std::cout << "Something wrong with jumping" << std::endl;
@@ -311,15 +377,13 @@ std::string output(vector<pair<std::string, ARG_TYPE>> instr, int inst_bit, int 
 }
 
 std::ostringstream genMachineCode(std::string filename) {
-
     std::ostringstream os;
     std::ifstream file(filename); 
     std::string line = "";
-
-    while(std::getline(file, line)) {
-            
+    int line_number = 0;
+    while(std::getline(file, line)) {        
+        std::cout << line << std::endl;
         if(is_instruction(line)) {
-            std::cout << line << std::endl;
             vector<std::string> instruction_vector = parseInstruction(line);
             auto arg_type_vector = parseArgTypes(instruction_vector);
             std::string op = arg_type_vector[0].first;
@@ -380,11 +444,24 @@ std::ostringstream genMachineCode(std::string filename) {
                 std::cout << "Invalid instruction: " << line << std::endl;
                 exit(1);
             }
+        } else if(is_comment(line)) {
+            os << line << '\n';
+        } else if(is_label(line)) {
+            std::string label = trim_label(line);
+            os << "#" << label << '\n';
+            if(LABEL_MAP.find(label)->second == 0) {
+                LABEL_MAP.insert({trim_label(line), CURRENT_LABEL_VALUE});
+                os << "0x" << std::hex << CURRENT_LABEL_VALUE++ << '\n';
+            } else {
+                os << "0x" << std::hex << LABEL_MAP.find(label)->second << '\n';
+            }
         } else {
-            os << "#comment\n";
+            std::cout << "Invalid line @" << line_number << std::endl;
+            exit(1); 
         }
-
+        ++line_number;
     }
+
     return os;
 }
 
