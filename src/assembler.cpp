@@ -228,10 +228,11 @@ std::string mov(vector<pair<std::string, ARG_TYPE>> instr) {
     return os.str();
 }
 
-// Add: reg=0x0, int=0x4
-// Sub: reg=0x1, int=0x5
-// Mul: reg=0x2, int=0x6
-// Mod: reg=0x3, int=0x7
+// Add: reg=0x0, int=0x5
+// Sub: reg=0x1, int=0x6
+// Mul: reg=0x2, int=0x7
+// Mod: reg=0x3, int=0x8
+// Mod: reg=0x4, int=0x9
 std::string arithmetic(vector<pair<std::string, ARG_TYPE>> instr, int int_bit, int reg_bit) {
     int A = 0xA;
     int B = 0x0;
@@ -435,13 +436,15 @@ std::ostringstream gen_machine_code(std::string filename) {
                 } else if(op == "div") {
                     os << arithmetic(arg_type_vector, 0x9, 0x4);
                 } else if(op == "and") {
-                    os << bitwise(arg_type_vector, 0x4, 0x0);
+                    os << bitwise(arg_type_vector, 0x5, 0x0);
                 } else if(op == "or" ) {
-                    os << bitwise(arg_type_vector, 0x5, 0x1);
+                    os << bitwise(arg_type_vector, 0x6, 0x1);
                 } else if(op == "lsh") {
-                    os << bitwise(arg_type_vector, 0x6, 0x2);
+                    os << bitwise(arg_type_vector, 0x7, 0x2);
                 } else if(op == "rsh") {
-                    os << bitwise(arg_type_vector, 0x7, 0x3);
+                    os << bitwise(arg_type_vector, 0x8, 0x3);
+                } else if(op == "not") {
+                    os << bitwise(arg_type_vector, 0x9, 0x4);
                 } else if(op == "cmp") {
                     os << jumping(arg_type_vector, 0x1);
                 } else if(op == "jmp") {
