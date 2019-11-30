@@ -28,3 +28,5 @@ src/main.cpp
 out/test.exe
 out/assembler.exe
 out/assembler
+out/bash_assembler
+out/bash_main
