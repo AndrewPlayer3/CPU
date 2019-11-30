@@ -1,18 +1,14 @@
 #include "assembler.hpp"
 
 std::map<std::string, int> LABEL_MAP;
-int CURRENT_LABEL_VALUE = 0x1001;
+int CURRENT_LABEL_VALUE = 0x0001;
 
 /* Remove ws from beginning and end of line*/
 std::string trim(std::string s) {
-    std::cout << s << ": ";
     std::size_t s_begin = s.find_first_not_of(' ');
-    std::cout << s_begin << ", ";
     if(s_begin < s.size()) {
         std::size_t s_end   = s.find_last_not_of(' ');
-        std::cout << s_end << ", ";
         std::string s_trimmed = s.substr(s_begin, s_end - s_begin + 1);
-        std::cout << s_trimmed << std::endl;
         if(s_trimmed == "") {
             std::cout << "trimmed " << s << " to nothing" << std::endl;
         }
