@@ -43,10 +43,12 @@ void CPU::arithmetic(int B, int C, int D) {
         case 0x1: regs[C] -= regs[D];           break;       /* r[C] -= r[D] 0xA1.. */
         case 0x2: regs[C] *= regs[D];           break;       /* r[C] *= r[D] 0xA2.. */
         case 0x3: regs[C] %= regs[D];           break;       /* r[C] %= r[D] 0xA3.. */
-        case 0x4: regs[D] += mem[regs[PCTR]++]; break;       /* r[C] += int  0xA4.. */
-        case 0x5: regs[D] -= mem[regs[PCTR]++]; break;       /* r[C] -= int  0xA5.. */
-        case 0x6: regs[D] *= mem[regs[PCTR]++]; break;       /* r[C] *= int  0xA6.. */
-        case 0x7: regs[D] %= mem[regs[PCTR]++]; break;       /* r[C] %= int  0xA7.. */
+        case 0x4: regs[C] /= regs[D];           break;       /* r[C] /= r[D] 0xA4.. */
+        case 0x5: regs[D] += mem[regs[PCTR]++]; break;       /* r[C] += int  0xA4.. */
+        case 0x6: regs[D] -= mem[regs[PCTR]++]; break;       /* r[C] -= int  0xA5.. */
+        case 0x7: regs[D] *= mem[regs[PCTR]++]; break;       /* r[C] *= int  0xA6.. */
+        case 0x8: regs[D] %= mem[regs[PCTR]++]; break;       /* r[C] %= int  0xA7.. */
+        case 0x9: regs[D] /= mem[regs[PCTR]++]; break;       /* r[C] /= int  0xA8.. */
         default: error(regs[PCTR], 0xA, B, C, D);
     }
 }

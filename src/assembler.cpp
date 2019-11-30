@@ -398,9 +398,9 @@ std::ostringstream gen_machine_code(std::string filename) {
     std::ostringstream os;
     std::ifstream file(filename); 
     std::string line = "";
-    int line_number = 0;
+    int line_number = 1;
     while(std::getline(file, line)) {        
-        //std::cout << line << std::endl;
+        std::cout << line << std::endl;
         if(line != "") {
             std::string line_trimmed = trim(line);
             if(is_instruction(line_trimmed)) {
@@ -425,13 +425,15 @@ std::ostringstream gen_machine_code(std::string filename) {
                     int inst = (0xF40 << 4) | (str_to_reg[arg_type_vector[1].first]);
                     os << "0x" << std::hex << inst << '\n';
                 } else if(op == "add") {
-                    os << arithmetic(arg_type_vector, 0x4, 0x0);
+                    os << arithmetic(arg_type_vector, 0x5, 0x0);
                 } else if(op == "sub") {
-                    os << arithmetic(arg_type_vector, 0x5, 0x1);
+                    os << arithmetic(arg_type_vector, 0x6, 0x1);
                 } else if(op == "mul") {
-                    os << arithmetic(arg_type_vector, 0x6, 0x2);
+                    os << arithmetic(arg_type_vector, 0x7, 0x2);
                 } else if(op == "mod") {
-                    os << arithmetic(arg_type_vector, 0x7, 0x3);
+                    os << arithmetic(arg_type_vector, 0x8, 0x3);
+                } else if(op == "div") {
+                    os << arithmetic(arg_type_vector, 0x9, 0x4);
                 } else if(op == "and") {
                     os << bitwise(arg_type_vector, 0x4, 0x0);
                 } else if(op == "or" ) {
@@ -477,7 +479,9 @@ std::ostringstream gen_machine_code(std::string filename) {
                     os << "0x" << std::hex << LABEL_MAP.find(label)->second << '\n';
                 }
             } else {
-                std::cout << "Invalid line @" << line_number << std::endl;
+                std::cout << "Invalid Line: ";
+                std::cout << line;
+                std::cout << " @" << line_number << std::endl;
                 exit(1); 
             }
             ++line_number;
@@ -495,7 +499,7 @@ int main() {
     std::string ofilename = filename + ".inst";
     std::ofstream out_file(ofilename);
     out_file << machine_code.str();
-    //std::cout << std::endl;
-    //std::cout << machine_code.str() << std::endl;
+    std::cout << std::endl;
+    std::cout << machine_code.str() << std::endl;
     return 0;
 }
