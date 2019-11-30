@@ -71,7 +71,7 @@ void CPU::jmp() {
     int jump_int = 0xD;
     int label = mem[regs[PCTR]];
     for(int i = 0; i < MEMORY_SIZE; i++) {
-        if(mem[i] == label && i != regs[PCTR] && (mem[i-1] >> 12) != jump_int) {
+        if(mem[i] == label && i != regs[PCTR] && mem[i-1]==0xDF00) {
             regs[PCTR] = i + 1; return;
         }
     }
@@ -111,6 +111,9 @@ void CPU::jumping(int B, int C, int D) {
             if      (_cmp_flag == 0 
                     || _cmp_flag==1)     {jmp()       ;}       
             else                         {regs[PCTR]++;}
+            break;
+        case 0xF:
+            //Anti-Collision Label Marker
             break;
         default: error(regs[PCTR], 0xD, B, C, D);
     }

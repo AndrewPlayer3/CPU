@@ -1,17 +1,24 @@
 #include "assembler.hpp"
 
 std::map<std::string, int> LABEL_MAP;
-int CURRENT_LABEL_VALUE = 0x0001;
+int CURRENT_LABEL_VALUE = 0x1001;
 
 /* Remove ws from beginning and end of line*/
 std::string trim(std::string s) {
-    std::size_t s_begin = s.find_first_not_of(" \t");
-    std::size_t s_end   = s.find_last_not_of(" \t");
-    std::string s_trimmed = s.substr(s_begin, s_end - s_begin + 1);
-    if(s_trimmed == "") {
-        std::cout << "trimmed " << s << " to nothing" << std::endl;
+    std::cout << s << ": ";
+    std::size_t s_begin = s.find_first_not_of(' ');
+    std::cout << s_begin << ", ";
+    if(s_begin < s.size()) {
+        std::size_t s_end   = s.find_last_not_of(' ');
+        std::cout << s_end << ", ";
+        std::string s_trimmed = s.substr(s_begin, s_end - s_begin + 1);
+        std::cout << s_trimmed << std::endl;
+        if(s_trimmed == "") {
+            std::cout << "trimmed " << s << " to nothing" << std::endl;
+        }
+        return s_trimmed;
     }
-    return s_trimmed;
+    return "";
 }
 
 /* check if line is a label */
@@ -94,10 +101,6 @@ int to_int(std::string str) {
     exit(1);
 }
 
-void parseLineTypes(std::string line) {
-
-}
-
 vector<std::string> parseInstruction(std::string line) {
     int pos = 0;
     std::string line_trimmed = trim(line);
@@ -121,11 +124,27 @@ vector<std::string> parseInstruction(std::string line) {
         pos++;
     }
     while(pos != line_trimmed.size() && line_trimmed[pos] != ' ' && line_trimmed[pos] != '\t' && pos != line_trimmed.size()) {
-        arg1 += line_trimmed[pos++];
+        if(line_trimmed[pos] == '\\' && line_trimmed[pos+1] == '\'') {
+            arg1 += line_trimmed[++pos];
+            pos++;
+        }
+        if(line_trimmed[pos] != '\'') {
+            arg1 += line_trimmed[pos++];
+        } else {
+            pos++;
+        }
     }
     if(!is_int(arg1) && !is_pointer(arg1) && !is_register(arg1) && pos != line_trimmed.size()) {
         while(pos != line_trimmed.size() && (line_trimmed[pos-1] != '0' && line_trimmed[pos-2] != '\\')) {
-            arg1 += line_trimmed[pos++];
+            if(line_trimmed[pos] == '\\' && line_trimmed[pos+1] == '\'') {
+                arg1 += line_trimmed[++pos];
+                pos++;
+            } 
+            if(line_trimmed[pos] != '\'') {    
+                arg1 += line_trimmed[pos++];
+            } else {
+                pos++;
+            }
         }
     }
     vector<std::string> instruction_plus_args = {op, arg0, arg1};
@@ -138,7 +157,7 @@ vector<pair<std::string, ARG_TYPE>> parseArgTypes(vector<std::string> arg_vector
     vector<pair<std::string, ARG_TYPE>> arg_type_vec;
 
     for(std::string arg : arg_vector) {
-        std::cout << "\"" << arg << "\"" << std::endl;
+        //std::cout << "\"" << arg << "\"" << std::endl;
         if(str_to_op.find(arg)->second != 0) {
             arg_type_vec.push_back(pair<std::string, ARG_TYPE>(arg, OPCODE));
         } else if(is_int(arg)) {
@@ -146,7 +165,7 @@ vector<pair<std::string, ARG_TYPE>> parseArgTypes(vector<std::string> arg_vector
         } else if(is_pointer(arg)) {
             arg_type_vec.push_back(pair<std::string, ARG_TYPE>(arg, POINTER));
         } else if(is_register(arg)) {
-            std::cout << "\"" << arg << "\"" << std::endl;
+            //std::cout << "\"" << arg << "\"" << std::endl;
             arg_type_vec.push_back(pair<std::string, ARG_TYPE>(arg, REGISTER));
         } else {
             arg_type_vec.push_back(pair<std::string, ARG_TYPE>(arg, STRING));
@@ -313,7 +332,6 @@ std::string jumping(vector<pair<std::string, ARG_TYPE>> instr, int int_bit) {
                 is_int_arg = true;
                 break;
             case REGISTER:
-                std::cout << instr[1].first << ", " << instr[2].first << std::endl;
                 B = 0x1;
                 C = str_to_reg[instr[1].first];
                 D = str_to_reg[instr[2].first];
@@ -324,7 +342,6 @@ std::string jumping(vector<pair<std::string, ARG_TYPE>> instr, int int_bit) {
                 D = 0x0;
                 str_arg = instr[1].first;
                 if(LABEL_MAP.find(str_arg)->second == 0) {
-                    std::cout << str_arg << ", " << LABEL_MAP.find(str_arg)->second << "!!" << std::endl; 
                     LABEL_MAP.insert({str_arg, CURRENT_LABEL_VALUE});
                     int_arg = CURRENT_LABEL_VALUE++;
                 } else {
@@ -382,96 +399,100 @@ std::ostringstream genMachineCode(std::string filename) {
     std::string line = "";
     int line_number = 0;
     while(std::getline(file, line)) {        
-        std::cout << line << std::endl;
-        if(is_instruction(line)) {
-            vector<std::string> instruction_vector = parseInstruction(line);
-            auto arg_type_vector = parseArgTypes(instruction_vector);
-            std::string op = arg_type_vector[0].first;
-            if(op == "mov") {
-                os << mov(arg_type_vector);
-            } else if(op == "ini") {
-                int inst = (0xE20 << 4) | (str_to_reg[arg_type_vector[1].first]);
-                os << "0x" << inst << '\n';
-            } else if(op == "ins") {
-                int inst = (0xE80 << 4) | (str_to_reg[arg_type_vector[1].first]);
-                os << "0x" << inst << '\n';
-            } else if(op == "out") {
-                int inst = (0xF00 << 4) | (str_to_reg[arg_type_vector[1].first]);
-                os << "0x" << std::hex << inst << '\n';
-            } else if(op == "put") {
-                int inst = (0xF30 << 4) | (str_to_reg[arg_type_vector[1].first]);
-                os << "0x" << std::hex << inst << '\n';
-            } else if(op == "pln") {
-                int inst = (0xF40 << 4) | (str_to_reg[arg_type_vector[1].first]);
-                os << "0x" << std::hex << inst << '\n';
-            } else if(op == "add") {
-                os << arithmetic(arg_type_vector, 0x4, 0x0);
-            } else if(op == "sub") {
-                os << arithmetic(arg_type_vector, 0x5, 0x1);
-            } else if(op == "mul") {
-                os << arithmetic(arg_type_vector, 0x6, 0x2);
-            } else if(op == "mod") {
-                os << arithmetic(arg_type_vector, 0x7, 0x3);
-            } else if(op == "and") {
-                os << bitwise(arg_type_vector, 0x4, 0x0);
-            } else if(op == "or" ) {
-                os << bitwise(arg_type_vector, 0x5, 0x1);
-            } else if(op == "lsh") {
-                os << bitwise(arg_type_vector, 0x6, 0x2);
-            } else if(op == "rsh") {
-                os << bitwise(arg_type_vector, 0x7, 0x3);
-            } else if(op == "cmp") {
-                os << jumping(arg_type_vector, 0x1);
-            } else if(op == "jmp") {
-                os << jumping(arg_type_vector, 0x0);
-            } else if(op == "je" ) {
-                os << jumping(arg_type_vector, 0x2);
-            } else if(op == "jl" ) {
-                os << jumping(arg_type_vector, 0x3);
-            } else if(op == "jg" ) {
-                os << jumping(arg_type_vector, 0x4);
-            } else if(op == "jle") {
-                os << jumping(arg_type_vector, 0x5);
-            } else if(op == "jge") {
-                os << jumping(arg_type_vector, 0x6);
-            } else if(op == "mdp") {
-                os << "0x" << std::hex << 0xF100 << '\n';
-            } else if(op == "rdp") {
-                os << "0x" << std::hex << 0xF200 << '\n';
-            } else if(op == "nop") {
-                os << "0x" << std::hex << 0x0000;
+        //std::cout << line << std::endl;
+        if(line != "") {
+            std::string line_trimmed = trim(line);
+            if(is_instruction(line_trimmed)) {
+                vector<std::string> instruction_vector = parseInstruction(line);
+                auto arg_type_vector = parseArgTypes(instruction_vector);
+                std::string op = arg_type_vector[0].first;
+                if(op == "mov") {
+                    os << mov(arg_type_vector);
+                } else if(op == "ini") {
+                    int inst = (0xE20 << 4) | (str_to_reg[arg_type_vector[1].first]);
+                    os << "0x" << inst << '\n';
+                } else if(op == "ins") {
+                    int inst = (0xE80 << 4) | (str_to_reg[arg_type_vector[1].first]);
+                    os << "0x" << inst << '\n';
+                } else if(op == "out") {
+                    int inst = (0xF00 << 4) | (str_to_reg[arg_type_vector[1].first]);
+                    os << "0x" << std::hex << inst << '\n';
+                } else if(op == "put") {
+                    int inst = (0xF30 << 4) | (str_to_reg[arg_type_vector[1].first]);
+                    os << "0x" << std::hex << inst << '\n';
+                } else if(op == "pln") {
+                    int inst = (0xF40 << 4) | (str_to_reg[arg_type_vector[1].first]);
+                    os << "0x" << std::hex << inst << '\n';
+                } else if(op == "add") {
+                    os << arithmetic(arg_type_vector, 0x4, 0x0);
+                } else if(op == "sub") {
+                    os << arithmetic(arg_type_vector, 0x5, 0x1);
+                } else if(op == "mul") {
+                    os << arithmetic(arg_type_vector, 0x6, 0x2);
+                } else if(op == "mod") {
+                    os << arithmetic(arg_type_vector, 0x7, 0x3);
+                } else if(op == "and") {
+                    os << bitwise(arg_type_vector, 0x4, 0x0);
+                } else if(op == "or" ) {
+                    os << bitwise(arg_type_vector, 0x5, 0x1);
+                } else if(op == "lsh") {
+                    os << bitwise(arg_type_vector, 0x6, 0x2);
+                } else if(op == "rsh") {
+                    os << bitwise(arg_type_vector, 0x7, 0x3);
+                } else if(op == "cmp") {
+                    os << jumping(arg_type_vector, 0x1);
+                } else if(op == "jmp") {
+                    os << jumping(arg_type_vector, 0x0);
+                } else if(op == "je" ) {
+                    os << jumping(arg_type_vector, 0x2);
+                } else if(op == "jl" ) {
+                    os << jumping(arg_type_vector, 0x3);
+                } else if(op == "jg" ) {
+                    os << jumping(arg_type_vector, 0x4);
+                } else if(op == "jle") {
+                    os << jumping(arg_type_vector, 0x5);
+                } else if(op == "jge") {
+                    os << jumping(arg_type_vector, 0x6);
+                } else if(op == "mdp") {
+                    os << "0x" << std::hex << 0xF100 << '\n';
+                } else if(op == "rdp") {
+                    os << "0x" << std::hex << 0xF200 << '\n';
+                } else if(op == "nop") {
+                    os << "0x" << std::hex << 0x0000;
+                } else {
+                    std::cout << "Invalid instruction: " << line << std::endl;
+                    exit(1);
+                }
+            } else if(is_comment(line)) {
+                os << line << '\n';
+            } else if(is_label(line)) {
+                std::string label = trim_label(line);
+                os << "#" << label << '\n';
+                os << "0x" << std::hex << 0xDF00 << '\n';
+                if(LABEL_MAP.find(label)->second == 0) {
+                    LABEL_MAP.insert({trim_label(line), CURRENT_LABEL_VALUE});
+                    os << "0x" << std::hex << CURRENT_LABEL_VALUE++ << '\n';
+                } else {
+                    os << "0x" << std::hex << LABEL_MAP.find(label)->second << '\n';
+                }
             } else {
-                std::cout << "Invalid instruction: " << line << std::endl;
-                exit(1);
+                std::cout << "Invalid line @" << line_number << std::endl;
+                exit(1); 
             }
-        } else if(is_comment(line)) {
-            os << line << '\n';
-        } else if(is_label(line)) {
-            std::string label = trim_label(line);
-            os << "#" << label << '\n';
-            if(LABEL_MAP.find(label)->second == 0) {
-                LABEL_MAP.insert({trim_label(line), CURRENT_LABEL_VALUE});
-                os << "0x" << std::hex << CURRENT_LABEL_VALUE++ << '\n';
-            } else {
-                os << "0x" << std::hex << LABEL_MAP.find(label)->second << '\n';
-            }
-        } else {
-            std::cout << "Invalid line @" << line_number << std::endl;
-            exit(1); 
+            ++line_number;
         }
-        ++line_number;
     }
 
     return os;
 }
 
 int main() {
-    std::string filename = "programs/asm";
+    std::string filename = "programs/boxprint";
     std::ostringstream machine_code = genMachineCode(filename);
     std::string ofilename = filename + ".inst";
     std::ofstream out_file(ofilename);
     out_file << machine_code.str();
-    std::cout << std::endl;
-    std::cout << machine_code.str() << std::endl;
+    //std::cout << std::endl;
+    //std::cout << machine_code.str() << std::endl;
     return 0;
 }

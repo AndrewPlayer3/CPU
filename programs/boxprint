@@ -1,119 +1,96 @@
-#Width question
-0xE30A
-Width?\0
-0xF40A
+#Width Question
+mov r10, Width?\0
+pln r10
 
 #Box Width
-0xE200
+ini r0
 
-#Height question
-0xE30A
-Height?\0
-0xF40A
+#Height Question
+mov r10, Height?\0
+pln r10
 
 #Box Height
-0xE20A
+ini r10
 
-#Box Type question
-0xE30D
-Filled (1) or Hollow (2)?\0
-0xF40D
+#Box Type Question
+mov r13, Filled (1) or Hollow (2)?\0
+pln r13
 
 #Box Type
-0xE20C
+ini r12
 
 #New Line
-0xE30D
-\0
-0xF40D
+mov r13, \0
+pln r13
 
-#test value
-0xE00D
-0x0001
+#Test Value
+mov r13, 1
 
 #Row Count
-0xE001
-0x0001
+mov r1, 1
 
-#Row Loop:
-0x1001
+#Row Loop
+row_loop:
+    
+    #Column Count
+    mov r2, 1
 
-#Column Count
-0xE002
-0x0001
+    #Column Loop
+    column_loop:
 
-#Column Loop:
-0x1002
+    #goto tests
+    jmp testing
 
-#Go to Testing
-0xD000
-0x1003
+    #Print an x
+    print_x:
+    mov r5, x\0
+    put r5
 
-#Print x
-0x1005
-0xE305
-x\0
-0xF305
+    #goto end loop
+    jmp end_loop
 
-#go to end loop
-0xD000
-0x1007
+    #Print Space
+    print_space:
+    mov r5, ' '\0
+    put r5
 
-#Print Space
-0x1006
-0xE305
- \0
-0xF305
+    #End Inside Loop
+    end_loop:
 
-#End inside loop
-0x1007
+    #col++
+    add r2, 1
 
-# col++
-0xA402
-0x0001
+    #Col > width?
+    cmp r2, r10
+    jle column_loop
 
-#col > width
-0xD120
-0xD500
-0x1002
+#New Line
+mov r5, \0
+pln r5
 
-#new line
-0xE305
-\0
-0xF405
+#Row++
+add r1, 1
 
-# row++
-0xA401
-0x0001
+#Row > Height?
+cmp r1, r10
+jle row_loop
 
-#row > height
-0xD11A
-0xD500
-0x1001
+#Goto finish once out of loop
+jmp finish
 
-#Jump to Finish
-0xD000
-0x1004
-
-#Testing
-0x1003
-0xD1DC
-0xD200
-0x1005
-0xD12D
-0xD200
-0x1005
-0xD11D
-0xD200
-0x1005
-0xD120
-0xD200
-0x1005
-0xD11A
-0xD200
-0x1005
-0xD000
-0x1006
+#Tests
+testing:
+cmp r13, r12
+je print_x
+cmp r2, r13
+je print_x
+cmp r1, r13
+je print_x
+cmp r2, r0
+je print_x
+cmp r1, r10
+je print_x
+jmp print_space
 
 #Finish
-0x1004
+finish:
