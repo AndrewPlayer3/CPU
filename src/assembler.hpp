@@ -1,18 +1,18 @@
-#ifndef _ASSEMBLER_HPP_
-#define _ASSEMBLER_HPP_
+#ifndef _CONSTANTS_HPP_
+#define _CONSTANTS_HPP_
 
 #include <iostream>
 #include <string>
-#include <vector>
 #include <sstream>
 #include <fstream>
-#include <regex>
+#include <vector>
 #include <map>
+#include "assembler.hpp"
 
-using std::string;
-using std::pair;
 using std::map;
 using std::vector;
+using std::string;
+using std::pair;
 
 enum OPCODE_MNEMONIC {
     MOV = 0x1,
@@ -116,5 +116,3 @@ map<string, REGISTERS> str_to_reg = {
 };
 
 #endif
-
-

@@ -76,9 +76,9 @@ bool is_int(std::string str) {
 }
 
 /* check if arg is a pointer */
-bool is_pointer(std::string arg) {
-    if(arg[0] == '[' && arg[arg.size() - 1] == ']') {
-        if(is_int(arg.substr(0, arg.size() - 1))) {
+bool is_pointer(std::string str) {
+    if(str[0] == '[' && str[str.size() - 1] == ']') {
+        if(is_int(str.substr(0, str.size() - 1))) {
             return true;
         }
     }
@@ -98,7 +98,7 @@ int to_int(std::string str) {
 }
 
 /* makes a vector with the opcode and its operands */
-vector<std::string> parseInstruction(std::string line) {
+vector<std::string> parse_instruction(std::string line) {
     int pos = 0;
     std::string line_trimmed = trim(line);
     std::string op = "";
@@ -150,7 +150,7 @@ vector<std::string> parseInstruction(std::string line) {
 }
 
 /* makes a vector with the opcode, and operands, paired with their types */
-vector<pair<std::string, ARG_TYPE>> parseArgTypes(vector<std::string> arg_vector) {
+vector<pair<std::string, ARG_TYPE>> parse_arg_types(vector<std::string> arg_vector) {
 
     vector<pair<std::string, ARG_TYPE>> arg_type_vec;
 
@@ -394,7 +394,7 @@ std::string output(vector<pair<std::string, ARG_TYPE>> instr, int inst_bit, int 
 }
 
 /* Generates machine code from the assembly file: filename */
-std::ostringstream genMachineCode(std::string filename) {
+std::ostringstream gen_machine_code(std::string filename) {
     std::ostringstream os;
     std::ifstream file(filename); 
     std::string line = "";
@@ -404,8 +404,8 @@ std::ostringstream genMachineCode(std::string filename) {
         if(line != "") {
             std::string line_trimmed = trim(line);
             if(is_instruction(line_trimmed)) {
-                vector<std::string> instruction_vector = parseInstruction(line);
-                auto arg_type_vector = parseArgTypes(instruction_vector);
+                vector<std::string> instruction_vector = parse_instruction(line);
+                auto arg_type_vector = parse_arg_types(instruction_vector);
                 std::string op = arg_type_vector[0].first;
                 if(op == "mov") {
                     os << mov(arg_type_vector);
@@ -491,7 +491,7 @@ int main() {
     std::cout << "Filename: ";
     std::string filename = "";
     std::cin >> filename;
-    std::ostringstream machine_code = genMachineCode(filename);
+    std::ostringstream machine_code = gen_machine_code(filename);
     std::string ofilename = filename + ".inst";
     std::ofstream out_file(ofilename);
     out_file << machine_code.str();
