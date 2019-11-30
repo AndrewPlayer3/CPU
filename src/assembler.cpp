@@ -109,7 +109,7 @@ vector<std::string> parseInstruction(std::string line) {
         }
     }
     vector<std::string> instruction_plus_args = {op, arg0, arg1};
-    std::cout << "op: " << op << " arg0: " << arg0 << " arg1: " << arg1 << std::endl;
+    //std::cout << "op: " << op << " arg0: " << arg0 << " arg1: " << arg1 << std::endl;
     return instruction_plus_args;
 }
 
@@ -342,7 +342,7 @@ std::string output(vector<pair<std::string, ARG_TYPE>> instr, int inst_bit, int 
     return os.str();
 }
 
-std::ostringstream functionName(std::string filename) {
+std::ostringstream genMachineCode(std::string filename) {
 
     std::ostringstream os;
     std::ifstream file(filename); 
@@ -422,7 +422,10 @@ std::ostringstream functionName(std::string filename) {
 
 int main() {
     std::string filename = "programs/asm";
-    std::ostringstream machine_code = functionName(filename);
+    std::ostringstream machine_code = genMachineCode(filename);
+    std::string ofilename = filename + ".inst";
+    std::ofstream out_file(ofilename);
+    out_file << machine_code.str();
     std::cout << std::endl;
     std::cout << machine_code.str() << std::endl;
     return 0;

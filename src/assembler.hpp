@@ -4,12 +4,66 @@
 #include <regex>
 #include <map>
 #include "instr.hpp"
-#include "constants.hpp"
 
 using std::string;
 using std::pair;
 using std::map;
 using std::vector;
+
+enum OPCODE_MNEMONIC {
+    MOV = 0x1,
+    JMP,
+    JE,
+    JL,
+    JG,
+    JLE,
+    JGE,
+    CMP,
+    ADD,
+    SUB,
+    MUL,
+    MOD,
+    AND,
+    OR,
+    RSH,
+    LSH,
+    INI,
+    INS,
+    OUT,
+    PUT,
+    PLN,
+    MDP,
+    RDP,
+    NOP
+};
+
+enum REGISTERS {
+    R0  = 0x0,
+    R1  = 0x1,
+    R2  = 0x2,
+    R3  = 0x3,
+    R4  = 0x4,
+    R5  = 0x5,
+    R6  = 0x6,
+    R7  = 0x7,
+    R8  = 0x8,
+    R9  = 0x9,
+    R10 = 0xA,
+    R11 = 0xB,
+    R12 = 0xC,
+    R13 = 0xD,
+    R14 = 0xE,
+    R15 = 0xF
+};
+
+enum ARG_TYPE {
+    INTEGER = 0x1,
+    OPCODE,
+    REGISTER,
+    POINTER,
+    STRING,
+    CHARACTER
+};
 
 map<string, OPCODE_MNEMONIC> str_to_op = {
     {"mov", MOV},
@@ -55,34 +109,6 @@ map<string, REGISTERS> str_to_reg = {
     {"r13", R13},
     {"r14", R14},
     {"r15", R15},
-};
-
-std::string trim(std::string s);
-
-class Lexer {
-
-private:
-
-    std::string _str;
-
-public:
-
-    Lexer(std::string s) {
-        _str = trim(s);
-    }
-
-    void print_lexed() {
-        std::cout << _str << std::endl;
-    }
-
-};
-
-class Parser  {
-
-};
-
-class CodeGenerator {
-
 };
 
 #endif
