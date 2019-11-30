@@ -60,12 +60,14 @@ void CPU::bitwise(int B, int C, int D) {
         case 0x1: regs[C] |=  regs[D];           break;      /* r[C] |= r[D] 0xB1.. */
         case 0x2: regs[C] <<= regs[D];           break;      /* r[C] << r[D] 0xB2.. */
         case 0x3: regs[C] >>= regs[D];           break;      /* r[C] >> r[D] 0xB3.. */
-        case 0x4: regs[C] =  ~regs[D];                       /* r[C] = ~r[D] 0xB4.. */
-        case 0x5: regs[D] &=  mem[regs[PCTR]++]; break;      /* r[C] &= int  0xB5.. */
-        case 0x6: regs[D] |=  mem[regs[PCTR]++]; break;      /* r[C] |= int  0xB6.. */
-        case 0x7: regs[D] <<= mem[regs[PCTR]++]; break;      /* r[C] << int  0xB7.. */
-        case 0x8: regs[D] >>= mem[regs[PCTR]++]; break;      /* r[C] >> int  0xB8.. */
-        case 0x9: regs[D] =  ~mem[regs[PCTR]++]; break;      /* r[C] = ~int  0xB9.. */
+        case 0x4: regs[C] ^=  regs[D];           break;      /* r[C] ^= r[D] 0xB4.. */
+        case 0x5: regs[C] =  ~regs[D];                       /* r[C] = ~r[D] 0xB5.. */
+        case 0x6: regs[D] &=  mem[regs[PCTR]++]; break;      /* r[C] &= int  0xB6.. */
+        case 0x7: regs[D] |=  mem[regs[PCTR]++]; break;      /* r[C] |= int  0xB7.. */
+        case 0x8: regs[D] <<= mem[regs[PCTR]++]; break;      /* r[C] << int  0xB8.. */
+        case 0x9: regs[D] >>= mem[regs[PCTR]++]; break;      /* r[C] >> int  0xB9.. */
+        case 0xA: regs[D] =  ~mem[regs[PCTR]++]; break;      /* r[C] = ~int  0xBA.. */
+        case 0xB: regs[D] ^=  mem[regs[PCTR]++]; break;      /* r[C] ^= int  0xBB.. */
         default: error(regs[PCTR], 0xB, B, C, D);
     }
 }

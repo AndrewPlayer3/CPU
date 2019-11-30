@@ -436,15 +436,17 @@ std::ostringstream gen_machine_code(std::string filename) {
                 } else if(op == "div") {
                     os << arithmetic(arg_type_vector, 0x9, 0x4);
                 } else if(op == "and") {
-                    os << bitwise(arg_type_vector, 0x5, 0x0);
+                    os << bitwise(arg_type_vector, 0x6, 0x0);
                 } else if(op == "or" ) {
-                    os << bitwise(arg_type_vector, 0x6, 0x1);
+                    os << bitwise(arg_type_vector, 0x7, 0x1);
                 } else if(op == "lsh") {
-                    os << bitwise(arg_type_vector, 0x7, 0x2);
+                    os << bitwise(arg_type_vector, 0x8, 0x2);
                 } else if(op == "rsh") {
-                    os << bitwise(arg_type_vector, 0x8, 0x3);
+                    os << bitwise(arg_type_vector, 0x9, 0x3);
                 } else if(op == "not") {
-                    os << bitwise(arg_type_vector, 0x9, 0x4);
+                    os << bitwise(arg_type_vector, 0xA, 0x4);
+                } else if(op == "xor" ) {
+                    os << bitwise(arg_type_vector, 0xB, 0x5);
                 } else if(op == "cmp") {
                     os << jumping(arg_type_vector, 0x1);
                 } else if(op == "jmp") {
