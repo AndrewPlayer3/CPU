@@ -10,29 +10,8 @@ std::string trim(std::string s) {
     return s_trimmed;
 }
 
-bool is_label(std::string str) {
-    if(str[str.size() - 1] != ':') {
-        return false;
-    }
-    return true;
-}
-
-bool is_opcode(std::string str) {
-    if(str_to_op.find(str)->second == 0) {
-        return false;
-    }
-    return true;
-}
-
 bool is_register(std::string str) {
     if(str_to_reg.find(str)->second == 0) {
-        return false;
-    }
-    return true;
-}
-
-bool is_operand(std::string str) {
-    if(str[str.size() - 1] != ',') {
         return false;
     }
     return true;
@@ -41,13 +20,6 @@ bool is_operand(std::string str) {
 bool is_instruction(std::string line) {
     bool prop = str_to_op.find(trim(line.substr(0, 3)))->second != 0;
     if(prop) {
-        return true;
-    }
-    return false;
-}
-
-bool is_comment(std::string line) {
-    if(trim(line)[0] == '#') {
         return true;
     }
     return false;
@@ -308,10 +280,6 @@ std::string jumping(vector<pair<std::string, ARG_TYPE>> instr, int int_bit) {
     return os.str();
 }
 
-// Add: reg=0x0, int=0x4
-// Sub: reg=0x1, int=0x5
-// Mul: reg=0x2, int=0x6
-// Mod: reg=0x3, int=0x7
 std::string output(vector<pair<std::string, ARG_TYPE>> instr, int inst_bit, int reg_bit) {
     int A = 0xF;
     int B = 0x0;
