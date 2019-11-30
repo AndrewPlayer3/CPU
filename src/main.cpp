@@ -23,7 +23,7 @@ int  main() {
     
     cpu.run();
     
-    std::cout << "\nProgram Exited Successfully" << std::endl;
+    std::cout << "\nProgram Exited Successfully :)" << std::endl;
     std::cout << std::endl;
     
     return 0;

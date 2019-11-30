@@ -506,5 +506,6 @@ int main() {
     out_file << machine_code.str();
     std::cout << std::endl;
     std::cout << machine_code.str() << std::endl;
+    std::cout << "Program Compiled Successfully :)\n" << std::endl;
     return 0;
 }
