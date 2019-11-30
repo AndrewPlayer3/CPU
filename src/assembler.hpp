@@ -1,9 +1,13 @@
 #ifndef _ASSEMBLER_HPP_
 #define _ASSEMBLER_HPP_
 
+#include <iostream>
+#include <string>
+#include <vector>
+#include <sstream>
+#include <fstream>
 #include <regex>
 #include <map>
-#include "instr.hpp"
 
 using std::string;
 using std::pair;
