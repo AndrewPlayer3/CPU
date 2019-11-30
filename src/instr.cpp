@@ -160,7 +160,7 @@ void CPU::output(int B, int C, int D) {
     int loc;
     switch(B) {                                              /* Output:           */
         case 0x0:                                            /* cout r[D]  0xF00. */
-            std::cout << std::hex << regs[D] << std::endl;
+            std::cout << "0x" <<  std::hex << regs[D];
             break;
         case 0x1: mem_dump(); break;                         /* mem dump   0xF100 */
         case 0x2: reg_dump(); break;                         /* reg dump   0xF200 */

@@ -97,6 +97,7 @@ int to_int(std::string str) {
     exit(1);
 }
 
+/* makes a vector with the opcode and its operands */
 vector<std::string> parseInstruction(std::string line) {
     int pos = 0;
     std::string line_trimmed = trim(line);
@@ -148,6 +149,7 @@ vector<std::string> parseInstruction(std::string line) {
     return instruction_plus_args;
 }
 
+/* makes a vector with the opcode, and operands, paired with their types */
 vector<pair<std::string, ARG_TYPE>> parseArgTypes(vector<std::string> arg_vector) {
 
     vector<pair<std::string, ARG_TYPE>> arg_type_vec;
@@ -171,6 +173,7 @@ vector<pair<std::string, ARG_TYPE>> parseArgTypes(vector<std::string> arg_vector
     return arg_type_vec;
 }
 
+/* Mov int, reg, str, or ptr into a register */
 std::string mov(vector<pair<std::string, ARG_TYPE>> instr) {
     int A = 0xE;
     int B = 0x0;
@@ -202,7 +205,7 @@ std::string mov(vector<pair<std::string, ARG_TYPE>> instr) {
                 is_str_arg = true;
                 break;
             case POINTER:
-                B = 0xF;
+                B = 0x7;
                 C = 0x0;
                 D = str_to_reg[instr[1].first];
                 int_arg = to_int(instr[2].first);
@@ -359,6 +362,7 @@ std::string jumping(vector<pair<std::string, ARG_TYPE>> instr, int int_bit) {
     return os.str();
 }
 
+// Todo: make this not shitty and stupid
 std::string output(vector<pair<std::string, ARG_TYPE>> instr, int inst_bit, int reg_bit) {
     int A = 0xF;
     int B = 0x0;
@@ -389,6 +393,7 @@ std::string output(vector<pair<std::string, ARG_TYPE>> instr, int inst_bit, int 
     return os.str();
 }
 
+/* Generates machine code from the assembly file: filename */
 std::ostringstream genMachineCode(std::string filename) {
     std::ostringstream os;
     std::ifstream file(filename); 
@@ -483,7 +488,9 @@ std::ostringstream genMachineCode(std::string filename) {
 }
 
 int main() {
-    std::string filename = "programs/boxprint";
+    std::cout << "Filename: ";
+    std::string filename = "";
+    std::cin >> filename;
     std::ostringstream machine_code = genMachineCode(filename);
     std::string ofilename = filename + ".inst";
     std::ofstream out_file(ofilename);
