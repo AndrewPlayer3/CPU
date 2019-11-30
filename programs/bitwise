@@ -1,2 +1,9 @@
-mov r0, 😄😄😄😄😄😄😄\0
-pln r0
+mov r0, 1
+lsh r0, 4
+or  r0, 1
+lsh r0, 4
+or  r0, 1
+lsh r0, 4
+or  r0, 1
+xor r0, 1
+out r0
