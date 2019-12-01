@@ -1,0 +1,30 @@
+mov r0, Enter a Number:\0
+pln r0
+ini r1
+mov r2, 2
+cmp r1, r2
+jl return_one
+mov r3, r1
+mov r11, r1
+
+loop:
+    mov r4, 1
+    sub r1, r4
+    mul r3, r1
+    cmp r1, r2
+    jl finish
+    jmp loop
+
+return_one:
+    mov r5, 1
+    out r5
+
+finish:
+    mov r10, Factorial of \0
+    put r10
+    out r11
+    mov r10, ' is \0
+    put r10
+    out r3
+    mov r10, .\0
+    pln r10
