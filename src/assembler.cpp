@@ -1,3 +1,12 @@
+/*
+INSTR Hex Instruction Set
+Andrew Player, Robert Lawton, Gannon Higgins
+October 18, 2019
+DOESN'T WORK WITH 32-BIT COMPILERS
+DIFFERENCE IN TEXT ENCODING MEANS THE TEST FILES MAY NOT WORK
+ON OSs DIFFERENT THAN WINDOWS WITHOUT BEING REWRITTEN
+*/
+
 #include "assembler.hpp"
 
 std::map<std::string, int> LABEL_MAP;

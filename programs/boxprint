@@ -61,7 +61,7 @@ row_loop:
     add r2, 1
 
     #Col > width?
-    cmp r2, r10
+    cmp r2, r0
     jle column_loop
 
 #New Line
