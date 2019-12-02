@@ -23,36 +23,6 @@ using std::vector;
 using std::string;
 using std::pair;
 
-enum OPCODE_MNEMONIC {
-    MOV = 0x1,
-    JMP,
-    JE,
-    JL,
-    JG,
-    JLE,
-    JGE,
-    CMP,
-    ADD,
-    SUB,
-    MUL,
-    DIV,
-    MOD,
-    AND,
-    OR,
-    XOR,
-    RSH,
-    LSH,
-    NOT,
-    INI,
-    INS,
-    OUT,
-    PUT,
-    PLN,
-    MDP,
-    RDP,
-    NOP
-};
-
 enum REGISTERS {
     R0  = 0x0,
     R1  = 0x1,
@@ -81,36 +51,6 @@ enum ARG_TYPE {
     CHARACTER
 };
 
-map<string, OPCODE_MNEMONIC> str_to_op = {
-    {"mov", MOV},
-    {"jmp", JMP},
-    {"je" , JE },
-    {"jl" , JL },
-    {"jg" , JG },
-    {"jle", JLE},
-    {"jge", JGE},
-    {"cmp", CMP},
-    {"add", ADD},
-    {"sub", SUB},
-    {"mul", MUL},
-    {"mod", MOD},
-    {"div", DIV},
-    {"and", AND},
-    {"or" , OR },
-    {"xor", XOR},
-    {"rsh", RSH},
-    {"lsh", LSH},
-    {"not", NOT},
-    {"ini", INI},
-    {"ins", INS},
-    {"out", OUT},
-    {"put", PUT},
-    {"pln", PLN},
-    {"mdp", MDP},
-    {"rdp", RDP},
-    {"nop", NOP}
-};
-
 map<string, REGISTERS> str_to_reg = {
     {"r0",  R0 },
     {"r1",  R1 },
@@ -128,6 +68,66 @@ map<string, REGISTERS> str_to_reg = {
     {"r13", R13},
     {"r14", R14},
     {"r15", R15},
+};
+
+vector<std::string> opcode_vector = {
+    "mov",
+    "jmp",
+    "je" ,
+    "jl" ,
+    "jg" ,
+    "jle",
+    "jge",
+    "cmp",
+    "add",
+    "sub",
+    "mul",
+    "mod",
+    "div",
+    "and",
+    "or" ,
+    "xor",
+    "rsh",
+    "lsh",
+    "not",
+    "ini",
+    "ins",
+    "out",
+    "put",
+    "pln",
+    "mdp",
+    "rdp",
+    "nop"
+};
+
+map<string, vector<int>> op_to_int = {
+    {"mov", {0xE, 0x1, 0x0, 0x3, 0x7}},
+    {"jmp", {0xD, 0x0, 0x0, 0x0, 0x0}},
+    {"je" , {0xD, 0x2, 0x2, 0x2, 0x2}},
+    {"jl" , {0xD, 0x3, 0x3, 0x3, 0x3}},
+    {"jg" , {0xD, 0x4, 0x4, 0x4, 0x4}},
+    {"jle", {0xD, 0x5, 0x5, 0x5, 0x5}},
+    {"jge", {0xD, 0x6, 0x6, 0x6, 0x6}},
+    {"cmp", {0xD, 0x1, 0x1, 0x1, 0x1}},
+    {"add", {0xA, 0x0, 0x5, 0x0, 0x0}},
+    {"sub", {0xA, 0x1, 0x6, 0x0, 0x0}},
+    {"mul", {0xA, 0x2, 0x7, 0x0, 0x0}},
+    {"mod", {0xA, 0x3, 0x8, 0x0, 0x0}},
+    {"div", {0xA, 0x4, 0x9, 0x0, 0x0}},
+    {"and", {0xB, 0x0, 0x6, 0x0, 0x0}},
+    {"or" , {0xB, 0x1, 0x7, 0x0, 0x0}},
+    {"xor", {0xB, 0x5, 0xB, 0x0, 0x0}},
+    {"rsh", {0xB, 0x3, 0x9, 0x0, 0x0}},
+    {"lsh", {0xB, 0x2, 0x8, 0x0, 0x0}},
+    {"not", {0xB, 0x4, 0xA, 0x0, 0x0}},
+    {"ini", {0xE, 0x2, 0x2, 0x2, 0x2}},
+    {"ins", {0xE, 0x8, 0x8, 0x8, 0x8}},
+    {"out", {0xF, 0x0, 0x0, 0x0, 0x0}},
+    {"put", {0xF, 0x3, 0x3, 0x3, 0x3}},
+    {"pln", {0xF, 0x4, 0x4, 0x4, 0x4}},
+    {"mdp", {0xF, 0x1, 0x1, 0x1, 0x1}},
+    {"rdp", {0xF, 0x2, 0x2, 0x2, 0x2}},
+    {"nop", {0x0, 0x0, 0x0, 0x0, 0x0}}
 };
 
 #endif

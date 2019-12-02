@@ -49,6 +49,14 @@ std::string trim_label(std::string label) {
     return label_trimmed;
 }
 
+/* checks if str is a valid opcode mnemonic */
+bool is_opcode(std::string str) {
+    for(std::string s : opcode_vector) {
+        if(str == s) return true;
+    }
+    return false;
+}
+
 /* check if line is a comment */
 bool is_comment(std::string line) {
     if(trim(line)[0] != '#') {
@@ -67,7 +75,7 @@ bool is_register(std::string str) {
 
 /* check if str is an instruction */
 bool is_instruction(std::string line) {
-    bool prop = str_to_op.find(trim(line.substr(0, 3)))->second != 0;
+    bool prop = is_opcode(trim(line.substr(0, 3)));
     if(prop) {
         return true;
     }
@@ -114,7 +122,7 @@ vector<std::string> parse_instruction(std::string line) {
     while(line_trimmed[pos] != ' ' && line_trimmed[pos] != '\t') {
         op += line_trimmed[pos++];
     }
-    if(str_to_op.find(op)->second == 0) {
+    if(!is_opcode(op)) {
         std::cout << "Invalid Instruction: " << op << std::endl;
         exit(1);
     }
@@ -165,7 +173,7 @@ vector<pair<std::string, ARG_TYPE>> parse_arg_types(vector<std::string> arg_vect
 
     for(std::string arg : arg_vector) {
         //std::cout << "\"" << arg << "\"" << std::endl;
-        if(str_to_op.find(arg)->second != 0) {
+        if(is_opcode(arg)) {
             arg_type_vec.push_back(pair<std::string, ARG_TYPE>(arg, OPCODE));
         } else if(is_int(arg)) {
             arg_type_vec.push_back(pair<std::string, ARG_TYPE>(arg, INTEGER));
@@ -182,9 +190,9 @@ vector<pair<std::string, ARG_TYPE>> parse_arg_types(vector<std::string> arg_vect
     return arg_type_vec;
 }
 
-/* Mov int, reg, str, or ptr into a register */
-std::string mov(vector<pair<std::string, ARG_TYPE>> instr) {
-    int A = 0xE;
+
+/* peices things together for machine code instruction */
+std::string builder(vector<pair<std::string, ARG_TYPE>> instr, int A, int reg, int integer, int str, int ptr) {
     int B = 0x0;
     int C = 0x0;
     int D = 0x0;
@@ -195,33 +203,45 @@ std::string mov(vector<pair<std::string, ARG_TYPE>> instr) {
     if(instr.size() == 3) {
         switch(instr[2].second) {
             case INTEGER:
-                B = 0x0;
+                B = integer;
                 C = 0x0;
                 D = str_to_reg[instr[1].first];
                 int_arg = to_int(instr[2].first);
                 is_int_arg = true;
                 break;
             case REGISTER:
-                B = 0x1;
+                B = reg;
                 C = str_to_reg[instr[1].first];
                 D = str_to_reg[instr[2].first];
                 break;
             case STRING:
-                B = 0x3;
+                B = str;
                 C = 0x0;
-                D = str_to_reg[instr[1].first];
-                str_arg = instr[2].first;
-                is_str_arg = true;
+                if(A != 0xD) {
+                    D = str_to_reg[instr[1].first];
+                    str_arg = instr[2].first;
+                    is_str_arg = true;
+                } else {
+                    D = 0x0;
+                    str_arg = instr[1].first;
+                    if(LABEL_MAP.find(str_arg)->second == 0) {
+                        LABEL_MAP.insert({str_arg, CURRENT_LABEL_VALUE});
+                        int_arg = CURRENT_LABEL_VALUE++;
+                    } else {
+                        int_arg = LABEL_MAP.find(str_arg)->second;
+                    }
+                    is_int_arg = true;
+                }
                 break;
             case POINTER:
-                B = 0x7;
+                B = ptr;
                 C = 0x0;
                 D = str_to_reg[instr[1].first];
                 int_arg = to_int(instr[2].first);
                 is_int_arg = true;
                 break;
             default:
-                std::cout << "Something wrong with mov" << std::endl;
+                std::cout << "Something wrong in general" << std::endl;
                 exit(1);
         }
     }
@@ -233,172 +253,6 @@ std::string mov(vector<pair<std::string, ARG_TYPE>> instr) {
     }
     if(is_str_arg) {
         os << str_arg << '\n';
-    }
-    return os.str();
-}
-
-// Add: reg=0x0, int=0x5
-// Sub: reg=0x1, int=0x6
-// Mul: reg=0x2, int=0x7
-// Mod: reg=0x3, int=0x8
-// Mod: reg=0x4, int=0x9
-std::string arithmetic(vector<pair<std::string, ARG_TYPE>> instr, int int_bit, int reg_bit) {
-    int A = 0xA;
-    int B = 0x0;
-    int C = 0x0;
-    int D = 0x0;
-    bool is_int_arg = false;
-    int int_arg = 0x0;
-    if(instr.size() == 3) {
-        switch(instr[2].second) {
-            case INTEGER:
-                B = int_bit;
-                C = 0x0;
-                D = str_to_reg[instr[1].first];
-                int_arg = to_int(instr[2].first);
-                is_int_arg = true;
-                break;
-            case REGISTER:
-                B = reg_bit;
-                C = str_to_reg[instr[1].first];
-                D = str_to_reg[instr[2].first];
-                break;
-            default:
-                std::cout << "Something wrong with arithmetic" << std::endl;
-                exit(1);
-        }
-    }
-    int inst = (A << 12) | (B << 8) | (C << 4) | (D << 0);
-    std::ostringstream os;
-    os << "0x" << std::hex << inst << '\n';
-    if(is_int_arg) {
-        os << "0x" << int_arg << '\n';
-    }
-    return os.str();
-}
-
-// And: reg=0x0, int=0x4
-// Or:  reg=0x1, int=0x5
-// LSH: reg=0x2, int=0x6
-// RSH: reg=0x3, int=0x7
-std::string bitwise(vector<pair<std::string, ARG_TYPE>> instr, int int_bit, int reg_bit) {
-    int A = 0xB;
-    int B = 0x0;
-    int C = 0x0;
-    int D = 0x0;
-    bool is_int_arg = false;
-    int int_arg = 0x0;
-    if(instr.size() == 3) {
-        switch(instr[2].second) {
-            case INTEGER:
-                B = int_bit;
-                C = 0x0;
-                D = str_to_reg[instr[1].first];
-                int_arg = to_int(instr[2].first);
-                is_int_arg = true;
-                break;
-            case REGISTER:
-                B = reg_bit;
-                C = str_to_reg[instr[1].first];
-                D = str_to_reg[instr[2].first];
-                break;
-            default:
-                std::cout << "Something wrong with bitwise" << std::endl;
-                exit(1);
-        }
-    }
-    int inst = (A << 12) | (B << 8) | (C << 4) | (D << 0);
-    std::ostringstream os;
-    os << "0x" << std::hex << inst << '\n';
-    if(is_int_arg) {
-        os << "0x" << int_arg << '\n';
-    }
-    return os.str();
-}
-
-// Jmp:  int=0x0
-// cmp:  int=0x1
-// JE:   int=0x2
-// JL:   int=0x3
-// JG:   int=0x4
-// JLE:  int=0x5
-// JGE:  int=0x6
-std::string jumping(vector<pair<std::string, ARG_TYPE>> instr, int int_bit) {
-    int A = 0xD;
-    int B = 0x0;
-    int C = 0x0;
-    int D = 0x0;
-    bool is_int_arg = false;
-    int int_arg = 0x0;
-    std::string str_arg = "";
-    if(instr.size() == 3) {
-        switch(instr[1].second) {
-            case INTEGER:
-                B = int_bit;
-                C = 0x0; 
-                D = 0x0;
-                int_arg = to_int(instr[1].first);
-                is_int_arg = true;
-                break;
-            case REGISTER:
-                B = 0x1;
-                C = str_to_reg[instr[1].first];
-                D = str_to_reg[instr[2].first];
-                break;
-            case STRING:
-                B = int_bit;
-                C = 0x0; 
-                D = 0x0;
-                str_arg = instr[1].first;
-                if(LABEL_MAP.find(str_arg)->second == 0) {
-                    LABEL_MAP.insert({str_arg, CURRENT_LABEL_VALUE});
-                    int_arg = CURRENT_LABEL_VALUE++;
-                } else {
-                    int_arg = LABEL_MAP.find(str_arg)->second;
-                }
-                is_int_arg = true;
-                break;
-            default:
-                std::cout << "Something wrong with jumping" << std::endl;
-                exit(1);
-        }
-    }
-    int inst = (A << 12) | (B << 8) | (C << 4) | (D << 0);
-    std::ostringstream os;
-    os << "0x" << std::hex << inst << '\n';
-    if(is_int_arg) {
-        os << "0x" << int_arg << '\n';
-    }
-    return os.str();
-}
-
-// Todo: make this not shitty and stupid
-std::string output(vector<pair<std::string, ARG_TYPE>> instr, int inst_bit, int reg_bit) {
-    int A = 0xF;
-    int B = 0x0;
-    int C = 0x0;
-    int D = 0x0;
-    bool is_int_arg = false;
-    int int_arg = 0x0;
-    if(instr.size() == 3) {
-        switch(instr[2].second) {
-            case REGISTER:
-                B = reg_bit;
-                C = 0x0;
-                D = str_to_reg[instr[1].first];
-                int_arg = to_int(instr[2].first);
-                is_int_arg = true;
-                break;
-            default:
-                std::cout << "Something wrong with jumping" << std::endl;
-                exit(1);
-        }
-    }
-    int inst = (A << 12) | (B << 8) | (C << 4) | (D << 0);
-    std::ostringstream os;
-    os << "0x" << std::hex << inst << '\n';
-    if(is_int_arg) {
-        os << "0x" << int_arg << '\n';
     }
     return os.str();
 }
@@ -417,9 +271,12 @@ std::ostringstream gen_machine_code(std::string filename) {
                 vector<std::string> instruction_vector = parse_instruction(line);
                 auto arg_type_vector = parse_arg_types(instruction_vector);
                 std::string op = arg_type_vector[0].first;
-                if(op == "mov") {
-                    os << mov(arg_type_vector);
-                } else if(op == "ini") {
+                int op_bits  = op_to_int[op][0];
+                int reg_bits = op_to_int[op][1];
+                int int_bits = op_to_int[op][2];
+                int str_bits = op_to_int[op][3];
+                int ptr_bits = op_to_int[op][4];
+                if(op == "ini") {
                     int inst = (0xE20 << 4) | (str_to_reg[arg_type_vector[1].first]);
                     os << "0x" << inst << '\n';
                 } else if(op == "ins") {
@@ -434,51 +291,14 @@ std::ostringstream gen_machine_code(std::string filename) {
                 } else if(op == "pln") {
                     int inst = (0xF40 << 4) | (str_to_reg[arg_type_vector[1].first]);
                     os << "0x" << std::hex << inst << '\n';
-                } else if(op == "add") {
-                    os << arithmetic(arg_type_vector, 0x5, 0x0);
-                } else if(op == "sub") {
-                    os << arithmetic(arg_type_vector, 0x6, 0x1);
-                } else if(op == "mul") {
-                    os << arithmetic(arg_type_vector, 0x7, 0x2);
-                } else if(op == "mod") {
-                    os << arithmetic(arg_type_vector, 0x8, 0x3);
-                } else if(op == "div") {
-                    os << arithmetic(arg_type_vector, 0x9, 0x4);
-                } else if(op == "and") {
-                    os << bitwise(arg_type_vector, 0x6, 0x0);
-                } else if(op == "or" ) {
-                    os << bitwise(arg_type_vector, 0x7, 0x1);
-                } else if(op == "lsh") {
-                    os << bitwise(arg_type_vector, 0x8, 0x2);
-                } else if(op == "rsh") {
-                    os << bitwise(arg_type_vector, 0x9, 0x3);
-                } else if(op == "not") {
-                    os << bitwise(arg_type_vector, 0xA, 0x4);
-                } else if(op == "xor" ) {
-                    os << bitwise(arg_type_vector, 0xB, 0x5);
-                } else if(op == "cmp") {
-                    os << jumping(arg_type_vector, 0x1);
-                } else if(op == "jmp") {
-                    os << jumping(arg_type_vector, 0x0);
-                } else if(op == "je" ) {
-                    os << jumping(arg_type_vector, 0x2);
-                } else if(op == "jl" ) {
-                    os << jumping(arg_type_vector, 0x3);
-                } else if(op == "jg" ) {
-                    os << jumping(arg_type_vector, 0x4);
-                } else if(op == "jle") {
-                    os << jumping(arg_type_vector, 0x5);
-                } else if(op == "jge") {
-                    os << jumping(arg_type_vector, 0x6);
-                } else if(op == "mdp") {
+                }  else if(op == "mdp") {
                     os << "0x" << std::hex << 0xF100 << '\n';
                 } else if(op == "rdp") {
                     os << "0x" << std::hex << 0xF200 << '\n';
                 } else if(op == "nop") {
                     os << "0x" << std::hex << 0x0000;
                 } else {
-                    std::cout << "Invalid instruction: " << line << std::endl;
-                    exit(1);
+                    os << builder(arg_type_vector, op_bits, reg_bits, int_bits, str_bits, ptr_bits);
                 }
             } else if(is_comment(line)) {
                 os << line << '\n';
