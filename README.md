@@ -18,7 +18,7 @@ Arithmetic:
         /* r[C] *= int  0xA6.. */
         /* r[C] %= int  0xA7.. */
 
-Conditionals:
+Bitwise:
 
     0xC...
 
