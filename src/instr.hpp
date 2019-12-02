@@ -54,7 +54,7 @@ public:
     void output    (int B, int C, int D); /* 0xF... */
     void input     (int B, int C, int D); /* 0xE... */
     void jmp       ();                    /* 0xD000 */
-    void mem_dump  ();                    /* 0xF100 */
+    void mem_dump  (int until);           /* 0xF100 */
     void reg_dump  ();                    /* 0xF200 */
     void exec      (int inst);
     void run       ();

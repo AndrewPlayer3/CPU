@@ -169,7 +169,7 @@ void CPU::output(int B, int C, int D) {
         case 0x0:                                            /* cout r[D]  0xF00. */
             std::cout << regs[D];
             break;
-        case 0x1: mem_dump(); break;                         /* mem dump   0xF100 */
+        case 0x1: mem_dump(mem[regs[PCTR]++]); break;        /* mem dump   0xF100 */
         case 0x2: reg_dump(); break;                         /* reg dump   0xF200 */
         case 0x3:                                            /* cout@ptr   0xF30. */
             loc = regs[D];
@@ -189,8 +189,9 @@ void CPU::output(int B, int C, int D) {
 }
 
 /* Prints each memory location and its contents */
-void CPU::mem_dump() {
-    for(int i = 0; i < MEMORY_SIZE; i++) {
+void CPU::mem_dump(int until) {
+    if(until <= 0 || until > MEMORY_SIZE) until = MEMORY_SIZE;
+    for(int i = 0; i < until; i++) {
         /* Memory[x]: y */
         std::cout << "Memory[" << i << "]: " 
         << std::hex << mem[i] << std::endl;
