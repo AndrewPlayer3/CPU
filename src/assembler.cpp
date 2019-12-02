@@ -249,7 +249,7 @@ std::string builder(vector<pair<std::string, ARG_TYPE>> instr, int A, int reg, i
     if(is_int_arg) {
         os << "0x" << int_arg << '\n';
     }
-    if(is_str_arg) {
+    if(is_str_arg && str_arg != "") {
         os << str_arg << '\n';
     }
     return os.str();
