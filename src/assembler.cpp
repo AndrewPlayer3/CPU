@@ -287,6 +287,6 @@ int main() {
     std::string ofilename = filename + ".inst";
     std::ofstream out_file(ofilename);
     out_file << machine_code.str();
-    std::cout << "Program Compiled Successfully :)\n" << std::endl;
+    std::cout << "Program Compiled Successfully. Made: " << ofilename << '\n' << std::endl;
     return 0;
 }
