@@ -67,7 +67,7 @@ bool is_comment(const std::string& line) {
     } 
     return true;
 } 
-
+/* returns true if line is a register */
 bool is_register(const std::string& str) {
     if(str_to_reg.count(str) == 0) {
         return false;
