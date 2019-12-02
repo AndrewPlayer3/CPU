@@ -74,7 +74,7 @@ bool is_register(const std::string& str) {
     }
     return true;
 }
-
+/* returns true if line is an instruction */
 bool is_instruction(const std::string& line) {
     bool prop = is_opcode(trim(line.substr(0, 3)));
     if(prop) {
