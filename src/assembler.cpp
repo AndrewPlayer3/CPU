@@ -276,30 +276,7 @@ std::ostringstream gen_machine_code(std::string filename) {
                 int int_bits = op_to_int[op][2];
                 int str_bits = op_to_int[op][3];
                 int ptr_bits = op_to_int[op][4];
-                if(op == "ini") {
-                    int inst = (0xE20 << 4) | (str_to_reg[arg_type_vector[1].first]);
-                    os << "0x" << inst << '\n';
-                } else if(op == "ins") {
-                    int inst = (0xE80 << 4) | (str_to_reg[arg_type_vector[1].first]);
-                    os << "0x" << inst << '\n';
-                } else if(op == "out") {
-                    int inst = (0xF00 << 4) | (str_to_reg[arg_type_vector[1].first]);
-                    os << "0x" << std::hex << inst << '\n';
-                } else if(op == "put") {
-                    int inst = (0xF30 << 4) | (str_to_reg[arg_type_vector[1].first]);
-                    os << "0x" << std::hex << inst << '\n';
-                } else if(op == "pln") {
-                    int inst = (0xF40 << 4) | (str_to_reg[arg_type_vector[1].first]);
-                    os << "0x" << std::hex << inst << '\n';
-                }  else if(op == "mdp") {
-                    os << "0x" << std::hex << 0xF100 << '\n';
-                } else if(op == "rdp") {
-                    os << "0x" << std::hex << 0xF200 << '\n';
-                } else if(op == "nop") {
-                    os << "0x" << std::hex << 0x0000;
-                } else {
-                    os << builder(arg_type_vector, op_bits, reg_bits, int_bits, str_bits, ptr_bits);
-                }
+                os << builder(arg_type_vector, op_bits, reg_bits, int_bits, str_bits, ptr_bits);
             } else if(is_comment(line)) {
                 os << line << '\n';
             } else if(is_label(line)) {

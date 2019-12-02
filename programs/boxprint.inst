@@ -2,24 +2,31 @@
 0xe30a
 Width?\0
 0xf40a
+
 #Box Width
 0xe200
+
 #Height Question
 0xe30a
 Height?\0
 0xf40a
+
 #Box Height
 0xe20a
+
 #Box Type Question
 0xe30d
 Filled (1) or Hollow (2)?\0
 0xf40d
+
 #Box Type
 0xe20c
+
 #New Line
 0xe30d
 \0
 0xf40d
+
 #Test Value
 0xe00d
 0x1
@@ -50,6 +57,7 @@ Filled (1) or Hollow (2)?\0
 0xe305
 x\0
 0xf305
+
     #goto end loop
 0xd000
 0x6
@@ -60,6 +68,7 @@ x\0
 0xe305
  \0
 0xf305
+
     #End Inside Loop
 #end_loop
 0xdf00
@@ -75,6 +84,7 @@ x\0
 0xe305
 \0
 0xf405
+
 #Row++
 0xa501
 0x1
