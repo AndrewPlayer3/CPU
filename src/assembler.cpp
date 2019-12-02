@@ -60,7 +60,7 @@ bool is_opcode(const std::string& str) {
     }
     return false;
 }
-
+/* returns true if line is a comment */
 bool is_comment(const std::string& line) {
     if(trim(line)[0] != '#') {
         return false;
@@ -81,7 +81,6 @@ bool is_instruction(const std::string& line) {
         return true;
     }
     return false;
-}
 
 bool is_int(const std::string& str) {
     int num;
