@@ -274,7 +274,6 @@ std::ostringstream gen_machine_code(const std::string& filename) {
             ++line_number;
         }
     }
-
     return os;
 }
 
