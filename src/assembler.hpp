@@ -2,9 +2,7 @@
 INSTR Hex Instruction Set
 Andrew Player, Robert Lawton, Gannon Higgins
 October 18, 2019
-DOESN'T WORK WITH 32-BIT COMPILERS
-DIFFERENCE IN TEXT ENCODING MEANS THE TEST FILES MAY NOT WORK
-ON OSs DIFFERENT THAN WINDOWS WITHOUT BEING REWRITTEN
+DOESN'T WORK WITH 32-BIT MINGW/32-BIT GCC
 */
 
 #ifndef _CONSTANTS_HPP_
@@ -16,7 +14,6 @@ ON OSs DIFFERENT THAN WINDOWS WITHOUT BEING REWRITTEN
 #include <fstream>
 #include <vector>
 #include <map>
-#include "assembler.hpp"
 
 using std::map;
 using std::vector;
@@ -70,36 +67,6 @@ map<string, REGISTERS> str_to_reg = {
     {"r15", R15},
 };
 
-vector<std::string> opcode_vector = {
-    "mov",
-    "jmp",
-    "je" ,
-    "jl" ,
-    "jg" ,
-    "jle",
-    "jge",
-    "cmp",
-    "add",
-    "sub",
-    "mul",
-    "mod",
-    "div",
-    "and",
-    "or" ,
-    "xor",
-    "rsh",
-    "lsh",
-    "not",
-    "ini",
-    "ins",
-    "out",
-    "put",
-    "pln",
-    "mdp",
-    "rdp",
-    "nop"
-};
-
 map<string, vector<int>> op_to_int = {
     {"mov", {0xE, 0x1, 0x0, 0x3, 0x7}},
     {"jmp", {0xD, 0x0, 0x0, 0x0, 0x0}},
@@ -128,6 +95,36 @@ map<string, vector<int>> op_to_int = {
     {"mdp", {0xF, 0x1, 0x1, 0x1, 0x1}},
     {"rdp", {0xF, 0x2, 0x2, 0x2, 0x2}},
     {"nop", {0x0, 0x0, 0x0, 0x0, 0x0}}
+};
+
+vector<std::string> opcode_vector = {
+    "mov",
+    "jmp",
+    "je" ,
+    "jl" ,
+    "jg" ,
+    "jle",
+    "jge",
+    "cmp",
+    "add",
+    "sub",
+    "mul",
+    "mod",
+    "div",
+    "and",
+    "or" ,
+    "xor",
+    "rsh",
+    "lsh",
+    "not",
+    "ini",
+    "ins",
+    "out",
+    "put",
+    "pln",
+    "mdp",
+    "rdp",
+    "nop"
 };
 
 #endif
