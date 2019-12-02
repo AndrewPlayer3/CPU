@@ -1,0 +1,176 @@
+#This file tests all of the main operations 
+#with their potential operands
+
+#Moving
+mov r0, 123
+mov r1, r0
+mov r2, This is a string\0
+
+out r1
+
+#New Line
+mov r14,  \0
+pln r14
+
+pln r2
+
+#Arithmetic with Integers
+add r0, 1
+out r0
+pln r14
+sub r0, 1
+out r0
+pln r14
+mul r0, 2
+out r0
+pln r14
+mod r0, 10
+out r0
+pln r14
+
+#Arithmetic with Registers
+mov r2, 1
+mov r3, 2
+mov r4, 10
+add r1, r2
+out r1
+pln r14
+sub r1, r2
+out r1
+pln r14
+mul r1, r3
+out r1
+pln r14
+mod r1, r4
+out r1
+pln r14
+
+#Bitwise with Integers
+mov r0, 1
+and r0, 1
+out r0
+pln r14
+or  r0, 0
+out r0
+pln r14
+lsh r0, 4
+out r0
+pln r14
+rsh r0, 4
+out r0
+pln r14
+xor r0, 1
+out r0
+pln r14
+not r0, 0
+out r0
+pln r14
+
+
+#Bitwise with Registers
+mov r1, 1
+mov r2, 0
+mov r3, 4
+mov r0, r1
+and r0, r1
+out r0
+pln r14
+or  r0, r2
+out r0
+pln r14
+lsh r0, r3
+out r0
+pln r14
+rsh r0, r3
+out r0
+pln r14
+xor r0, r1
+out r0
+pln r14
+not r0, r0
+out r0
+pln r14
+
+#Jumping
+mov r0, 0
+mov r1, 1
+mov r2, 10
+mov r3, 10
+jump_tests:
+    test_jl:
+        cmp r0, r1
+        je jump_equal
+        jl jump_less
+        jg jump_greater
+        jle jump_less_equal
+        jge jump_greater_equal
+    test_jg:    
+        cmp r1, r0
+        je jump_equal
+        jl jump_less
+        jg jump_greater
+        jle jump_less_equal
+        jge jump_greater_equal
+    test_je:    
+        cmp r0, r0
+        je jump_equal
+        jl jump_less
+        jg jump_greater
+        jle jump_less_equal
+        jge jump_greater_equal
+    test_jle_e:    
+        cmp r0, r0
+        jle jump_less_equal
+        jge jump_greater_equal
+    test_jle_l:    
+        cmp r0, r2
+        jle jump_less_equal_equal
+        jge jump_greater_equal
+    test_jge_e:    
+        cmp r2, r2
+        jge jump_greater_equal
+        jle jump_less_equal
+    test_jge_l:    
+        cmp r2, r0
+        jle jump_less_equal
+        jge done_jumping
+
+jump_equal:
+    mov r13, Jump if Equal'd\0
+    pln r13
+    jmp test_jle_e
+
+jump_less:
+    mov r13, Jump if Less'd\0
+    pln r13
+    jmp test_jg
+
+jump_greater:
+    mov r13, Jump if Greater'd\0
+    pln r13
+    jmp test_je
+
+jump_less_equal:
+    mov r13, Jump if Less or Equal'd\0
+    pln r13
+    jmp test_jle_l
+
+jump_less_equal_equal:
+    mov r13, Jump if Less or Equal'd\0
+    pln r13
+    jmp test_jge_e
+
+jump_greater_equal:
+    mov r13, Jump if Greater or Equal'd\0
+    pln r13
+    jmp test_jge_l
+
+done_jumping:
+
+#Input String and Int Testing
+ini r0
+out r0
+pln r14
+ins r0
+pln r0
+pln r14
