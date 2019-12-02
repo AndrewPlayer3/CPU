@@ -5,8 +5,10 @@ October 18, 2019
 DOESN'T WORK WITH 32-BIT MINGW/32-BIT GCC
 */
 
-/* This is a 16-bit hex instruction-set that runs on an "emulated" cpu  */
-/* refer to the readme for a list of the instructions                   */
+/* This is a 16-bit hex instruction-set that runs on an "emulated" cpu   */
+/* refer to the readme for a list of the instructions                    */
+/* The machine code for this cpu can be generated from an assembly using */
+/* the included assembler. (Note: that is a seperate program)            */
 
 #ifndef _INSTR_H_
 #define _INSTR_H_

@@ -7,6 +7,13 @@ DOESN'T WORK WITH 32-BIT MINGW/32-BIT GCC
 
 #include "assembler.hpp"
 
+/* This is an assembler that takes instr assembly and */
+/* turns it into valid instr machine code.            */
+
+/* This holds all current labels and the integers   */
+/* that they get converted to in the machine code   */
+/* this is global for use between functions without */
+/* needed to pass it around                         */
 std::map<std::string, int> LABEL_MAP;
 int CURRENT_LABEL_VALUE = 0x0001;
 
@@ -24,7 +31,6 @@ std::string trim(const std::string& s) {
     return "";
 }
 
-/* check if line is a label */
 bool is_label(const std::string& line) {
     int pos = 0;
     std::string line_trimmed = trim(line);
@@ -55,7 +61,6 @@ bool is_opcode(const std::string& str) {
     return false;
 }
 
-/* check if line is a comment */
 bool is_comment(const std::string& line) {
     if(trim(line)[0] != '#') {
         return false;
@@ -63,7 +68,6 @@ bool is_comment(const std::string& line) {
     return true;
 } 
 
-/* check if str is a register */
 bool is_register(const std::string& str) {
     if(str_to_reg.count(str) == 0) {
         return false;
@@ -71,7 +75,6 @@ bool is_register(const std::string& str) {
     return true;
 }
 
-/* check if str is an instruction */
 bool is_instruction(const std::string& line) {
     bool prop = is_opcode(trim(line.substr(0, 3)));
     if(prop) {
@@ -80,7 +83,6 @@ bool is_instruction(const std::string& line) {
     return false;
 }
 
-/* check if str is an integer */
 bool is_int(const std::string& str) {
     int num;
     std::istringstream is(str);
@@ -90,17 +92,8 @@ bool is_int(const std::string& str) {
     return false;
 }
 
-/* check if arg is a pointer */
-bool is_pointer(const std::string& str) {
-    if(str[0] == '[' && str[str.size() - 1] == ']') {
-        if(is_int(str.substr(0, str.size() - 1))) {
-            return true;
-        }
-    }
-    return false;
-}
-
 /* convert str to an integer if possible */
+/* exits with code 1 if not              */
 int to_int(const std::string& str) {
     if(is_int(str)) {
         int number;
@@ -112,7 +105,7 @@ int to_int(const std::string& str) {
     exit(1);
 }
 
-/* makes a vector with the opcode and its operands */
+/* makes a vector with the opcode and its operands from a givin line */
 vector<std::string> parse_instruction(const std::string& line) {
     int pos = 0;
     std::string line_trimmed = trim(line);
@@ -148,8 +141,7 @@ vector<std::string> parse_instruction(const std::string& line) {
             pos++;
         }
     }
-    if(!is_int(arg1) && !is_pointer(arg1) 
-    && !is_register(arg1) && pos != line_trimmed.size()) {
+    if(!is_int(arg1) && !is_register(arg1) && pos != line_trimmed.size()) {
         while(pos != line_trimmed.size() 
         && (line_trimmed[pos-1] != '0' && line_trimmed[pos-2] != '\\')) {
             if(line_trimmed[pos] == '\\' && line_trimmed[pos+1] == '\'') {
@@ -164,40 +156,36 @@ vector<std::string> parse_instruction(const std::string& line) {
         }
     }
     vector<std::string> instruction_plus_args = {op, arg0, arg1};
-    //std::cout << "op: " << op << " arg0: " << arg0 << " arg1: " << arg1 << std::endl;
     return instruction_plus_args;
 }
 
 /* makes a vector with the opcode, and operands, paired with their types */
+/* NOTE: This has no error handling, only pass it validated instructions */
 vector<pair<std::string, ARG_TYPE>> parse_arg_types(const vector<std::string>& arg_vector) {
-
     vector<pair<std::string, ARG_TYPE>> arg_type_vec;
-
     for(std::string arg : arg_vector) {
-        //std::cout << "\"" << arg << "\"" << std::endl;
         if(is_opcode(arg)) {
             arg_type_vec.push_back(pair<std::string, ARG_TYPE>(arg, OPCODE));
         } else if(is_int(arg)) {
             arg_type_vec.push_back(pair<std::string, ARG_TYPE>(arg, INTEGER));
-        } else if(is_pointer(arg)) {
-            arg_type_vec.push_back(pair<std::string, ARG_TYPE>(arg, POINTER));
         } else if(is_register(arg)) {
-            //std::cout << "\"" << arg << "\"" << std::endl;
             arg_type_vec.push_back(pair<std::string, ARG_TYPE>(arg, REGISTER));
         } else {
             arg_type_vec.push_back(pair<std::string, ARG_TYPE>(arg, STRING));
         }
     }
-
     return arg_type_vec;
 }
 
-
-/* peices things together for machine code instruction */
-std::string builder(const vector<pair<std::string, ARG_TYPE>>& instr, int A, int reg, int integer, int str, int ptr) {
-    int B = 0x0;
-    int C = 0x0;
-    int D = 0x0;
+/* takes in an instruction (arg_type) vector along with its corresponding    */
+/* opcode's information then generates the machine code for that instruction */
+std::string builder(const vector<pair<std::string, ARG_TYPE>>& instr) {
+    std::string op = instr[0].first;
+    int op_bits  = op_to_int[op][0];
+    int reg_bits = op_to_int[op][1];
+    int int_bits = op_to_int[op][2];
+    int str_bits = op_to_int[op][3];
+    int B, C, D = 0x0;
     bool is_int_arg = false;
     int int_arg = 0x0;
     bool is_str_arg = false;
@@ -205,21 +193,21 @@ std::string builder(const vector<pair<std::string, ARG_TYPE>>& instr, int A, int
     if(instr.size() == 3) {
         switch(instr[2].second) {
             case INTEGER:
-                B = integer;
+                B = int_bits;
                 C = 0x0;
                 D = str_to_reg[instr[1].first];
                 int_arg = to_int(instr[2].first);
                 is_int_arg = true;
                 break;
             case REGISTER:
-                B = reg;
+                B = reg_bits;
                 C = str_to_reg[instr[1].first];
                 D = str_to_reg[instr[2].first];
                 break;
             case STRING:
-                B = str;
+                B = str_bits;
                 C = 0x0;
-                if(A != 0xD) {
+                if(op_bits != 0xD) {
                     D = str_to_reg[instr[1].first];
                     str_arg = instr[2].first;
                     is_str_arg = true;
@@ -235,19 +223,12 @@ std::string builder(const vector<pair<std::string, ARG_TYPE>>& instr, int A, int
                     is_int_arg = true;
                 }
                 break;
-            case POINTER:
-                B = ptr;
-                C = 0x0;
-                D = str_to_reg[instr[1].first];
-                int_arg = to_int(instr[2].first);
-                is_int_arg = true;
-                break;
             default:
                 std::cout << "Something wrong in general" << std::endl;
                 exit(1);
         }
     }
-    int inst = (A << 12) | (B << 8) | (C << 4) | (D << 0);
+    int inst = (op_bits << 12) | (B << 8) | (C << 4) | (D << 0);
     std::ostringstream os;
     os << "0x" << std::hex << inst << '\n';
     if(is_int_arg) {
@@ -259,7 +240,8 @@ std::string builder(const vector<pair<std::string, ARG_TYPE>>& instr, int A, int
     return os.str();
 }
 
-/* Generates machine code from the assembly file: filename */
+/* Generates machine code from the assembly file: filename  */
+/* returns an ostringstream with the generated machine code */
 std::ostringstream gen_machine_code(const std::string& filename) {
     std::ostringstream os;
     std::ifstream file(filename); 
@@ -271,13 +253,7 @@ std::ostringstream gen_machine_code(const std::string& filename) {
             if(is_instruction(line_trimmed)) {
                 vector<std::string> instruction_vector = parse_instruction(line);
                 auto arg_type_vector = parse_arg_types(instruction_vector);
-                std::string op = arg_type_vector[0].first;
-                int op_bits  = op_to_int[op][0];
-                int reg_bits = op_to_int[op][1];
-                int int_bits = op_to_int[op][2];
-                int str_bits = op_to_int[op][3];
-                int ptr_bits = op_to_int[op][4];
-                os << builder(arg_type_vector, op_bits, reg_bits, int_bits, str_bits, ptr_bits);
+                os << builder(arg_type_vector);
             } else if(is_comment(line)) {
                 os << line << '\n';
             } else if(is_label(line)) {
