@@ -18,7 +18,7 @@ DOESN'T WORK WITH 32-BIT MINGW/32-BIT GCC
 
 /* Using defines because I think they look nicer than enums */
 #define REGISTER_COUNT 0x10
-#define MEMORY_SIZE    0xFF
+#define MEMORY_SIZE    0x1FF
 
 /* Program Counter Register will be the last register */
 #define PCTR           REGISTER_COUNT - 1

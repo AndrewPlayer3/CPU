@@ -135,7 +135,7 @@ void CPU::input(int B, int C, int D) {
         case 0x1: regs[C] = regs[D];              break;     /* mov r[D],int  0xE1..  */
         case 0x2:                                            /* cin r[D],int  0xE20.  */
                   std::cout << ">> "; 
-                  std::cin >>std::hex>> regs[D];  break;
+                  std::cin >> regs[D];            break;
         case 0x3: regs[D] = regs[PCTR];                      /* mov r[D],str* 0xE30.  */
                   while(mem[regs[PCTR]] != 0x5C30) {
                     regs[PCTR]++;
@@ -167,7 +167,7 @@ void CPU::output(int B, int C, int D) {
     int loc;
     switch(B) {                                              /* Output:           */
         case 0x0:                                            /* cout r[D]  0xF00. */
-            std::cout << "0x" <<  std::hex << regs[D];
+            std::cout << regs[D];
             break;
         case 0x1: mem_dump(); break;                         /* mem dump   0xF100 */
         case 0x2: reg_dump(); break;                         /* reg dump   0xF200 */
@@ -180,8 +180,7 @@ void CPU::output(int B, int C, int D) {
             std::cout<<read_memory(&mem[loc])<<std::endl;
             break;
         case 0x5:                                            /* cout@mem   0xF50. */
-            std::cout << std::hex 
-            << mem[regs[D]] << std::endl;
+            std::cout << mem[regs[D]] << std::endl;
             break;
         case 0x6:                                            /* new line   0xF600 */
             std::cout << std::endl; break;                                      
