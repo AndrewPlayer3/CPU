@@ -81,7 +81,7 @@ bool is_instruction(const std::string& line) {
         return true;
     }
     return false;
-
+/* returns true if line is an integer */
 bool is_int(const std::string& str) {
     int num;
     std::istringstream is(str);
