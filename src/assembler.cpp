@@ -11,7 +11,7 @@ std::map<std::string, int> LABEL_MAP;
 int CURRENT_LABEL_VALUE = 0x0001;
 
 /* Remove ws from beginning and end of line*/
-std::string trim(std::string s) {
+std::string trim(const std::string& s) {
     std::size_t s_begin = s.find_first_not_of(' ');
     if(s_begin < s.size()) {
         std::size_t s_end   = s.find_last_not_of(' ');
@@ -25,7 +25,7 @@ std::string trim(std::string s) {
 }
 
 /* check if line is a label */
-bool is_label(std::string line) {
+bool is_label(const std::string& line) {
     int pos = 0;
     std::string line_trimmed = trim(line);
     while(++pos != line_trimmed.size() && line_trimmed[pos] != ':');
@@ -36,7 +36,7 @@ bool is_label(std::string line) {
 }
 
 /* gets just the label name before the ':' */
-std::string trim_label(std::string label) {
+std::string trim_label(const std::string& label) {
     int pos = 0;
     std::string label_no_ws = trim(label);
     std::string label_trimmed = "";
@@ -48,7 +48,7 @@ std::string trim_label(std::string label) {
 }
 
 /* checks if str is a valid opcode mnemonic */
-bool is_opcode(std::string str) {
+bool is_opcode(const std::string& str) {
     for(std::string s : opcode_vector) {
         if(str == s) return true;
     }
@@ -56,7 +56,7 @@ bool is_opcode(std::string str) {
 }
 
 /* check if line is a comment */
-bool is_comment(std::string line) {
+bool is_comment(const std::string& line) {
     if(trim(line)[0] != '#') {
         return false;
     } 
@@ -64,7 +64,7 @@ bool is_comment(std::string line) {
 } 
 
 /* check if str is a register */
-bool is_register(std::string str) {
+bool is_register(const std::string& str) {
     if(str_to_reg.count(str) == 0) {
         return false;
     }
@@ -72,7 +72,7 @@ bool is_register(std::string str) {
 }
 
 /* check if str is an instruction */
-bool is_instruction(std::string line) {
+bool is_instruction(const std::string& line) {
     bool prop = is_opcode(trim(line.substr(0, 3)));
     if(prop) {
         return true;
@@ -81,7 +81,7 @@ bool is_instruction(std::string line) {
 }
 
 /* check if str is an integer */
-bool is_int(std::string str) {
+bool is_int(const std::string& str) {
     int num;
     std::istringstream is(str);
     if(is >> num) {
@@ -91,7 +91,7 @@ bool is_int(std::string str) {
 }
 
 /* check if arg is a pointer */
-bool is_pointer(std::string str) {
+bool is_pointer(const std::string& str) {
     if(str[0] == '[' && str[str.size() - 1] == ']') {
         if(is_int(str.substr(0, str.size() - 1))) {
             return true;
@@ -101,7 +101,7 @@ bool is_pointer(std::string str) {
 }
 
 /* convert str to an integer if possible */
-int to_int(std::string str) {
+int to_int(const std::string& str) {
     if(is_int(str)) {
         int number;
         std::istringstream is(str);
@@ -113,29 +113,31 @@ int to_int(std::string str) {
 }
 
 /* makes a vector with the opcode and its operands */
-vector<std::string> parse_instruction(std::string line) {
+vector<std::string> parse_instruction(const std::string& line) {
     int pos = 0;
     std::string line_trimmed = trim(line);
     std::string op = "";
-    while(line_trimmed[pos] != ' ' && line_trimmed[pos] != '\t') {
+    while(pos != line_trimmed.size() && !iswspace(line_trimmed[pos])) {
         op += line_trimmed[pos++];
     }
     if(!is_opcode(op)) {
         std::cout << "Invalid Instruction: " << op << std::endl;
         exit(1);
     }
-    while(line_trimmed[pos] == ' ' || line_trimmed[pos] == '\t') {
+    while(pos != line_trimmed.size() && iswspace(line_trimmed[pos])) {
         pos++;
     }
     std::string arg0 = "";
     std::string arg1 = "";
-    while(line_trimmed[pos] != ' ' && line_trimmed[pos] != '\t' && line_trimmed[pos] != ',' && pos != line_trimmed.size()) {
+    while(pos != line_trimmed.size() 
+    && (!iswspace(line_trimmed[pos])) && line_trimmed[pos] != ',') {
         arg0 += line_trimmed[pos++];
     }
-    while(line_trimmed[pos] == ' ' || line_trimmed[pos] == '\t' || line_trimmed[pos] == ',' && pos != line_trimmed.size()) {
+    while(pos != line_trimmed.size() 
+    && (iswspace(line_trimmed[pos]) || line_trimmed[pos] == ',')) {
         pos++;
     }
-    while(pos != line_trimmed.size() && line_trimmed[pos] != ' ' && line_trimmed[pos] != '\t' && pos != line_trimmed.size()) {
+    while(pos != line_trimmed.size() && !iswspace(line_trimmed[pos])) {
         if(line_trimmed[pos] == '\\' && line_trimmed[pos+1] == '\'') {
             arg1 += line_trimmed[++pos];
             pos++;
@@ -146,8 +148,10 @@ vector<std::string> parse_instruction(std::string line) {
             pos++;
         }
     }
-    if(!is_int(arg1) && !is_pointer(arg1) && !is_register(arg1) && pos != line_trimmed.size()) {
-        while(pos != line_trimmed.size() && (line_trimmed[pos-1] != '0' && line_trimmed[pos-2] != '\\')) {
+    if(!is_int(arg1) && !is_pointer(arg1) 
+    && !is_register(arg1) && pos != line_trimmed.size()) {
+        while(pos != line_trimmed.size() 
+        && (line_trimmed[pos-1] != '0' && line_trimmed[pos-2] != '\\')) {
             if(line_trimmed[pos] == '\\' && line_trimmed[pos+1] == '\'') {
                 arg1 += line_trimmed[++pos];
                 pos++;
@@ -165,7 +169,7 @@ vector<std::string> parse_instruction(std::string line) {
 }
 
 /* makes a vector with the opcode, and operands, paired with their types */
-vector<pair<std::string, ARG_TYPE>> parse_arg_types(vector<std::string> arg_vector) {
+vector<pair<std::string, ARG_TYPE>> parse_arg_types(const vector<std::string>& arg_vector) {
 
     vector<pair<std::string, ARG_TYPE>> arg_type_vec;
 
@@ -190,7 +194,7 @@ vector<pair<std::string, ARG_TYPE>> parse_arg_types(vector<std::string> arg_vect
 
 
 /* peices things together for machine code instruction */
-std::string builder(vector<pair<std::string, ARG_TYPE>> instr, int A, int reg, int integer, int str, int ptr) {
+std::string builder(const vector<pair<std::string, ARG_TYPE>>& instr, int A, int reg, int integer, int str, int ptr) {
     int B = 0x0;
     int C = 0x0;
     int D = 0x0;
@@ -256,7 +260,7 @@ std::string builder(vector<pair<std::string, ARG_TYPE>> instr, int A, int reg, i
 }
 
 /* Generates machine code from the assembly file: filename */
-std::ostringstream gen_machine_code(std::string filename) {
+std::ostringstream gen_machine_code(const std::string& filename) {
     std::ostringstream os;
     std::ifstream file(filename); 
     std::string line = "";

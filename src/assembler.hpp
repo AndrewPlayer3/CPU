@@ -127,4 +127,20 @@ vector<std::string> opcode_vector = {
     "nop"
 };
 
+std::string trim(const std::string& s);
+bool is_label(const std::string& line);
+std::string trim_label(const std::string& label);
+bool is_opcode(const std::string& str);
+bool is_comment(const std::string& line);
+bool is_register(const std::string& str);
+bool is_instruction(const std::string& line);
+bool is_int(const std::string& str);
+bool is_pointer(const std::string& str);
+int to_int(const std::string& str);
+vector<std::string> parse_instruction(const std::string& line);
+vector<pair<std::string, ARG_TYPE>> parse_arg_types(const vector<std::string>& arg_vector);
+std::string builder(const vector<pair<std::string, ARG_TYPE>>& instr, int A, int reg, int integer, int str, int ptr);
+std::ostringstream gen_machine_code(const std::string& filename);
+
+
 #endif
