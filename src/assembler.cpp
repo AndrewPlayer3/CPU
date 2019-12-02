@@ -266,7 +266,6 @@ std::ostringstream gen_machine_code(const std::string& filename) {
     std::string line = "";
     int line_number = 1;
     while(std::getline(file, line)) {        
-        std::cout << line << std::endl;
         if(line != "") {
             std::string line_trimmed = trim(line);
             if(is_instruction(line_trimmed)) {
@@ -312,8 +311,6 @@ int main() {
     std::string ofilename = filename + ".inst";
     std::ofstream out_file(ofilename);
     out_file << machine_code.str();
-    std::cout << std::endl;
-    std::cout << machine_code.str() << std::endl;
     std::cout << "Program Compiled Successfully :)\n" << std::endl;
     return 0;
 }
