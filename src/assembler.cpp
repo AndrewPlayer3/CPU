@@ -60,6 +60,7 @@ bool is_opcode(const std::string& str) {
     }
     return false;
 }
+
 /* returns true if line is a comment */
 bool is_comment(const std::string& line) {
     if(trim(line)[0] != '#') {
@@ -74,6 +75,7 @@ bool is_register(const std::string& str) {
     }
     return true;
 }
+
 /* returns true if line is an instruction */
 bool is_instruction(const std::string& line) {
     bool prop = is_opcode(trim(line.substr(0, 3)));
@@ -81,6 +83,8 @@ bool is_instruction(const std::string& line) {
         return true;
     }
     return false;
+}
+
 /* returns true if line is an integer */
 bool is_int(const std::string& str) {
     int num;
