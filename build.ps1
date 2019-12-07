@@ -1,5 +1,6 @@
-# This script compiles the cpu emulator and assembler
-# they are compiled to the bin/ directory
+# This script compiles the cpu emulator and assembler.
+# They are compiled to the bin/ directory.
+# Will require allowing execution of unsigned scripts.
 
 # Create bin directory if it does not exist
 # Dont print the "it already exists" error

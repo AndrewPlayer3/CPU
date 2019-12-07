@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# This script compiles the cpu emulator and assembler
-# they are compiled to the bin/ directory
+# This script compiles the cpu emulator and assembler.
+# They are compiled to the bin/ directory.
+# Use "chmod +x build.sh" if you're getting permission denied.
 
 # Create bin directory if it does not exist
 # Dont print the "it already exists" error
