@@ -264,8 +264,9 @@ void parse_string(std::string& str, int* mem, int& next_free_location) {
 }
 
 /* Goes through the file and puts the opcodes and strings into memory */
-void parse_file(std::string& filename, int* mem, int& next_free_location) {
+bool parse_file(std::string& filename, int* mem, int& next_free_location) {
     std::ifstream file(filename); 
+    if(!file.is_open()) return false;
     std::string line;
     while(std::getline(file, line)) {
         int line_pos = 0;
@@ -287,6 +288,7 @@ void parse_file(std::string& filename, int* mem, int& next_free_location) {
             parse_string(line, &mem[0], next_free_location);
         }
     }
+    return true;
 }
 
 /* Prints the location and instruction and exits with code 1 */

@@ -151,5 +151,4 @@ vector<pair<std::string, ARG_TYPE>> parse_arg_types(const vector<std::string>& a
 std::string builder(const vector<pair<std::string, ARG_TYPE>>& instr);
 std::ostringstream gen_machine_code(const std::string& filename);
 
-
 #endif

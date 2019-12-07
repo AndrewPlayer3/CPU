@@ -247,7 +247,11 @@ std::string builder(const vector<pair<std::string, ARG_TYPE>>& instr) {
 /* returns an ostringstream with the generated machine code */
 std::ostringstream gen_machine_code(const std::string& filename) {
     std::ostringstream os;
-    std::ifstream file(filename); 
+    std::ifstream file(filename);
+    if(!file.is_open()) {
+        std::cout << "\nError opening file: " << filename << '\n' << std::endl;
+        exit(1); 
+    } 
     std::string line = "";
     int line_number = 1;
     while(std::getline(file, line)) {        
@@ -279,16 +283,4 @@ std::ostringstream gen_machine_code(const std::string& filename) {
         }
     }
     return os;
-}
-
-int main() {
-    std::cout << "Filename: ";
-    std::string filename = "";
-    std::cin >> filename;
-    std::ostringstream machine_code = gen_machine_code(filename);
-    std::string ofilename = filename + ".inst";
-    std::ofstream out_file(ofilename);
-    out_file << machine_code.str();
-    std::cout << "Program Compiled Successfully. Made: " << ofilename << '\n' << std::endl;
-    return 0;
 }

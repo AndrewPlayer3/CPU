@@ -62,7 +62,7 @@ public:
     void run       ();
 };
 
-void parse_file  (std::string& filename, int* mem, int& next_free_location);
+bool parse_file  (std::string& filename, int* mem, int& next_free_location);
 void parse_string(std::string& str,      int* mem, int& next_free_location);
 std::string read_memory(int* memory);
 void error(int loc, int inst);

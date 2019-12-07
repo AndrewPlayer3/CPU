@@ -12,15 +12,20 @@ DOESN'T WORK WITH 32-BIT MINGW/32-BIT GCC
 
 #include "instr.hpp"
 
-int  main() {
+int  main(int argc, char* argv[]) {
 
     CPU cpu;
-    
-    std::string filename;
-    std::cout << "Filename: ";
-    std::cin >> filename;
-    
-    parse_file(filename, &cpu.mem[0], cpu.next_free_location);
+
+    if(argv[1] == nullptr) {
+        std::cout << "ERROR: Please enter a valid filename along with the"
+            << " executable in the command line. \ni.e. ./executable filename" << std::endl;
+            return 1;
+    }
+
+    std::string filename = argv[1];
+    if(!parse_file(filename, &cpu.mem[0], cpu.next_free_location)) {
+        std::cout << "Error opening file: " << filename << std::endl;
+    }
     
     std::cout << std::endl;
     
