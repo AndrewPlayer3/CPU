@@ -17,9 +17,11 @@ int  main(int argc, char* argv[]) {
     CPU cpu;
 
     if(argv[1] == nullptr) {
-        std::cout << "ERROR: Please enter a valid filename along with the"
-            << " executable in the command line. \ni.e. ./executable filename" << std::endl;
-            return 1;
+        std::cout << "\nERROR: Please enter a valid filename along with the"
+            << " executable in the command line. " 
+            << "\ni.e. ./executable filename\n" << 
+            "P.S. The test files are in programs/ DO use the ones with .inst\n" << std::endl;
+        exit(1);
     }
 
     std::string filename = argv[1];
