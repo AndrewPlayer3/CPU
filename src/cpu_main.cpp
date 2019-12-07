@@ -25,7 +25,7 @@ int  main(int argc, char* argv[]) {
     }
 
     std::string filename = argv[1];
-    if(filename.substr(filename.size() - 6, 5) != ".inst") {
+    if(filename.substr(filename.size() - 5, 5) != ".inst") {
         std::cout << "\nWARNING: File is not a .inst file! Are you running the compiled version?\n" << std::endl;
     }
 
