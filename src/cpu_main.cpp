@@ -25,6 +25,10 @@ int  main(int argc, char* argv[]) {
     }
 
     std::string filename = argv[1];
+    if(filename.substr(filename.size() - 6, 5) != ".inst") {
+        std::cout << "\nWARNING: File is not a .inst file! Are you running the compiled version?\n" << std::endl;
+    }
+
     if(!parse_file(filename, &cpu.mem[0], cpu.next_free_location)) {
         std::cout << "Error opening file: " << filename << std::endl;
     }
