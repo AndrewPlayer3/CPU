@@ -15,8 +15,8 @@ int main(int argc, char* argv[]) {
     if(argv[1] == nullptr) {
         std::cout << "\nERROR: Please enter a valid filename along with the"
                   << " executable in the command line. " 
-                  << "\ni.e. ./executable filename\n" 
-                  << "P.S. The test files are in programs/ but NOT the ones with .inst\n" << std::endl;
+                  << "\ni.e. bin/assembler filename\n" 
+                  << "P.S. The test assembly files are in programs/  the ones WITHOUT .inst\n" << std::endl;
             return 1;
     }
     std::cout << std::endl;

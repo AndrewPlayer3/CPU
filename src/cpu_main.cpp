@@ -19,8 +19,8 @@ int  main(int argc, char* argv[]) {
     if(argv[1] == nullptr) {
         std::cout << "\nERROR: Please enter a valid filename along with the"
                   << " executable in the command line. " 
-                  << "\ni.e. ./executable filename\n" 
-                  << "P.S. The test files are in programs/ DO use the ones with .inst\n" << std::endl;
+                  << "\ni.e. bin/cpu filename\n" 
+                  << "P.S. The test machine code files are in programs/  the ones WITH .inst\n\n" << std::endl;
         exit(1);
     }
 
