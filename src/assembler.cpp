@@ -106,9 +106,9 @@ vector<std::string> opcode_vector = {
 
 /* Remove ws from beginning and end of line*/
 std::string trim(const std::string& s) {
-    std::size_t s_begin = s.find_first_not_of(' ');
-    if(s_begin < s.size()) {
-        std::size_t s_end   = s.find_last_not_of(' ');
+    std::size_t s_begin = s.find_first_not_of(" \t");
+    if(s_begin != std::string::npos) {
+        std::size_t s_end   = s.find_last_not_of(" \t");
         std::string s_trimmed = s.substr(s_begin, s_end - s_begin + 1);
         if(s_trimmed == "") {
             std::cout << "trimmed " << s << " to nothing" << std::endl;
@@ -150,7 +150,7 @@ bool is_opcode(const std::string& str) {
 
 /* returns true if line is a comment */
 bool is_comment(const std::string& line) {
-    if(trim(line)[0] != '#') {
+    if(line.size() > 0 && trim(line).size() > 0 && trim(line)[0] != '#') {
         return false;
     } 
     return true;
@@ -349,7 +349,7 @@ std::ostringstream gen_machine_code(const std::string& filename) {
                 auto arg_type_vector = parse_arg_types(instruction_vector);
                 os << builder(arg_type_vector);
             } else if(is_comment(line)) {
-                os << line << '\n';
+                os << trim(line) << '\n';
             } else if(is_label(line)) {
                 std::string label = trim_label(line);
                 os << "#" << label << '\n';
