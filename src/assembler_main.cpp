@@ -19,11 +19,15 @@ int main(int argc, char* argv[]) {
             "P.S. The test files are in programs/ but NOT the ones with .inst\n" << std::endl;
             return 1;
     }
-    std::string filename = argv[1];
-    std::ostringstream machine_code = gen_machine_code(filename);
-    std::string ofilename = filename + ".inst";
-    std::ofstream out_file(ofilename);
-    out_file << machine_code.str();
-    std::cout << "\nProgram Compiled Successfully. Made: " << ofilename << '\n' << std::endl;
+    std::cout << std::endl;
+    for(int i = 1; argv[i] != nullptr; i++) {
+        std::string filename = argv[i];
+        std::ostringstream machine_code = gen_machine_code(filename);
+        std::string ofilename = filename + ".inst";
+        std::ofstream out_file(ofilename);
+        out_file << machine_code.str();
+        std::cout << "Program Compiled Successfully. Made: " << ofilename << std::endl;
+    }
+    std::cout << std::endl;
     return 0;
 }
