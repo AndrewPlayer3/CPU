@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # This script compiles the cpu emulator and assembler.
 # They are compiled to the bin/ directory.
