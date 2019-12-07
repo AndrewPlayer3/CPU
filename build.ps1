@@ -4,11 +4,12 @@
 
 # Create bin directory if it does not exist
 # Dont print the "it already exists" error
-mkdir bin -erroraction 'silentlycontinue'
+mkdir bin -erroraction 'silentlycontinue' | Out-Null
 
 # Remove the the existing execs just because
-Remove-Item bin/cpu.exe
-Remove-Item bin/assembler.exe
+# Also doesn't print out their errors.
+Remove-Item bin/cpu.exe -erroraction 'silentlycontinue'
+Remove-Item bin/assembler.exe -erroraction 'silentlycontinue'
 
 # Compile to bin/cpu
 g++ -std=c++17 -O3 src/cpu_main.cpp src/instr.cpp -o bin/cpu

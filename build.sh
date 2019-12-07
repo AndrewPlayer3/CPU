@@ -6,11 +6,11 @@
 
 # Create bin directory if it does not exist
 # Dont print the "it already exists" error
-mkdir bin 2>/dev/null 
+mkdir bin 2>/dev/null
 
 # Remove the the existing execs just because
-rm bin/cpu.exe
-rm bin/assembler.exe
+rm bin/cpu.exe 2>/dev/null
+rm bin/assembler.exe 2>/dev/null
 
 # Compile to bin/cpu
 g++ -std=c++17 -O3 src/cpu_main.cpp src/instr.cpp -o bin/cpu
