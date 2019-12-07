@@ -31,3 +31,5 @@ out/assembler
 out/bash_assembler
 out/bash_main
 .inst
+out/cpu.exe
+*.exe
