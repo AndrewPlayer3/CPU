@@ -1,7 +1,20 @@
 # AssemblyProject
 
-This is a 16-bit instruction set that operates on an "emulated" 32bit cpu.
-There are two included test programs: boxprint and factorial.
+This is a 16-bit instruction set that operates on an "emulated" 32bit cpu,
+along with an assembler for a custom assembly language.
+
+There are several included demo programs in the programs folder. 
+
+To build the program to you can run the build script, or run these commands:
+"mkdir bin"
+"g++ -std=c++17 -O3 src/cpu_main.cpp src/instr.cpp -o bin/cpu"
+"g++ -std=c++17 -O3 src/assembler_main.cpp src/assembler.cpp -o bin/assembler"
+
+To assemble one(or more) of the test programs:
+"bin/assembler programs/filename"
+
+To run the compiled test programs:
+"bin/cpu programs/filename.inst"
 
 These are the instructions:
 
@@ -9,10 +22,10 @@ Arithmetic:
 
     0xA...
 
-        /* r[C] += r[D] 0xA0.. */
-        /* r[C] -= r[D] 0xA1.. */
-        /* r[C] *= r[D] 0xA2.. */
-        /* r[C] %= r[D] 0xA3.. */
+        /* r[C] += r[D] 0xA0.. */   /* add reg, int or reg */
+        /* r[C] -= r[D] 0xA1.. */   /* sub reg, int or reg */
+        /* r[C] *= r[D] 0xA2.. */   /* mul reg, int or reg */
+        /* r[C] %= r[D] 0xA3.. */   /* mod reg, int or reg */
         /* r[C] += int  0xA4.. */
         /* r[C] -= int  0xA5.. */
         /* r[C] *= int  0xA6.. */
