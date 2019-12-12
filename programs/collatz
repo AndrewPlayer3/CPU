@@ -30,3 +30,5 @@ odd:
 
 finish:
     #we done now boys
+    rdp 0
+    mdp 0,100

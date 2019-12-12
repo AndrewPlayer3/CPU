@@ -336,7 +336,7 @@ std::ostringstream gen_machine_code(const std::string& filename) {
     std::ostringstream os;
     std::ifstream file(filename);
     if(!file.is_open()) {
-        std::cout << "\nError opening file: " << filename << '\n' << std::endl;
+        std::cout << "\nError opening file: " << filename << std::endl;
         exit(1); 
     } 
     std::string line = "";

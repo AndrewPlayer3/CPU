@@ -44,4 +44,7 @@ Enter an Integer:\0
 #finish
 0xdf00
 0x2
-    #we done now boys
+#we done now boys
+0xf200
+0xf100
+0x64
