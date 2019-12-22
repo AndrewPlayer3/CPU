@@ -1,8 +1,5 @@
 /*
-INSTR Hex Instruction Set
-Andrew Player, Robert Lawton, Gannon Higgins
-October 18, 2019
-DOESN'T WORK WITH 32-BIT MINGW/32-BIT GCC
+    Andrew Player 2019
 */
 
 #include "assembler.hpp"
@@ -122,9 +119,7 @@ bool is_label(const std::string& line) {
     int pos = 0;
     std::string line_trimmed = trim(line);
     while(++pos != line_trimmed.size() && line_trimmed[pos] != ':');
-    if(line_trimmed[pos] != ':') {
-        return false;
-    }
+    if(line_trimmed[pos] != ':') return false;
     return true;
 }
 
@@ -142,33 +137,28 @@ std::string trim_label(const std::string& label) {
 
 /* checks if str is a valid opcode mnemonic */
 bool is_opcode(const std::string& str) {
-    for(std::string s : opcode_vector) {
+    for(std::string s : opcode_vector)
         if(str == s) return true;
-    }
     return false;
 }
 
 /* returns true if line is a comment */
 bool is_comment(const std::string& line) {
-    if(line.size() > 0 && trim(line).size() > 0 && trim(line)[0] != '#') {
+    if(line.size() > 0 && trim(line).size() > 0 && trim(line)[0] != '#')
         return false;
-    } 
     return true;
 } 
+
 /* returns true if line is a register */
 bool is_register(const std::string& str) {
-    if(str_to_reg.count(str) == 0) {
-        return false;
-    }
+    if(str_to_reg.count(str) == 0) return false;
     return true;
 }
 
 /* returns true if line is an instruction */
 bool is_instruction(const std::string& line) {
     bool prop = is_opcode(trim(line.substr(0, 3)));
-    if(prop) {
-        return true;
-    }
+    if(prop) return true;
     return false;
 }
 
@@ -176,9 +166,7 @@ bool is_instruction(const std::string& line) {
 bool is_int(const std::string& str) {
     int num;
     std::istringstream is(str);
-    if(is >> num) {
-        return true;
-    }
+    if(is >> num) return true;
     return false;
 }
 

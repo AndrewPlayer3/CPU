@@ -1,8 +1,5 @@
 /*
-INSTR Hex Instruction Set
-Andrew Player, Robert Lawton, Gannon Higgins
-October 18, 2019
-DOESN'T WORK WITH 32-BIT MINGW/32-BIT GCC
+    Andrew Player 2019
 */
 
 #ifndef _ASSEMBLER_HPP_
