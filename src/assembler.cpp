@@ -213,11 +213,8 @@ vector<std::string> parse_instruction(const std::string& line) {
             arg1 += line_trimmed[++pos];
             pos++;
         }
-        if(line_trimmed[pos] != '\'') {
-            arg1 += line_trimmed[pos++];
-        } else {
-            pos++;
-        }
+        if(line_trimmed[pos] != '\'') arg1 += line_trimmed[pos++];
+        else pos++;
     }
     if(!is_int(arg1) && !is_register(arg1) && pos != line_trimmed.size()) {
         while(pos != line_trimmed.size() 
@@ -226,11 +223,8 @@ vector<std::string> parse_instruction(const std::string& line) {
                 arg1 += line_trimmed[++pos];
                 pos++;
             } 
-            if(line_trimmed[pos] != '\'') {    
-                arg1 += line_trimmed[pos++];
-            } else {
-                pos++;
-            }
+            if(line_trimmed[pos] != '\'') arg1 += line_trimmed[pos++];
+            else pos++;
         }
     }
     vector<std::string> instruction_plus_args = {op, arg0, arg1};
@@ -302,19 +296,15 @@ std::string builder(const vector<pair<std::string, ARG_TYPE>>& instr) {
                 }
                 break;
             default:
-                std::cout << "Something wrong in general" << std::endl;
+                std::cout << "Builder function didn't match a case somehow." << std::endl;
                 exit(1);
         }
     }
     int inst = (op_bits << 12) | (B << 8) | (C << 4) | (D << 0);
     std::ostringstream os;
     os << "0x" << std::hex << inst << '\n';
-    if(is_int_arg) {
-        os << "0x" << int_arg << '\n';
-    }
-    if(is_str_arg && str_arg != "") {
-        os << str_arg << '\n';
-    }
+    if(is_int_arg) os << "0x" << int_arg << '\n';
+    if(is_str_arg && str_arg != "") os << str_arg << '\n';
     return os.str();
 }
 
