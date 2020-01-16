@@ -286,7 +286,7 @@ std::string builder(const vector<pair<std::string, ARG_TYPE>>& instr) {
                 } else {
                     D = 0x0;
                     str_arg = instr[1].first;
-                    if(LABEL_MAP.find(str_arg)->second == 0) {
+                    if(LABEL_MAP.find(str_arg) == LABEL_MAP.end()) {
                         LABEL_MAP.insert({str_arg, CURRENT_LABEL_VALUE});
                         int_arg = CURRENT_LABEL_VALUE++;
                     } else {
@@ -332,7 +332,7 @@ std::ostringstream gen_machine_code(const std::string& filename) {
                 std::string label = trim_label(line);
                 os << "#" << label << '\n';
                 os << "0x" << std::hex << 0xDF00 << '\n';
-                if(LABEL_MAP.find(label)->second == 0) {
+                if(LABEL_MAP.find(label) == LABEL_MAP.end()) {
                     LABEL_MAP.insert({trim_label(line), CURRENT_LABEL_VALUE});
                     os << "0x" << std::hex << CURRENT_LABEL_VALUE++ << '\n';
                 } else {
