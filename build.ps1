@@ -15,11 +15,11 @@ Remove-Item bin/assembler.exe -erroraction 'silentlycontinue'
 Write-Output ""
  
 # Compile to bin/cpu
-g++ -std=c++17 -O3 src/cpu_main.cpp src/instr.cpp -o bin/cpu
+c++ -std=c++17 -O3 src/cpu_main.cpp src/instr.cpp -o bin/cpu
 Write-Output "Compiled cpu to bin/cpu"
 
 # Compile to bin/assembler
-g++ -std=c++17 -O3 src/assembler_main.cpp src/assembler.cpp -o bin/assembler
+c++ -std=c++17 -O3 src/assembler_main.cpp src/assembler.cpp -o bin/assembler
 Write-Output "Compiled assembler to bin/assembler"
 
 # Print some instructions
