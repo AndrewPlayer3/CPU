@@ -87,6 +87,8 @@ void CPU::jmp() {
 
 /* Conditional Jumping, Jumping, and Compares */
 void CPU::jumping(int B, int C, int D) {
+    std::string C_string;
+    std::string D_string;
     switch(B){                                              /* Jumping:   */
         case 0x0:                                           /* jmp 0xD000 */           
             jmp();
@@ -118,6 +120,12 @@ void CPU::jumping(int B, int C, int D) {
                     || _cmp_flag==1)     {jmp()       ;}       
             else                         {regs[PCTR]++;}
             break;
+        case 0x7:                                           /* cms 0xD7.. */
+            C_string = read_memory(&mem[regs[C]]);
+            D_string = read_memory(&mem[regs[D]]);
+            if(C_string == D_string)    _cmp_flag = 0;
+            else                        _cmp_flag = 1;
+            break;
         case 0xF:
             //Anti-Collision Label Marker
             break;
@@ -129,33 +137,40 @@ void CPU::jumping(int B, int C, int D) {
 void CPU::input(int B, int C, int D) {
     std::string input;
     int size;
-    switch(B) {                                              /* Input:                */
-        case 0x0: regs[D] = mem[regs[PCTR]];      break;     /* mov r[D],int  0xE0..  */
-        case 0x1: regs[C] = regs[D];              break;     /* mov r[D],int  0xE1..  */
-        case 0x2:                                            /* cin r[D],int  0xE20.  */
+    switch(B) {                                                /* Input:                */
+        case 0x0: regs[D] = mem[regs[PCTR]];        break;     /* mov r[D],int  0xE0..  */
+        case 0x1: regs[C] = regs[D];                break;     /* mov r[D],int  0xE1..  */
+        case 0x2:                                              /* cin r[D],int  0xE20.  */
                   std::cout << ">> "; 
-                  std::cin >> regs[D];            break;
-        case 0x3: regs[D] = regs[PCTR];                      /* mov r[D],str* 0xE30.  */
+                  std::cin >> regs[D];
+                  std::cin.clear();
+                  std::cin.ignore(INT8_MAX, '\n');  break;
+        case 0x3: regs[D] = regs[PCTR];                        /* mov r[D],str* 0xE30.  */
                   while(mem[regs[PCTR]] != 0x5C30) {
                     regs[PCTR]++;
-                  }                               break;
-        case 0x4: regs[C] = mem[regs[D]];         break;     /* mov r[D],mem    0xE4.. */
-        case 0x5: mem[regs[C]] = mem[regs[D]];    break;     /* mov mem, r[C]   0xE5.. */
-        case 0x6: mem[regs[PCTR]] = mem[regs[D]]; break;     /* mov mem, r[D]   0xE6.. */
-        case 0x7: regs[D] = mem[mem[regs[PCTR]]]; break;     /* mov mem, int    0xE7.. */
-        case 0x8: regs[D] = next_free_location;              /* mov cin, str    0xE80. */
-                  std::cin.clear();
-                  std::cin.ignore(INT8_MAX, '\n');
+                  }                                 break;
+        case 0x4: regs[C] = mem[regs[D]];           break;     /* mov r[D],mem    0xE4.. */
+        case 0x5: mem[regs[C]] = mem[regs[D]];      break;     /* mov mem, r[C]   0xE5.. */
+        case 0x6: mem[regs[D]] = mem[regs[PCTR]++]; break;     /* mov mem, r[D]   0xE6.. */
+        case 0x7: regs[D] = mem[mem[regs[PCTR]]];   break;     /* mov mem, int    0xE7.. */
+        case 0x8: regs[D] = next_free_location;                /* mov cin, str    0xE80. */
                   std::cout << ">> " ;
                   std::getline(std::cin, input);
+                  std::cin.clear();
                   input += "\\0";
                   parse_string(input, &mem[0], next_free_location);           
-                                                 break;
-        case 0x9: size = mem[regs[PCTR]++];                  /* mov r[D],*int[] 0xE90. */
+                                                    break;
+        case 0x9: size = mem[regs[PCTR]++];                    /* mov r[D],*int[] 0xE90. */
                   regs[D] = regs[PCTR];
                   for(int i = 0; i < size-1; i++) {
                     ++regs[PCTR];
-                  }                               break;
+                  }                                 break;
+        case 0xA: 
+                                                    break;
+        case 0xB: push(D);                          break;
+        case 0xC: pop (D);                          break;
+        case 0xD: pusha();                          break;
+        case 0xE: popa();                           break;
         default: error(regs[PCTR], 0xE, B, C, D);
     }
 }
@@ -214,6 +229,32 @@ void CPU::run() {
     }
 }
 
+/* Frees a block of memory */
+bool CPU::free_memory() {
+    for(int i = end_text_section; i < MEMORY_SIZE; i++) {
+        mem[i] = 0;
+        next_free_location = end_text_section;
+    }
+    return true;
+}
+
+/* Frees a block of memory */
+bool CPU::free_memory(int& location) {
+    int loc = location;
+    while(mem[loc - 1] != 0x5c30) {
+        mem[loc++] = 0;
+    }
+    if(location < next_free_location) {
+        next_free_location = location;
+    }
+    return true;
+}
+
+/* Frees a block of memory */
+bool CPU::free_memory(int& location, int& distance) {
+    return true;
+}
+
 /* Reads strings from memory */
 std::string read_memory(int* memory) {
     int loc = 0;
@@ -261,7 +302,7 @@ void parse_string(std::string& str, int* mem, int& next_free_location) {
 }
 
 /* Goes through the file and puts the opcodes and strings into memory */
-bool parse_file(std::string& filename, int* mem, int& next_free_location) {
+bool parse_file(std::string& filename, int* mem, int& next_free_location, int& end_text_section) {
     std::ifstream file(filename); 
     if(!file.is_open()) return false;
     std::string line;
@@ -284,8 +325,44 @@ bool parse_file(std::string& filename, int* mem, int& next_free_location) {
         else if(line[line_pos] != '#') { /* Lines that start with # are comments */
             parse_string(line, &mem[0], next_free_location);
         }
+        end_text_section = next_free_location;
     }
+    
     return true;
+}
+
+// Assume stack base is always MEMORY_SIZE - 1 and decrements towards
+// the beginning of memory
+void CPU::push(int reg) {
+    if(stck[regs[SP] - 1] != 0) {
+        std::cout << "*** Stack Overwrote Critical Memory ***" << std::endl;
+        exit(1);
+    }
+    stck[regs[SP]--] = regs[reg];
+}
+
+void CPU::pop(int reg) {
+    if(regs[SP] >= 0) {
+        std::cout << "*** Stack Underflow ***" << std::endl;
+        exit(1);
+    }
+    regs[SP]++;
+    regs[reg] = stck[regs[SP]];
+    stck[regs[SP]] = 0;
+}
+
+/* Push all scratch registers to memory */
+void CPU::pusha() {
+    for(int i = 0; i < REGISTER_COUNT - 2; i++) {
+        push(i);
+    }
+}
+
+/* Pop all scratch registers from memory into the registers */
+void CPU::popa() {
+    for(int i = REGISTER_COUNT - 3; i >= 0; i--) {
+        pop(i);
+    }
 }
 
 /* Prints the location and instruction and exits with code 1 */
@@ -310,3 +387,4 @@ void error(int loc, int inst) {
     std::cout  << "Exiting Program with Code 1\n" << std::endl;
     exit(1);
 }
+

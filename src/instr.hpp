@@ -18,9 +18,12 @@
 /* Using defines because I think they look nicer than enums */
 #define REGISTER_COUNT 0x10
 #define MEMORY_SIZE    0x1FF
+#define STACK_SIZE     0x10
 
 /* Program Counter Register will be the last register */
 #define PCTR           REGISTER_COUNT - 1
+/* Stack Pointer Register */
+#define SP             0xE
 
 /* 32-bit CPU emulator */
 class CPU {
@@ -33,11 +36,15 @@ private:
 public:
 
     /* reg count is hardcoded to 16 to have 1 digit reg numbers */
-    int regs[REGISTER_COUNT];
-    int mem [MEMORY_SIZE];
+    int regs [REGISTER_COUNT];
+    int mem  [MEMORY_SIZE];
+    int* stck = &mem[MEMORY_SIZE - 1];
 
     /* The next free memory location to write to */
     int next_free_location;
+    /* The end of the text section. This is the   */
+    /* value of next_free_location at the start   */
+    int end_text_section;
 
     CPU() {
         /* Set mem and regs to 0 */
@@ -55,11 +62,18 @@ public:
     void jmp       ();                    /* 0xD000 */
     void mem_dump  (int until);           /* 0xF100 */
     void reg_dump  ();                    /* 0xF200 */
+    bool free_memory();
+    bool free_memory(int& location);
+    bool free_memory(int& location, int& distance);
+    void push(int reg);
+    void pop(int reg);
+    void pusha();
+    void popa();
     void exec      (int inst);
     void run       ();
 };
 
-bool parse_file  (std::string& filename, int* mem, int& next_free_location);
+bool parse_file  (std::string& filename, int* mem, int& next_free_location, int& end_text_section);
 void parse_string(std::string& str,      int* mem, int& next_free_location);
 std::string read_memory(int* memory);
 void error(int loc, int inst);

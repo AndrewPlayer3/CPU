@@ -26,7 +26,7 @@ int  main(int argc, char* argv[]) {
         std::cout << "\nWARNING: File is not a .inst file! Are you running the compiled version?\n" << std::endl;
     }
 
-    if(!parse_file(filename, &cpu.mem[0], cpu.next_free_location)) {
+    if(!parse_file(filename, &cpu.mem[0], cpu.next_free_location, cpu.end_text_section)) {
         std::cout << "Error opening file: " << filename << std::endl;
     }
     

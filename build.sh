@@ -23,6 +23,10 @@ echo "Compiled cpu to bin/cpu"
 c++ -std=c++17 -O3 src/assembler_main.cpp src/assembler.cpp -o bin/assembler
 echo "Compiled assembler to bin/assembler"
 
+# Compile to bin/run
+c++ -std=c++17 -O3 src/main.cpp src/instr.cpp src/assembler.cpp -o bin/run
+echo "Compiled build+run to bin/run"
+
 # Print some instructions
 echo ""
 echo "To assemble the test files use this: \"bin/assembler filename\""

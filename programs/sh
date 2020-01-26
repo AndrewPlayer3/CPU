@@ -1,0 +1,30 @@
+prompt:
+    mov r0, Enter a command:\0
+    pln r0
+    ins r1
+    jmp parse_command
+
+parse_command:
+    mov r14, rdp\0
+    cms r14, r1
+    je reg_dump
+    mov r14, mdp\0
+    cms r14, r1
+    je m_dump
+    mov r14, mem\0
+    cms r14, r1
+    je m_change
+
+m_dump:
+    mdp 0,0
+    jmp prompt
+
+reg_dump:
+    rdp 0
+    jmp prompt
+
+m_change:
+    mov r14, 160
+    mem r14, 123456
+    jmp prompt
+
