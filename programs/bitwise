@@ -1,12 +1,17 @@
 question:
-    mov r0, Push(0) or Pop(1)?\0
+    mov r0, Push or Pop?\0
     pln r0
-    ini r0
-    mov r1, 0
-    cmp r0, r1
+    ins r0
+    mov r1, Push\0
+    mov r2, Pop\0
+    mov r3, Loop\0
+    cms r0, r1
     je do_push
-    jg do_pop
-    jl do_loop
+    cms r0, r2
+    je do_pop
+    cms r0, r3
+    je do_loop
+    jmp question
 
 do_push:
     mov r0, Enter a number to push:\0
