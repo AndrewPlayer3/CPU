@@ -41,6 +41,7 @@ map<std::string, vector<int>> op_to_int = {
     {"mov", {0xE, 0x1, 0x0, 0x3}},
     {"ext", {0x0, 0x0, 0x0, 0x0}},
     {"run", {0x0, 0x0, 0x0, 0x0}},
+    {"ret", {0x0, 0x0, 0x0, 0x0}},
     {"lnk", {0xF, 0xF, 0xF, 0xF}},
     {"psh", {0xE, 0xB, 0xB, 0xB}},
     {"pop", {0xE, 0xC, 0xC, 0xC}},
@@ -182,10 +183,10 @@ vector<std::string> parse_instruction(const std::string& line) {
     while(pos != line_trimmed.size() && !iswspace(line_trimmed[pos])) {
         op += line_trimmed[pos++];
     }
-    if(!is_opcode(op)) {
-        std::cout << "Invalid Instruction: " << op << std::endl;
-        exit(1);
-    }
+    // if(!is_opcode(op)) {
+    //     std::cout << "Invalid Instruction: " << op << std::endl;
+    //     exit(1);
+    // }
     while(pos != line_trimmed.size() && iswspace(line_trimmed[pos])) {
         pos++;
     }
@@ -334,8 +335,18 @@ std::ostringstream gen_machine_code(const std::string& filename) {
                     os << "0x" << std::hex << LABEL_MAP.find(label)->second << '\n';
                 }
             } else if(is_tag(line)) {
-                if(tag_to_int.find(line_trimmed) != tag_to_int.end()) {
-                    os << "0x" << std::hex << tag_to_int[line_trimmed] << '\n';
+                vector<std::string> args = parse_instruction(line_trimmed);
+                if(tag_to_int.find(args[0]) != tag_to_int.end()) {
+                    os << "0x" << std::hex << tag_to_int[args[0]] << '\n';
+                    if(args[1] != "") {
+                        os << "0x" << std::hex << 0xDF00 << '\n';
+                        if(LABEL_MAP.find(args[1]) == LABEL_MAP.end()) {
+                            LABEL_MAP.insert({args[1], CURRENT_LABEL_VALUE});
+                            os << "0x" << std::hex << CURRENT_LABEL_VALUE++ << '\n';
+                        } else {
+                            os << "0x" << std::hex << LABEL_MAP.find(args[1])->second << '\n';
+                        }
+                    }
                 } else {
                     std::cout << "Invalid Tag: ";
                     std::cout << line_trimmed;
