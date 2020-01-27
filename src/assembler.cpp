@@ -322,7 +322,7 @@ std::ostringstream gen_machine_code(const std::string& filename) {
                     os << builder(arg_type_vector);
                 }
             } else if(is_comment(line)) {
-                os << trim(line) << '\n';
+                os << line_trimmed << '\n';
             } else if(is_label(line)) {
                 std::string label = trim_label(line);
                 os << "#" << label << '\n';
@@ -334,17 +334,17 @@ std::ostringstream gen_machine_code(const std::string& filename) {
                     os << "0x" << std::hex << LABEL_MAP.find(label)->second << '\n';
                 }
             } else if(is_tag(line)) {
-                if(tag_to_int.find(trim(line)) != tag_to_int.end()) {
-                    os << "0x" << std::hex << tag_to_int[trim(line)] << '\n';
+                if(tag_to_int.find(line_trimmed) != tag_to_int.end()) {
+                    os << "0x" << std::hex << tag_to_int[line_trimmed] << '\n';
                 } else {
                     std::cout << "Invalid Tag: ";
-                    std::cout << trim(line);
+                    std::cout << line_trimmed;
                     std::cout << " @ " << line_number << std::endl;
                     exit(1);
                 }
             } else {
                 std::cout << "Invalid Line: ";
-                std::cout << trim(line);
+                std::cout << line_trimmed;
                 std::cout << " @ " << line_number << std::endl;
                 exit(1); 
             }
