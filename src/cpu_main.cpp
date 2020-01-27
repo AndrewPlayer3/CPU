@@ -31,7 +31,7 @@ int  main(int argc, char* argv[]) {
     }
     
     std::cout << std::endl;
-    
+
     cpu.run();
     
     std::cout << "\nProgram Exited Successfully :)" << std::endl;

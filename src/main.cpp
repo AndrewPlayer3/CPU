@@ -17,9 +17,8 @@ int main(int argc, char* argv[]) {
     out_file << machine_code.str();
     std::cout << "Program Compiled Successfully. Made: " << ofilename << std::endl;
     out_file.close();
-    filename = argv[1] + std::string(".inst");
     CPU cpu;
-    if(!parse_file(filename, &cpu.mem[0], cpu.next_free_location, cpu.end_text_section)) {
+    if(!parse_file(ofilename, &cpu.mem[0], cpu.next_free_location, cpu.end_text_section)) {
         std::cout << "Error opening file: " << filename << std::endl;
     }
     std::cout << std::endl;

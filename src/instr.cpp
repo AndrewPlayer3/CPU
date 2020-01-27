@@ -74,7 +74,6 @@ void CPU::bitwise(int B, int C, int D) {
 
 /* Sets program counter to the location of a label (+1) */
 void CPU::jmp() {       
-    int jump_int = 0xD;
     int label = mem[regs[PCTR]];
     for(int i = 0; i < MEMORY_SIZE; i++) {
         if(mem[i] == label && i != regs[PCTR] && mem[i-1]==0xDF00) {

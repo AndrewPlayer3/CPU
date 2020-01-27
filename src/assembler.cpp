@@ -128,7 +128,7 @@ std::string trim(const std::string& s) {
 }
 
 bool is_label(const std::string& line) {
-    int pos = 0;
+    std::size_t pos = 0;
     std::string line_trimmed = trim(line);
     while(++pos != line_trimmed.size() && line_trimmed[pos] != ':');
     if(line_trimmed[pos] != ':') return false;
@@ -137,7 +137,7 @@ bool is_label(const std::string& line) {
 
 /* gets just the label name before the ':' */
 std::string trim_label(const std::string& label) {
-    int pos = 0;
+    std::size_t pos = 0;
     std::string label_no_ws = trim(label);
     std::string label_trimmed = "";
     while(pos != label_no_ws.size() && label_no_ws[pos] != ':') {
@@ -197,7 +197,7 @@ int to_int(const std::string& str) {
 
 /* makes a vector with the opcode and its operands from a givin line */
 vector<std::string> parse_instruction(const std::string& line) {
-    int pos = 0;
+    std::size_t pos = 0;
     std::string line_trimmed = trim(line);
     std::string op = "";
     while(pos != line_trimmed.size() && !iswspace(line_trimmed[pos])) {
@@ -269,7 +269,7 @@ std::string builder(const vector<pair<std::string, ARG_TYPE>>& instr) {
     int reg_bits = op_to_int[op][1];
     int int_bits = op_to_int[op][2];
     int str_bits = op_to_int[op][3];
-    int B, C, D = 0x0;
+    int B = 0x0, C = 0x0, D = 0x0;
     bool is_int_arg = false;
     int int_arg = 0x0;
     bool is_str_arg = false;
