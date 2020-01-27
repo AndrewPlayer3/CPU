@@ -1,96 +1,97 @@
-#Width Question
-mov r10, Width?\0
-pln r10
+.main
+    #Width Question
+    mov r10, Width?\0
+    pln r10
 
-#Box Width
-ini r0
+    #Box Width
+    ini r0
 
-#Height Question
-mov r10, Height?\0
-pln r10
+    #Height Question
+    mov r10, Height?\0
+    pln r10
 
-#Box Height
-ini r10
+    #Box Height
+    ini r10
 
-#Box Type Question
-mov r13, Filled (1) or Hollow (2)?\0
-pln r13
+    #Box Type Question
+    mov r13, Filled (1) or Hollow (2)?\0
+    pln r13
 
-#Box Type
-ini r12
+    #Box Type
+    ini r12
 
-#New Line
-mov r13, \0
-pln r13
+    #New Line
+    mov r13, \0
+    pln r13
 
-#Test Value
-mov r13, 1
+    #Test Value
+    mov r13, 1
 
-#Row Count
-mov r1, 1
+    #Row Count
+    mov r1, 1
 
-#Row Loop
-row_loop:
-    
-    #Column Count
-    mov r2, 1
+    #Row Loop
+    row_loop:
+        
+        #Column Count
+        mov r2, 1
 
-    #Column Loop
-    column_loop:
+        #Column Loop
+        column_loop:
 
-    #goto tests
-    jmp testing
+        #goto tests
+        jmp testing
 
-    #Print an x
-    print_x:
-    mov r5, x\0
-    put r5
+        #Print an x
+        print_x:
+        mov r5, x\0
+        put r5
 
-    #goto end loop
-    jmp end_loop
+        #goto end loop
+        jmp end_loop
 
-    #Print Space
-    print_space:
-    mov r5, ' '\0
-    put r5
+        #Print Space
+        print_space:
+        mov r5, ' '\0
+        put r5
 
-    #End Inside Loop
-    end_loop:
+        #End Inside Loop
+        end_loop:
 
-    #col++
-    add r2, 1
+        #col++
+        add r2, 1
 
-    #Col > width?
+        #Col > width?
+        cmp r2, r0
+        jle column_loop
+
+    #New Line
+    mov r5, \0
+    pln r5
+
+    #Row++
+    add r1, 1
+
+    #Row > Height?
+    cmp r1, r10
+    jle row_loop
+
+    #Goto finish once out of loop
+    jmp finish
+
+    #Tests
+    testing:
+    cmp r13, r12
+    je print_x
+    cmp r2, r13
+    je print_x
+    cmp r1, r13
+    je print_x
     cmp r2, r0
-    jle column_loop
+    je print_x
+    cmp r1, r10
+    je print_x
+    jmp print_space
 
-#New Line
-mov r5, \0
-pln r5
-
-#Row++
-add r1, 1
-
-#Row > Height?
-cmp r1, r10
-jle row_loop
-
-#Goto finish once out of loop
-jmp finish
-
-#Tests
-testing:
-cmp r13, r12
-je print_x
-cmp r2, r13
-je print_x
-cmp r1, r13
-je print_x
-cmp r2, r0
-je print_x
-cmp r1, r10
-je print_x
-jmp print_space
-
-#Finish
-finish:
+    #Finish
+    finish:

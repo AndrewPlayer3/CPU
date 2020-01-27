@@ -17,7 +17,6 @@
 
 using std::map;
 using std::vector;
-using std::string;
 using std::pair;
 
 /* These are all possible valid argument types */

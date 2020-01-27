@@ -15,7 +15,7 @@ std::map<std::string, int> LABEL_MAP;
 int CURRENT_LABEL_VALUE = 0x0001;
 
 /* Takes string for register enum */
-map<string, REGISTERS> str_to_reg = {
+map<std::string, REGISTERS> str_to_reg = {
     {"r0",  R0 },
     {"r1",  R1 },
     {"r2",  R2 },
@@ -37,8 +37,11 @@ map<string, REGISTERS> str_to_reg = {
 /* map from opcode to vector of the digits that can be assembled            */
 /* the last three digits are the possible second digits (aka A*CD)          */
 /* when the last operand is a register, or integer, or string, respectively */
-map<string, vector<int>> op_to_int = {
+map<std::string, vector<int>> op_to_int = {
     {"mov", {0xE, 0x1, 0x0, 0x3}},
+    {"ext", {0x0, 0x0, 0x0, 0x0}},
+    {"run", {0x0, 0x0, 0x0, 0x0}},
+    {"lnk", {0xF, 0xF, 0xF, 0xF}},
     {"psh", {0xE, 0xB, 0xB, 0xB}},
     {"pop", {0xE, 0xC, 0xC, 0xC}},
     {"psa", {0xE, 0xD, 0xD, 0xD}},
@@ -73,45 +76,15 @@ map<string, vector<int>> op_to_int = {
     {"nop", {0x0, 0x0, 0x0, 0x0}}
 };
 
-/* These are all the opcode mnemonics for now    */
-vector<std::string> opcode_vector = {
-    "mov",
-    "psh",
-    "pop",
-    "psa",
-    "ppa",
-    "mem",
-    "jmp",
-    "je" ,
-    "jl" ,
-    "jg" ,
-    "jle",
-    "jge",
-    "cmp",
-    "cms",
-    "add",
-    "sub",
-    "mul",
-    "mod",
-    "div",
-    "and",
-    "or" ,
-    "xor",
-    "rsh",
-    "lsh",
-    "not",
-    "ini",
-    "ins",
-    "out",
-    "put",
-    "pln",
-    "mdp",
-    "rdp",
-    "nop"
+/* Map to turn tags to their machine code ints */
+map<std::string, int> tag_to_int {
+    {".main"    , 0xFF00},
+    {".function", 0xFF11},
+    {".global"  , 0xFF22},
+    {""         , 0xFF33},
+    {""         , 0xFF44},
+    {""         , 0xFF55}
 };
-/* btw                                           */
-/* std::map::count() was giving us trouble thats */
-/* why this exists along with the op_to_int map  */
 
 /* Remove ws from beginning and end of line*/
 std::string trim(const std::string& s) {
@@ -125,6 +98,12 @@ std::string trim(const std::string& s) {
         return s_trimmed;
     }
     return "";
+}
+
+bool is_tag(const std::string& line) {
+    std::string line_trimmed = trim(line);
+    if(line_trimmed[0] != '.') return false;
+    return true;
 }
 
 bool is_label(const std::string& line) {
@@ -149,9 +128,9 @@ std::string trim_label(const std::string& label) {
 
 /* checks if str is a valid opcode mnemonic */
 bool is_opcode(const std::string& str) {
-    for(std::string s : opcode_vector)
-        if(str == s) return true;
-    return false;
+    if(op_to_int.find(str) == op_to_int.end())
+        return false;
+    return true;
 }
 
 /* returns true if line is a comment */
@@ -337,7 +316,11 @@ std::ostringstream gen_machine_code(const std::string& filename) {
             if(is_instruction(line_trimmed)) {
                 vector<std::string> instruction_vector = parse_instruction(line);
                 auto arg_type_vector = parse_arg_types(instruction_vector);
-                os << builder(arg_type_vector);
+                if(arg_type_vector[0].first == "lnk") {
+                    os << gen_machine_code(arg_type_vector[1].first).str();
+                } else {
+                    os << builder(arg_type_vector);
+                }
             } else if(is_comment(line)) {
                 os << trim(line) << '\n';
             } else if(is_label(line)) {
@@ -350,10 +333,19 @@ std::ostringstream gen_machine_code(const std::string& filename) {
                 } else {
                     os << "0x" << std::hex << LABEL_MAP.find(label)->second << '\n';
                 }
+            } else if(is_tag(line)) {
+                if(tag_to_int.find(trim(line)) != tag_to_int.end()) {
+                    os << "0x" << std::hex << tag_to_int[trim(line)] << '\n';
+                } else {
+                    std::cout << "Invalid Tag: ";
+                    std::cout << trim(line);
+                    std::cout << " @ " << line_number << std::endl;
+                    exit(1);
+                }
             } else {
                 std::cout << "Invalid Line: ";
-                std::cout << line;
-                std::cout << " @" << line_number << std::endl;
+                std::cout << trim(line);
+                std::cout << " @ " << line_number << std::endl;
                 exit(1); 
             }
             ++line_number;

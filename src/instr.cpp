@@ -223,6 +223,8 @@ void CPU::reg_dump() {
 /* Excecutes each instruction in memory */
 void CPU::run() {
     int prog_end = next_free_location;
+    while(mem[regs[PCTR]] != 0xFF00 && regs[PCTR] < prog_end) regs[PCTR]++;
+    regs[PCTR]++;
     while(regs[PCTR] < prog_end) {
         exec(mem[regs[PCTR]++]);
     }
@@ -330,8 +332,8 @@ bool parse_file(std::string& filename, int* mem, int& next_free_location, int& e
     return true;
 }
 
-// Assume stack base is always MEMORY_SIZE - 1 and decrements towards
-// the beginning of memory
+/* Assume stack base is always MEMORY_SIZE - 1 and decrements towards */
+/* the beginning of memory                                            */
 void CPU::push(int reg) {
     if(stck[regs[SP] - 1] != 0) {
         std::cout << "*** Stack Overwrote Critical Memory ***" << std::endl;
@@ -340,6 +342,8 @@ void CPU::push(int reg) {
     stck[regs[SP]--] = regs[reg];
 }
 
+/* SP starts at 0 (the end of mem) and decrements into the negatives */
+/* thus if it is above 0 it is outside of the memory                 */
 void CPU::pop(int reg) {
     if(regs[SP] >= 0) {
         std::cout << "*** Stack Underflow ***" << std::endl;

@@ -17,7 +17,7 @@
 
 /* Using defines because I think they look nicer than enums */
 #define REGISTER_COUNT 0x10
-#define MEMORY_SIZE    0x1FF
+#define MEMORY_SIZE    0xFFFF
 #define STACK_SIZE     0x10
 
 /* Program Counter Register will be the last register */
@@ -34,7 +34,6 @@ private:
     int _cmp_flag;
 
 public:
-
     /* reg count is hardcoded to 16 to have 1 digit reg numbers */
     int regs [REGISTER_COUNT];
     int mem  [MEMORY_SIZE];
@@ -42,6 +41,7 @@ public:
 
     /* The next free memory location to write to */
     int next_free_location;
+    
     /* The end of the text section. This is the   */
     /* value of next_free_location at the start   */
     int end_text_section;

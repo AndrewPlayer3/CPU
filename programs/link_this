@@ -1,0 +1,49 @@
+question:
+    mov r0, Push or Pop?\0
+    pln r0
+    ins r0
+    mov r1, Push\0
+    mov r2, Pop\0
+    mov r3, Loop\0
+    mov r4, Dump\0
+    mov r5, Quit\0
+    cms r0, r1
+    je do_push
+    cms r0, r2
+    je do_pop
+    cms r0, r3
+    je do_loop
+    cms r0, r4
+    je do_dump
+    cms r0, r5
+    je do_finish
+    jmp question
+
+do_push:
+    mov r0, Enter a number to push:\0
+    pln r0
+    ini r0
+    psh r0
+    jmp question
+
+do_pop:
+    pop r4
+    mov r0, Popped \0
+    put r0
+    out r4
+    mov r0, ' into R4.\0
+    pln r0
+    jmp question
+
+do_loop:
+    mov r0, 69
+    psh r0
+    jmp do_loop
+
+do_dump:
+    rdp 0, 0
+    mdp 0, 0
+    jmp question
+
+do_finish:
+    # Done Now...
