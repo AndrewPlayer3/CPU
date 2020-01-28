@@ -17,7 +17,7 @@
 
 /* Using defines because I think they look nicer than enums */
 #define REGISTER_COUNT 0x10
-#define MEMORY_SIZE    0xFFFF
+#define MEMORY_SIZE    0x2FF
 #define STACK_SIZE     0x10
 
 /* Program Counter Register will be the last register */
@@ -60,6 +60,7 @@ public:
     void output    (int B, int C, int D); /* 0xF... */
     void input     (int B, int C, int D); /* 0xE... */
     void jmp       ();                    /* 0xD000 */
+    void jmp       (int label);           /* 0xD000 */
     void mem_dump  (int until);           /* 0xF100 */
     void reg_dump  ();                    /* 0xF200 */
     bool free_memory();

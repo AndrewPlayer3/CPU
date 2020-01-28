@@ -1,0 +1,3 @@
+.function printString
+    pln r0
+    ret

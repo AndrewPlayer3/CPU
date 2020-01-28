@@ -84,6 +84,11 @@ void CPU::jmp() {
 	      << std::hex << mem[regs[PCTR]] << std::endl;
 }
 
+/* Sets program counter to the location of a label (+1) */
+void CPU::jmp(int location) {       
+    regs[PCTR] = location;
+}
+
 /* Conditional Jumping, Jumping, and Compares */
 void CPU::jumping(int B, int C, int D) {
     std::string C_string;
@@ -124,6 +129,18 @@ void CPU::jumping(int B, int C, int D) {
             D_string = read_memory(&mem[regs[D]]);
             if(C_string == D_string)    _cmp_flag = 0;
             else                        _cmp_flag = 1;
+            break;
+        case 0x8: //ret?
+            for(int i = 0x9; i >= 0; i--) pop(i);
+            pop(0xC);
+            jmp(regs[0xC]);
+            regs[PCTR]++;
+            break;
+        case 0x9: //run?
+            regs[0xC] = regs[PCTR];
+            push(0xC);
+            for(int i = 0; i < 0xA; i++) push(i);
+            jmp();
             break;
         case 0xF:
             //Anti-Collision Label Marker
@@ -196,7 +213,10 @@ void CPU::output(int B, int C, int D) {
             std::cout << mem[regs[D]] << std::endl;
             break;
         case 0x6:                                            /* new line   0xF600 */
-            std::cout << std::endl; break;                                      
+            std::cout << std::endl; break;                   
+        case 0xF:
+            //do nothing
+            break;                   
         default: error(regs[PCTR], 0xF, B, C, D);
     }
 }

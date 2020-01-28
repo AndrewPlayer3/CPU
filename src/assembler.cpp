@@ -40,8 +40,8 @@ map<std::string, REGISTERS> str_to_reg = {
 map<std::string, vector<int>> op_to_int = {
     {"mov", {0xE, 0x1, 0x0, 0x3}},
     {"ext", {0x0, 0x0, 0x0, 0x0}},
-    {"run", {0x0, 0x0, 0x0, 0x0}},
-    {"ret", {0x0, 0x0, 0x0, 0x0}},
+    {"run", {0xD, 0x9, 0x9, 0x9}},
+    {"ret", {0xD, 0x8, 0x8, 0x8}},
     {"lnk", {0xF, 0xF, 0xF, 0xF}},
     {"psh", {0xE, 0xB, 0xB, 0xB}},
     {"pop", {0xE, 0xC, 0xC, 0xC}},
@@ -180,24 +180,18 @@ vector<std::string> parse_instruction(const std::string& line) {
     std::size_t pos = 0;
     std::string line_trimmed = trim(line);
     std::string op = "";
-    while(pos != line_trimmed.size() && !iswspace(line_trimmed[pos])) {
-        op += line_trimmed[pos++];
-    }
-    // if(!is_opcode(op)) {
-    //     std::cout << "Invalid Instruction: " << op << std::endl;
-    //     exit(1);
-    // }
-    while(pos != line_trimmed.size() && iswspace(line_trimmed[pos])) {
-        pos++;
-    }
+    while(pos != line_trimmed.size() && !iswspace(line_trimmed[pos])) op += line_trimmed[pos++];
+    while(pos != line_trimmed.size() && iswspace(line_trimmed[pos])) pos++;
     std::string arg0 = "";
     std::string arg1 = "";
     while(pos != line_trimmed.size() 
-    && (!iswspace(line_trimmed[pos])) && line_trimmed[pos] != ',') {
+    && (!iswspace(line_trimmed[pos])) 
+    && line_trimmed[pos] != ',') {
         arg0 += line_trimmed[pos++];
     }
     while(pos != line_trimmed.size() 
-    && (iswspace(line_trimmed[pos]) || line_trimmed[pos] == ',')) {
+    && (iswspace(line_trimmed[pos]) 
+    || line_trimmed[pos] == ',')) {
         pos++;
     }
     while(pos != line_trimmed.size() && !iswspace(line_trimmed[pos])) {
