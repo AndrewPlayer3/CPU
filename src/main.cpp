@@ -5,7 +5,7 @@ int main(int argc, char* argv[]) {
     if(argv[1] == nullptr) {
         std::cout << "\nERROR: Please enter a valid filename along with the"
                   << " executable in the command line. " 
-                  << "\ni.e. bin/assembler filename\n" 
+                  << "\ni.e. bin/run filename\n" 
                   << "P.S. The test assembly files are in programs/  the ones WITHOUT .inst\n" << std::endl;
             return 1;
     }
@@ -17,6 +17,9 @@ int main(int argc, char* argv[]) {
     out_file << machine_code.str();
     std::cout << "Program Compiled Successfully. Made: " << ofilename << std::endl;
     out_file.close();
+    if(argv[2] != nullptr) {
+        parse_file_into_file(ofilename);
+    }
     CPU cpu;
     if(!parse_file(ofilename, &cpu.mem[0], cpu.next_free_location, cpu.end_text_section)) {
         std::cout << "Error opening file: " << filename << std::endl;
