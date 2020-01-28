@@ -197,7 +197,7 @@ void CPU::output(int B, int C, int D) {
     int loc;
     switch(B) {                                              /* Output:           */
         case 0x0:                                            /* cout r[D]  0xF00. */
-            std::cout << regs[D];
+            std::cout << std::dec << regs[D];
             break;
         case 0x1: mem_dump(mem[regs[PCTR]++]); break;        /* mem dump   0xF100 */
         case 0x2: reg_dump(); break;                         /* reg dump   0xF200 */
@@ -210,7 +210,7 @@ void CPU::output(int B, int C, int D) {
             std::cout<<read_memory(&mem[loc])<<std::endl;
             break;
         case 0x5:                                            /* cout@mem   0xF50. */
-            std::cout << mem[regs[D]] << std::endl;
+            std::cout << std::dec << mem[regs[D]] << std::endl;
             break;
         case 0x6:                                            /* new line   0xF600 */
             std::cout << std::endl; break;                   
@@ -348,7 +348,43 @@ bool parse_file(std::string& filename, int* mem, int& next_free_location, int& e
         }
         end_text_section = next_free_location;
     }
-    
+    return true;
+}
+
+/* Goes through the file and puts the opcodes and strings into memory */
+bool parse_file_into_file(std::string& filename) {
+    std::ifstream file(filename); 
+    if(!file.is_open()) return false;
+    std::string line;
+    std::ostringstream raw_file;
+    while(std::getline(file, line)) {
+        int line_pos = 0;
+        /* For opcodes, preceeding whitespace is ignored */
+        while(line[line_pos] == '\t' || line[line_pos] == ' ') {
+            line_pos++;
+        }
+        /* Opcodes must start with a 0 */
+        if(line[line_pos] == '0') {
+            int opcode;
+            std::istringstream ss(line);
+            if(ss >> std::hex >> opcode) {
+                raw_file << "0x" << std::hex << opcode << '\n';
+            } 
+        }
+        /* Strings are entered in 4 char chunks into memory */
+        /* the chars are implicitly cast as ints            */
+        else if(line[line_pos] != '#') { /* Lines that start with # are comments */
+            int raw_mem[MEMORY_SIZE] = {0};
+            int next = 0;
+            parse_string(line, &raw_mem[0], next);
+            for(int i = 0; i < next; i++) {
+                raw_file << "0x" << std::hex << raw_mem[i] << '\n';
+            }
+        }
+    }
+    std::string ofilename = "debug.inst";
+    std::ofstream ofile(ofilename);
+    ofile << raw_file.str();
     return true;
 }
 
