@@ -76,7 +76,6 @@ public:
 
 bool parse_file  (std::string& filename, int* mem, int& next_free_location, int& end_text_section);
 void parse_string(std::string& str,      int* mem, int& next_free_location);
-bool parse_file_into_file(std::string& filename);
 std::string read_memory(int* memory);
 void error(int loc, int inst);
 void error(int loc, int A, int B, int C, int D);

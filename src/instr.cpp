@@ -351,43 +351,6 @@ bool parse_file(std::string& filename, int* mem, int& next_free_location, int& e
     return true;
 }
 
-/* Goes through the file and puts the opcodes and strings into memory */
-bool parse_file_into_file(std::string& filename) {
-    std::ifstream file(filename); 
-    if(!file.is_open()) return false;
-    std::string line;
-    std::ostringstream raw_file;
-    while(std::getline(file, line)) {
-        int line_pos = 0;
-        /* For opcodes, preceeding whitespace is ignored */
-        while(line[line_pos] == '\t' || line[line_pos] == ' ') {
-            line_pos++;
-        }
-        /* Opcodes must start with a 0 */
-        if(line[line_pos] == '0') {
-            int opcode;
-            std::istringstream ss(line);
-            if(ss >> std::hex >> opcode) {
-                raw_file << "0x" << std::hex << opcode << '\n';
-            } 
-        }
-        /* Strings are entered in 4 char chunks into memory */
-        /* the chars are implicitly cast as ints            */
-        else if(line[line_pos] != '#') { /* Lines that start with # are comments */
-            int raw_mem[MEMORY_SIZE] = {0};
-            int next = 0;
-            parse_string(line, &raw_mem[0], next);
-            for(int i = 0; i < next; i++) {
-                raw_file << "0x" << std::hex << raw_mem[i] << '\n';
-            }
-        }
-    }
-    std::string ofilename = "debug.inst";
-    std::ofstream ofile(ofilename);
-    ofile << raw_file.str();
-    return true;
-}
-
 /* Assume stack base is always MEMORY_SIZE - 1 and decrements towards */
 /* the beginning of memory                                            */
 void CPU::push(int reg) {
