@@ -317,10 +317,10 @@ std::ostringstream gen_machine_code(const std::string& filename) {
                     os << builder(arg_type_vector);
                 }
             } else if(is_comment(line)) {
-                os << line_trimmed << '\n';
+                // Do Nothing :D
             } else if(is_label(line)) {
                 std::string label = trim_label(line);
-                os << "#" << label << '\n';
+                os << "# Label: " << label << '\n';
                 os << "0x" << std::hex << 0xDF00 << '\n';
                 if(LABEL_MAP.find(label) == LABEL_MAP.end()) {
                     LABEL_MAP.insert({trim_label(line), CURRENT_LABEL_VALUE});
@@ -331,6 +331,11 @@ std::ostringstream gen_machine_code(const std::string& filename) {
             } else if(is_tag(line)) {
                 vector<std::string> args = parse_instruction(line_trimmed);
                 if(tag_to_int.find(args[0]) != tag_to_int.end()) {
+                    if(args[0] == ".main") {    
+                        os << "<<<===Main===>>> " << '\n';
+                    } else {
+                        os << "# Function: " << args[1] << '\n';
+                    }
                     os << "0x" << std::hex << tag_to_int[args[0]] << '\n';
                     if(args[1] != "") {
                         os << "0x" << std::hex << 0xDF00 << '\n';
