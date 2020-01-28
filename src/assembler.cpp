@@ -358,8 +358,8 @@ std::ostringstream gen_machine_code(const std::string& filename) {
                 std::cout << " @ " << line_number << std::endl;
                 exit(1); 
             }
-            ++line_number;
         }
+        ++line_number;
     }
     return os;
 }
