@@ -10,6 +10,7 @@ mkdir bin -erroraction 'silentlycontinue' | Out-Null
 # Also doesn't print out their errors.
 Remove-Item bin/cpu.exe -erroraction 'silentlycontinue'
 Remove-Item bin/assembler.exe -erroraction 'silentlycontinue'
+Remove-Item bin/run.exe -erroraction 'silentlycontinue'
 
 # New Line
 Write-Output ""
@@ -30,6 +31,7 @@ Write-Output "Compiled build+run to bin/run"
 Write-Output ""
 Write-Output "To assemble the test files use this: 'bin/assembler filename'"
 Write-Output "To run the test files use this: 'bin/cpu filename'"
+Write-Output "To assemble and run use this: 'bin/run filename\'"
 Write-Output "Note: the cpu only runs the .inst files. These are what the assembler generates."
 Write-Output "Check the programs folder for the test programs."
 Write-Output ""

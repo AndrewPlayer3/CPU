@@ -11,6 +11,7 @@ mkdir bin 2>/dev/null
 # Remove the the existing execs just because
 rm bin/cpu.exe 2>/dev/null
 rm bin/assembler.exe 2>/dev/null
+rm bin/run.exe 2>/dev/null
 
 # New Line
 echo ""
@@ -31,6 +32,7 @@ echo "Compiled build+run to bin/run"
 echo ""
 echo "To assemble the test files use this: \"bin/assembler filename\""
 echo "To run the test files use this: \"bin/cpu filename.inst\""
+echo "To assemble and run use this: \"bin/run filename\""
 echo "Note: the cpu only runs the .inst files. These are what the assembler generates"
 echo "Check the programs folder for the test programs."
 echo ""
