@@ -15,15 +15,5 @@ lnk programs/function
     run subInts
     ret
 
-.main 
-    mov r3, ' \0
-    mov r0, 10
-    mov r1, 15
-    run addInts
-    out r11
-    pln r3
-    run subInts
-    out r11
-    pln r3
-    mov r0, This is a string.\0
-    run printString
+# run should push the scratch registers [0 - 9]
+# ret should then pop them back
