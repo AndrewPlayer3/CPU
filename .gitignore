@@ -28,6 +28,7 @@ out/assembler.exe
 out/assembler
 out/bash_assembler
 out/bash_main
+debug.inst
 .inst
 out/cpu.exe
 *.exe
