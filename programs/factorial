@@ -1,4 +1,5 @@
-.main 
+# Factorial Program
+.main
     mov r0, Enter a Number:\0
     pln r0
     ini r1

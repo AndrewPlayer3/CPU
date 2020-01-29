@@ -1,4 +1,7 @@
 # Collatz Function
+
+lnk programs/function_test
+
 .main
     mov r10, Enter an Integer:\0
     pln r10
@@ -30,3 +33,7 @@
 
     finish_collatz:
         #we done now boys
+        mov r0, 105
+        psh r0
+        psh r0
+        psh r0
