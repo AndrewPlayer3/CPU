@@ -107,14 +107,6 @@ bool is_tag(const std::string& line) {
     return true;
 }
 
-bool is_label(const std::string& line) {
-    std::size_t pos = 0;
-    std::string line_trimmed = trim(line);
-    while(++pos != line_trimmed.size() && line_trimmed[pos] != ':');
-    if(line_trimmed[pos] != ':') return false;
-    return true;
-}
-
 /* gets just the label name before the ':' */
 std::string trim_label(const std::string& label) {
     std::size_t pos = 0;
@@ -125,6 +117,16 @@ std::string trim_label(const std::string& label) {
         pos++;
     }
     return label_trimmed;
+}
+
+bool is_label(const std::string& line) {
+    std::size_t pos = 0;
+    std::string line_trimmed = trim(line);
+    while(++pos != line_trimmed.size() && line_trimmed[pos] != ':');
+    if(line_trimmed[pos] != ':') return false;
+    while(iswspace(line_trimmed[++pos]));
+    if(line_trimmed[pos] != '#' && line_trimmed[pos] != '\0') return false;
+    return true;
 }
 
 /* checks if str is a valid opcode mnemonic */
@@ -308,7 +310,7 @@ std::ostringstream gen_machine_code(const std::string& filename) {
     while(std::getline(file, line)) {        
         if(line != "") {
             std::string line_trimmed = trim(line);
-            if(is_instruction(line_trimmed)) {
+            if(is_instruction(line_trimmed) && !is_label(line_trimmed)) {
                 vector<std::string> instruction_vector = parse_instruction(line);
                 auto arg_type_vector = parse_arg_types(instruction_vector);
                 if(arg_type_vector[0].first == "lnk") {
