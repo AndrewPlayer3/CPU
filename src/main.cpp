@@ -25,12 +25,15 @@ int main(int argc, char* argv[]) {
     cpu.run();
     std::ostringstream os;
     if(argv[2] != nullptr) {
-        for(int i = 0; i < MEMORY_SIZE; i++) {
-            os << "0x" << std::hex << cpu.mem[i] << '\n';
+        std::string arg = (std::string)argv[2];
+        if(arg == "debug") {
+            for(int i = 0; i < MEMORY_SIZE; i++) {
+                os << "0x" << std::hex << cpu.mem[i] << '\n';
+            }
+            std::ofstream ofile("debug.inst");
+            ofile << os.str();
+            ofile.close();
         }
-        std::ofstream ofile("debug.inst");
-        ofile << os.str();
-        ofile.close();
     }
     std::cout << "\nProgram Exited Successfully :)" << std::endl;
     std::cout << std::endl;
