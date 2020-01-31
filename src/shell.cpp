@@ -22,13 +22,16 @@ int main() {
         std::getline(std::cin, input);
         if(input == "quit()") {
             break;
-        }
-        if(input == "r") {
+        } else if(input == "r") {
             cpu.reg_dump();
             continue;
-        }
-        if(input == "m") {
+        } else if(input == "m") {
             cpu.mem_dump(cpu.next_free_location + 1);
+            continue;
+        } else if(input == "") {
+            continue;
+        } else if(input == "n") {
+            cpu.regs[PCTR]++;
             continue;
         }
         std::ostringstream os;
