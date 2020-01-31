@@ -46,7 +46,8 @@ public:
     /* value of next_free_location at the start   */
     int end_text_section;
 
-    /*  */
+    /* This can be set to true when a program has */
+    /* been fully loaded into memory.             */
     bool loaded;
 
     CPU() {
