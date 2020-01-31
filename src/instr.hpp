@@ -46,12 +46,16 @@ public:
     /* value of next_free_location at the start   */
     int end_text_section;
 
+    /*  */
+    bool loaded;
+
     CPU() {
         /* Set mem and regs to 0 */
         for(int i = 0; i < REGISTER_COUNT; i++) { regs[i] = 0; }
         for(int i = 0; i < MEMORY_SIZE   ; i++) { mem [i] = 0; }
         next_free_location  = 0;
         _cmp_flag = 0;
+        loaded = false;
     }
 
     void arithmetic(int B, int C, int D); /* 0xA... */

@@ -438,4 +438,5 @@ std::ostringstream gen_code_from_line(std::string& line) {
             exit(1); 
         }
     }
+    return os;
 }

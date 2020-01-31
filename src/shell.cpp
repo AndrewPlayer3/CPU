@@ -16,8 +16,6 @@ int main() {
 
     CPU cpu;
 
-    std::ostringstream os;
-
     while(true) {
         std::cout << ">> ";
         std::string input = "";
@@ -25,6 +23,15 @@ int main() {
         if(input == "quit()") {
             break;
         }
+        if(input == "r") {
+            cpu.reg_dump();
+            continue;
+        }
+        if(input == "m") {
+            cpu.mem_dump(cpu.next_free_location + 1);
+            continue;
+        }
+        std::ostringstream os;
         os << input << '\n';
         std::ostringstream instruction = gen_code_from_line(input);
         std::string inst_string = instruction.str();

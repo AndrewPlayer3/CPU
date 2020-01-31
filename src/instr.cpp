@@ -144,6 +144,7 @@ void CPU::jumping(int B, int C, int D) {
             break;
         case 0xF:
             //Anti-Collision Label Marker
+            regs[0xF]++;
             break;
         default: error(regs[PCTR], 0xD, B, C, D);
     }
@@ -154,7 +155,7 @@ void CPU::input(int B, int C, int D) {
     std::string input;
     int size;
     switch(B) {                                                /* Input:                */
-        case 0x0: regs[D] = mem[regs[PCTR]];        break;     /* mov r[D],int  0xE0..  */
+        case 0x0: regs[D] = mem[regs[PCTR]++];      break;     /* mov r[D],int  0xE0..  */
         case 0x1: regs[C] = regs[D];                break;     /* mov r[D],int  0xE1..  */
         case 0x2:                                              /* cin r[D],int  0xE20.  */
                   std::cout << ">> "; 
@@ -168,13 +169,16 @@ void CPU::input(int B, int C, int D) {
         case 0x4: regs[C] = mem[regs[D]];           break;     /* mov r[D],mem    0xE4.. */
         case 0x5: mem[regs[C]] = mem[regs[D]];      break;     /* mov mem, r[C]   0xE5.. */
         case 0x6: mem[regs[D]] = mem[regs[PCTR]++]; break;     /* mov mem, r[D]   0xE6.. */
-        case 0x7: regs[D] = mem[mem[regs[PCTR]]];   break;     /* mov mem, int    0xE7.. */
+        case 0x7: regs[D] = mem[mem[regs[PCTR]++]]; break;     /* mov mem, int    0xE7.. */
         case 0x8: regs[D] = next_free_location;                /* mov cin, str    0xE80. */
                   std::cout << ">> " ;
                   std::getline(std::cin, input);
                   std::cin.clear();
                   input += "\\0";
-                  parse_string(input, &mem[0], next_free_location);           
+                  parse_string(input, &mem[0], next_free_location);
+                  if(!loaded) {
+                      regs[PCTR] = next_free_location;
+                  }           
                                                     break;
         case 0x9: size = mem[regs[PCTR]++];                    /* mov r[D],*int[] 0xE90. */
                   regs[D] = regs[PCTR];
@@ -243,6 +247,7 @@ void CPU::reg_dump() {
 /* Excecutes each instruction in memory */
 void CPU::run() {
     int prog_end = next_free_location;
+    regs[PCTR] = 0;
     while(mem[regs[PCTR]] != 0xFF00 && regs[PCTR] < prog_end) regs[PCTR]++;
     regs[PCTR]++;
     while(regs[PCTR] < prog_end) {
