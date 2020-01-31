@@ -351,6 +351,34 @@ bool parse_file(std::string& filename, int* mem, int& next_free_location, int& e
     return true;
 }
 
+/* Goes through the file and puts the opcodes and strings into memory */
+bool parse_block(std::string& code, int* mem, int& next_free_location, int& end_text_section) {
+    std::istringstream is(code);
+    std::string line;
+    while(std::getline(is, line)) {
+        int line_pos = 0;
+        /* For opcodes, preceeding whitespace is ignored */
+        while(line[line_pos] == '\t' || line[line_pos] == ' ') {
+            line_pos++;
+        }
+        /* Opcodes must start with a 0 */
+        if(line[line_pos] == '0') {
+            int opcode;
+            std::istringstream ss(line);
+            if(ss >> std::hex >> opcode) {
+                mem[next_free_location++] = opcode;
+            } 
+        }
+        /* Strings are entered in 4 char chunks into memory */
+        /* the chars are implicitly cast as ints            */
+        else if(line[line_pos] != '#') { /* Lines that start with # are comments */
+            parse_string(line, &mem[0], next_free_location);
+        }
+        end_text_section = next_free_location;
+    }
+    return true;
+}
+
 /* Assume stack base is always MEMORY_SIZE - 1 and decrements towards */
 /* the beginning of memory                                            */
 void CPU::push(int reg) {

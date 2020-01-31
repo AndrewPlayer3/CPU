@@ -222,6 +222,7 @@ vector<std::string> parse_instruction(const std::string& line) {
 /* makes a vector with the opcode, and operands, paired with their types */
 /* NOTE: This has no error handling, only pass it validated instructions */
 vector<pair<std::string, ARG_TYPE>> parse_arg_types(const vector<std::string>& arg_vector) {
+    /* P.S. ARG_TYPE = {OPCODE, INTEGER, REGISTER, STRING} */
     vector<pair<std::string, ARG_TYPE>> arg_type_vec;
     for(std::string arg : arg_vector) {
         if(is_opcode(arg)) {
@@ -310,6 +311,7 @@ std::ostringstream gen_machine_code(const std::string& filename) {
     while(std::getline(file, line)) {        
         if(line != "") {
             std::string line_trimmed = trim(line);
+            // If its an instruction build the machine code
             if(is_instruction(line_trimmed) && !is_label(line_trimmed)) {
                 vector<std::string> instruction_vector = parse_instruction(line);
                 auto arg_type_vector = parse_arg_types(instruction_vector);
@@ -318,9 +320,13 @@ std::ostringstream gen_machine_code(const std::string& filename) {
                 } else {
                     os << builder(arg_type_vector);
                 }
-            } else if(is_comment(line)) {
+            } 
+            // If its a comment there is nothing to do
+            else if(is_comment(line)) {
                 // Do Nothing :D
-            } else if(is_label(line)) {
+            } 
+            // If its a label find/create the label number and insert it
+            else if(is_label(line)) {
                 std::string label = trim_label(line);
                 os << "# Label: " << label << '\n';
                 os << "0x" << std::hex << 0xDF00 << '\n';
@@ -330,7 +336,9 @@ std::ostringstream gen_machine_code(const std::string& filename) {
                 } else {
                     os << "0x" << std::hex << LABEL_MAP.find(label)->second << '\n';
                 }
-            } else if(is_tag(line)) {
+            } 
+            // If its a tag find/create the tag number and insert it
+            else if(is_tag(line)) {
                 vector<std::string> args = parse_instruction(line_trimmed);
                 if(tag_to_int.find(args[0]) != tag_to_int.end()) {
                     if(args[0] == ".main") {    
@@ -354,7 +362,9 @@ std::ostringstream gen_machine_code(const std::string& filename) {
                     std::cout << " @ " << line_number << std::endl;
                     exit(1);
                 }
-            } else {
+            } 
+            // Since the line didn't match anything it must be invalid
+            else {
                 std::cout << "Invalid Line: ";
                 std::cout << line_trimmed;
                 std::cout << " @ " << line_number << std::endl;
@@ -364,4 +374,68 @@ std::ostringstream gen_machine_code(const std::string& filename) {
         ++line_number;
     }
     return os;
+}
+
+std::ostringstream gen_code_from_line(std::string& line) {
+    std::ostringstream os;
+    if(line != "") {
+        std::string line_trimmed = trim(line);
+        // If its an instruction build the machine code
+        if(is_instruction(line_trimmed) && !is_label(line_trimmed)) {
+            vector<std::string> instruction_vector = parse_instruction(line);
+            auto arg_type_vector = parse_arg_types(instruction_vector);
+            if(arg_type_vector[0].first == "lnk") {
+                os << gen_machine_code(arg_type_vector[1].first).str();
+            } else {
+                os << builder(arg_type_vector);
+            }
+        } 
+        // If its a comment there is nothing to do
+        else if(is_comment(line)) {
+            // Do Nothing :D
+        } 
+        // If its a label find/create the label number and insert it
+        else if(is_label(line)) {
+            std::string label = trim_label(line);
+            os << "# Label: " << label << '\n';
+            os << "0x" << std::hex << 0xDF00 << '\n';
+            if(LABEL_MAP.find(label) == LABEL_MAP.end()) {
+                LABEL_MAP.insert({trim_label(line), CURRENT_LABEL_VALUE});
+                os << "0x" << std::hex << CURRENT_LABEL_VALUE++ << '\n';
+            } else {
+                os << "0x" << std::hex << LABEL_MAP.find(label)->second << '\n';
+            }
+        } 
+        // If its a tag find/create the tag number and insert it
+        else if(is_tag(line)) {
+            vector<std::string> args = parse_instruction(line_trimmed);
+            if(tag_to_int.find(args[0]) != tag_to_int.end()) {
+                if(args[0] == ".main") {    
+                    os << "<<<===Main===>>> " << '\n';
+                } else {
+                    os << "# Function: " << args[1] << '\n';
+                }
+                os << "0x" << std::hex << tag_to_int[args[0]] << '\n';
+                if(args[1] != "") {
+                    os << "0x" << std::hex << 0xDF00 << '\n';
+                    if(LABEL_MAP.find(args[1]) == LABEL_MAP.end()) {
+                        LABEL_MAP.insert({args[1], CURRENT_LABEL_VALUE});
+                        os << "0x" << std::hex << CURRENT_LABEL_VALUE++ << '\n';
+                    } else {
+                        os << "0x" << std::hex << LABEL_MAP.find(args[1])->second << '\n';
+                    }
+                }
+            } else {
+                std::cout << "Invalid Tag: ";
+                std::cout << line_trimmed;
+                exit(1);
+            }
+        } 
+        // Since the line didn't match anything it must be invalid
+        else {
+            std::cout << "Invalid Line: ";
+            std::cout << line_trimmed;
+            exit(1); 
+        }
+    }
 }

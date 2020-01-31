@@ -61,5 +61,6 @@ vector<std::string> parse_instruction(const std::string& line);
 vector<pair<std::string, ARG_TYPE>> parse_arg_types(const vector<std::string>& arg_vector);
 std::string builder(const vector<pair<std::string, ARG_TYPE>>& instr);
 std::ostringstream gen_machine_code(const std::string& filename);
+std::ostringstream gen_code_from_line(std::string& line);
 
 #endif
