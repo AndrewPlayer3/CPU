@@ -21,6 +21,7 @@ int main(int argc, char* argv[]) {
     if(!parse_file(ofilename, &cpu.mem[0], cpu.next_free_location, cpu.end_text_section)) {
         std::cout << "Error opening file: " << filename << std::endl;
     }
+    cpu.loaded = true;
     std::cout << std::endl;
     cpu.run();
     std::ostringstream os;
