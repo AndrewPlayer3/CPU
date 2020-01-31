@@ -28,6 +28,9 @@ echo "Compiled assembler to bin/assembler"
 c++ -std=c++17 -Wall -O3 src/main.cpp src/instr.cpp src/assembler.cpp -o bin/run
 echo "Compiled build+run to bin/run"
 
+# Compile to bin/run
+c++ -std=c++17 -Wall -O3 src/shell.cpp src/instr.cpp src/assembler.cpp -o bin/ish
+
 # Print some instructions
 echo ""
 echo "To assemble the test files use this: \"bin/assembler filename\""
