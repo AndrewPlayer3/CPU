@@ -1,3 +1,21 @@
+.function dump_mem
+    mdp 0,0
+    ret
+
+.function dump_reg
+    rdp 0,0
+    ret
+
+.function change_mem
+    mov r0, Location: \0
+    put r0
+    ini r1
+    mov r0, Value: \0
+    put r0
+    ini r2
+    mem r1, r2
+    ret
+
 .main
     prompt:
         mov r0, Enter a command:\0
@@ -8,10 +26,10 @@
     parse_command:
         mov r14, rdp\0
         cms r14, r1
-        je reg_dump
+        run reg_dump
         mov r14, mdp\0
         cms r14, r1
-        je m_dump
+        je men_dump
         mov r14, mem\0
         cms r14, r1
         je m_change

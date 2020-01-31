@@ -1,3 +1,6 @@
+# This file tests all of the possible instructions
+# along with their possible arguments.
+
 lnk programs/function_test
 
 .main
@@ -185,7 +188,7 @@ lnk programs/function_test
         mov r3, ' \0
         mov r0, 10
         mov r1, 15
-        run addInts
+        run diffAddInts
         out r11
         pln r3
         run subInts

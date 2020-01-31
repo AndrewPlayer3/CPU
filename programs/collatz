@@ -1,7 +1,5 @@
 # Collatz Function
 
-lnk programs/function_test
-
 .main
     mov r10, Enter an Integer:\0
     pln r10

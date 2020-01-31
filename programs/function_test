@@ -15,5 +15,12 @@ lnk programs/function
     run subInts
     ret
 
+# there is no functional difference between labels and functions
+# both are actually interchangable
+diffAddInts:
+    add r0, r1
+    mov r11, r0
+    ret
+
 # run should push the scratch registers [0 - 9]
 # ret should then pop them back
