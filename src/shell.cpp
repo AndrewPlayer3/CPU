@@ -33,7 +33,13 @@ int main() {
         } else if(input == "n") {
             cpu.regs[PCTR]++;
             continue;
-        }
+        } else if(input == "b") {
+	    cpu.regs[PCTR]--;
+	    continue;
+	} else if(input == "d") {
+	    cpu.exec(cpu.mem[cpu.regs[PCTR]++]);
+	    continue;
+	}
         std::ostringstream os;
         os << input << '\n';
         std::ostringstream instruction = gen_code_from_line(input);

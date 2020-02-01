@@ -163,7 +163,7 @@ void CPU::input(int B, int C, int D) {
                   std::cin.clear();
                   std::cin.ignore(INT8_MAX, '\n');  break;
         case 0x3: regs[D] = regs[PCTR];                        /* mov r[D],str* 0xE30.  */
-                  while(mem[regs[PCTR]] != 0x5C30) {
+                  while(mem[regs[PCTR] - 1] != 0x5C30) {
                     regs[PCTR]++;
                   }                                 break;
         case 0x4: regs[C] = mem[regs[D]];           break;     /* mov r[D],mem    0xE4.. */
