@@ -230,7 +230,7 @@ void CPU::mem_dump(int until) {
     if(until <= 0 || until > MEMORY_SIZE) until = MEMORY_SIZE;
     for(int i = 0; i < until; i++) {
         /* Memory[x]: y */
-        std::cout << "Memory[" << i << "]: " 
+        std::cout << "Memory[" << std::hex << i << "]: " 
         << std::hex << mem[i] << std::endl;
     }
 }
@@ -241,6 +241,15 @@ void CPU::reg_dump() {
         /* Register[x]: y */
         std::cout << "Register[" << std::hex << i << "]: " 
         << regs[i] << std::endl; 
+    }
+}
+
+/* Like the other dumps but for the stack */
+void CPU::stack_dump() {
+    for(int i = 0, j = MEMORY_SIZE - 1; i > regs[SP] - 1; i--, j--) {
+        /* Memory[x]: y */
+        std::cout << "Memory[" << std::hex << j << "]: " 
+        << std::hex << stck[i] << std::endl;
     }
 }
 

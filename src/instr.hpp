@@ -68,6 +68,7 @@ public:
     void jmp       (int label);           /* 0xD000 */
     void mem_dump  (int until);           /* 0xF100 */
     void reg_dump  ();                    /* 0xF200 */
+    void stack_dump();
     bool free_memory();
     bool free_memory(int& location);
     bool free_memory(int& location, int& distance);

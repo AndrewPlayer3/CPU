@@ -39,6 +39,17 @@ int main() {
         } else if(input == "d") {
             cpu.exec(cpu.mem[cpu.regs[PCTR]++]);
             continue;
+        } else if(input == "s") {
+            cpu.stack_dump();
+            continue;
+        } else if(input == "p") {
+            int new_value;
+            std::cout << ">> ";
+            std::cin >> std::hex >> new_value;
+            cpu.regs[PCTR] = new_value;
+            std::cin.clear();
+            std::cin.ignore(INT8_MAX, '\n');
+            continue;
         }
         std::ostringstream os;
         os << input << '\n';
