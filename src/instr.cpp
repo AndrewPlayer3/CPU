@@ -219,7 +219,7 @@ void CPU::output(int B, int C, int D) {
         case 0x6:                                            /* new line   0xF600 */
             std::cout << std::endl; break;                   
         case 0xF:
-            //do nothing
+            if(C == 0x1) regs[PCTR] += 2;
             break;                   
         default: error(regs[PCTR], 0xF, B, C, D);
     }
