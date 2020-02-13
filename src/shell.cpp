@@ -50,6 +50,16 @@ int main() {
             std::cin.clear();
             std::cin.ignore(INT8_MAX, '\n');
             continue;
+        } else if(input == "c") {
+            int end;
+            std::cout << ">> ";
+            std::cin >> std::hex >> end;
+            std::cin.clear();
+            std::cin.ignore(INT8_MAX, '\n');
+            for(int i = 0; i < end; i++) {
+                cpu.exec(cpu.mem[cpu.regs[PCTR]++]);
+            }
+            continue;
         }
         std::ostringstream os;
         os << input << '\n';

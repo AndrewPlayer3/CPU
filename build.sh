@@ -30,6 +30,7 @@ echo "Compiled build+run to bin/run"
 
 # Compile to bin/run
 c++ -std=c++17 -Wall -O3 src/shell.cpp src/instr.cpp src/assembler.cpp -o bin/ish
+echo "Compiled test shell to bin/ish"
 
 # Print some instructions
 echo ""
