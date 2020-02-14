@@ -27,6 +27,10 @@ Write-Output "Compiled assembler to bin/assembler"
 c++ -std=c++17 -Wall -O3 src/main.cpp src/instr.cpp src/assembler.cpp -o bin/run
 Write-Output "Compiled build+run to bin/run"
 
+# Compile to bin/ish
+c++ -std=c++17 -Wall -O3 src/shell.cpp src/instr.cpp src/assembler.cpp -o bin/ish
+Write-Output "Compiled test shell to bin/ish"
+
 # Print some instructions
 Write-Output ""
 Write-Output "To assemble the test files use this: 'bin/assembler filename'"
