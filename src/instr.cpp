@@ -200,8 +200,9 @@ void CPU::output(int B, int C, int D) {
     std::string str = "";
     int loc;
     switch(B) {                                              /* Output:           */
-        case 0x0:                                            /* cout r[D]  0xF00. */
-            std::cout << std::dec << regs[D];
+        case 0x0:                                             /* cout r[D]  0xF00. */
+            if(loaded) std::cout << std::dec << regs[D];
+            else std::cout << std::dec << regs[D] << std::endl;
             break;
         case 0x1: mem_dump(mem[regs[PCTR]++]); break;        /* mem dump   0xF100 */
         case 0x2: reg_dump(); break;                         /* reg dump   0xF200 */
