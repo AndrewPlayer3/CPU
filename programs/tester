@@ -1,8 +1,8 @@
 lnk programs/function_test
 
 .main
-    mov r0, 10
-    mov r1, 15
+    mov r0, 1
+    mov r1, 2147483646
     run addInts
     out r11
     mov r0, ' \0
