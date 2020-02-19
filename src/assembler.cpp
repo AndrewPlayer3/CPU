@@ -291,8 +291,8 @@ std::string builder(const vector<pair<std::string, ARG_TYPE>>& instr) {
     }
     int inst = (op_bits << 12) | (B << 8) | (C << 4) | (D << 0);
     std::ostringstream os;
-    os << "0x" << std::hex << inst << '\n';
-    if(is_int_arg) os << "0x" << int_arg << '\n';
+    os << "0x" << std::setfill('0') << std::setw(4) << std::right << std::hex << inst << '\n';
+    if(is_int_arg) os << "0x" << std::setfill('0') << std::setw(4) << std::right << int_arg << '\n';
     if(is_str_arg && str_arg != "") os << str_arg << '\n';
     return os.str();
 }
@@ -332,9 +332,9 @@ std::ostringstream gen_machine_code(const std::string& filename) {
                 os << "0x" << std::hex << 0xDF00 << '\n';
                 if(LABEL_MAP.find(label) == LABEL_MAP.end()) {
                     LABEL_MAP.insert({trim_label(line), CURRENT_LABEL_VALUE});
-                    os << "0x" << std::hex << CURRENT_LABEL_VALUE++ << '\n';
+                    os << "0x" << std::setfill('0') << std::setw(4) << std::right << std::hex << CURRENT_LABEL_VALUE++ << '\n';
                 } else {
-                    os << "0x" << std::hex << LABEL_MAP.find(label)->second << '\n';
+                    os << "0x" << std::setfill('0') << std::setw(4) << std::right << std::hex << LABEL_MAP.find(label)->second << '\n';
                 }
             } 
             // If its a tag find/create the tag number and insert it
@@ -351,9 +351,9 @@ std::ostringstream gen_machine_code(const std::string& filename) {
                         os << "0x" << std::hex << 0xDF00 << '\n';
                         if(LABEL_MAP.find(args[1]) == LABEL_MAP.end()) {
                             LABEL_MAP.insert({args[1], CURRENT_LABEL_VALUE});
-                            os << "0x" << std::hex << CURRENT_LABEL_VALUE++ << '\n';
+                            os << "0x" << std::setfill('0') << std::setw(4) << std::right << std::hex << CURRENT_LABEL_VALUE++ << '\n';
                         } else {
-                            os << "0x" << std::hex << LABEL_MAP.find(args[1])->second << '\n';
+                            os << "0x" << std::setfill('0') << std::setw(4) << std::right << std::hex << LABEL_MAP.find(args[1])->second << '\n';
                         }
                     }
                 } else {
