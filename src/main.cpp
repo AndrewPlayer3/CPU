@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
         std::string arg = (std::string)argv[2];
         if(arg == "debug") {
             for(int i = 0; i < MEMORY_SIZE; i++) {
-                os << "0x" << std::hex << cpu.mem[i] << '\n';
+                os << "0x" << std::setfill('0') << std::setw(8) << std::right << std::hex << cpu.mem[i] << '\n';
             }
             std::ofstream ofile("debug.inst");
             ofile << os.str();
