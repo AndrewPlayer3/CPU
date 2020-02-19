@@ -9,6 +9,7 @@
 /* turns it into valid instr machine code.            */
 
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <sstream>
 #include <fstream>
