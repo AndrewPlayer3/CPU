@@ -1,17 +1,6 @@
 #include "instr.hpp"
 #include "assembler.hpp"
 
-/*
-void CPU::run() {
-    int prog_end = next_free_location;
-    while(mem[regs[PCTR]] != 0xFF00 && regs[PCTR] < prog_end) regs[PCTR]++;
-    regs[PCTR]++;
-    while(regs[PCTR] < prog_end) {
-        exec(mem[regs[PCTR]++]);
-    }
-}
-*/
-
 int main() {
 
     CPU cpu;
