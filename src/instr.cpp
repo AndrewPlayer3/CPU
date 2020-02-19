@@ -232,7 +232,8 @@ void CPU::mem_dump(int until) {
     for(int i = 0; i < until; i++) {
         /* Memory[x]: y */
         std::cout << "Memory[" << std::hex << i << "]: " 
-        << std::hex << mem[i] << std::endl;
+        << "0x" << std::setfill('0') << std::setw(8) << std::right 
+        << mem[i] << std::endl;
     }
 }
 
@@ -250,7 +251,8 @@ void CPU::stack_dump() {
     for(int i = 0, j = MEMORY_SIZE - 1; i > regs[SP] - 1; i--, j--) {
         /* Memory[x]: y */
         std::cout << "Memory[" << std::hex << j << "]: " 
-        << std::hex << stck[i] << std::endl;
+        << "0x" << std::setfill('0') << std::setw(8) << std::right 
+        << stck[i] << std::endl;
     }
 }
 
@@ -399,7 +401,7 @@ bool parse_block(std::string& code, int* mem, int& next_free_location, int& end_
 void CPU::push(int reg) {
     if(stck[regs[SP] - 1] != 0) {
         std::cout << "*** Stack Overwrote Critical Memory ***" << std::endl;
-        exit(1);
+        if(loaded) exit(1);
     }
     stck[regs[SP]--] = regs[reg];
 }
@@ -409,7 +411,7 @@ void CPU::push(int reg) {
 void CPU::pop(int reg) {
     if(regs[SP] >= 0) {
         std::cout << "*** Stack Underflow ***" << std::endl;
-        exit(1);
+        if(loaded) exit(1);
     }
     regs[SP]++;
     regs[reg] = stck[regs[SP]];
