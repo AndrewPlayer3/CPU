@@ -218,7 +218,11 @@ void CPU::output(int B, int C, int D) {
             std::cout << std::dec << mem[regs[D]] << std::endl;
             break;
         case 0x6:                                            /* new line   0xF600 */
-            std::cout << std::endl; break;                   
+            std::cout << std::endl; break;
+        case 0x7:
+            if(loaded) std::cout << std::dec << mem[mem[regs[PCTR]++]];
+            else std::cout << std::dec << mem[mem[regs[PCTR]++]] << std::endl;
+            break;                   
         case 0xF:
             if(C == 0x1) regs[PCTR] += 2;
             break;                   

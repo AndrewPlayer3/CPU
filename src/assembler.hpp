@@ -24,7 +24,8 @@ enum ARG_TYPE {
     INTEGER = 0x1,
     OPCODE,
     REGISTER,
-    STRING
+    STRING,
+    POINTER
 };
 
 /* These are all the registers, all are scratch except for r15 */
@@ -55,6 +56,7 @@ bool is_opcode(const std::string& str);
 bool is_comment(const std::string& line);
 bool is_register(const std::string& str);
 bool is_instruction(const std::string& line);
+bool is_pointer(const std::string& str);
 bool is_int(const std::string& str);
 int to_int(const std::string& str);
 vector<std::string> parse_instruction(const std::string& line);
