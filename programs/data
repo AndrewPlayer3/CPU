@@ -1,1 +1,18 @@
 # Looking into Data Structures in this Assembly
+
+.function Array
+    # R0 Holds the initial location
+    # R1 Holds the size of the Array
+    # R2 Holds the fill for the initial elements
+    loop:
+        cmp r3, r1
+        jge done
+        mem r0, 105
+        add r0, 1
+        add r3, 1
+        jmp loop
+
+    done:
+        ret
+
+

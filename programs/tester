@@ -1,9 +1,9 @@
-lnk programs/function_test
+lnk programs/data
 
 .main
-    mov r0, 1
-    mov r1, 2147483646
-    run addInts
-    out r11
-    mov r0, ' \0
-    pln r0
+    mov r8, ' \0
+    mov r0, 50
+    mov r1, 10
+    mov r2, 105
+    run Array
+    mdp 0, 200
