@@ -1,4 +1,4 @@
-#.main
+.main
     #Width Question
     mov r10, Width?\0
     pln r10
