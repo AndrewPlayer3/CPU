@@ -190,12 +190,12 @@ int to_int(const std::string& str) {
 /* makes a vector with the opcode and its operands from a givin line */
 vector<std::string> parse_instruction(const std::string& line) {
     std::size_t pos = 0;
-    std::string line_trimmed = trim(line);
     std::string op = "";
-    while(pos != line_trimmed.size() && !iswspace(line_trimmed[pos])) op += line_trimmed[pos++];
-    while(pos != line_trimmed.size() && iswspace(line_trimmed[pos])) pos++;
     std::string arg0 = "";
     std::string arg1 = "";
+    std::string line_trimmed = trim(line);
+    while(pos != line_trimmed.size() && !iswspace(line_trimmed[pos])) op += line_trimmed[pos++];
+    while(pos != line_trimmed.size() && iswspace(line_trimmed[pos])) pos++;
     while(pos != line_trimmed.size() 
     && (!iswspace(line_trimmed[pos])) 
     && line_trimmed[pos] != ',') {
@@ -249,6 +249,8 @@ vector<pair<std::string, ARG_TYPE>> parse_arg_types(const vector<std::string>& a
             arg_type_vec.push_back(pair<std::string, ARG_TYPE>(arg, STRING));
         }
     }
+    // If the second argument is empty swap it with the first one
+    // This is so we can always switch off of the second argument
     if(arg_type_vec[2].second == EMPTY) {
         auto arg = arg_type_vec[1].first;
         auto argt = arg_type_vec[1].second;
@@ -314,7 +316,7 @@ std::string builder(const vector<pair<std::string, ARG_TYPE>>& instr) {
                 int_arg = to_int(trim(instr[2].first.substr(1, trim(instr[2].first).size() - 2)));
                 is_int_arg = true;
                 break;
-            case EMPTY: // Only ret should end up here.
+            case EMPTY: // Only ret should end up here. 🤞
                 B = reg_bits;
                 C = 0x0;
                 D = 0x0;
