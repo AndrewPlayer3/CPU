@@ -26,7 +26,8 @@ enum ARG_TYPE {
     OPCODE,
     REGISTER,
     STRING,
-    POINTER
+    POINTER,
+    EMPTY
 };
 
 /* These are all the registers, all are scratch except for r15 */

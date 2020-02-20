@@ -41,7 +41,7 @@ map<std::string, vector<int>> op_to_int = {
     {"mov", {0xE, 0x1, 0x0, 0x3, 0x7}},
     {"ext", {0x0, 0x0, 0x0, 0x0, 0x0}},
     {"run", {0xD, 0x9, 0x9, 0x9, 0x0}},
-    {"ret", {0xD, 0x8, 0x8, 0x8, 0x0}},
+    {"ret", {0xD, 0x8, 0x8, 0x8, 0x8}},
     {"lnk", {0xF, 0xF, 0xF, 0xF, 0x0}},
     {"psh", {0xE, 0xB, 0xB, 0xB, 0x0}},
     {"pop", {0xE, 0xC, 0xC, 0xC, 0x0}},
@@ -145,7 +145,8 @@ bool is_comment(const std::string& line) {
 
 /* returns true if line is a register */
 bool is_register(const std::string& str) {
-    if(str_to_reg.count(str) == 0) return false;
+    if(str == "") return false;
+    if(str_to_reg.find(str) == str_to_reg.end()) return false;
     return true;
 }
 
@@ -242,9 +243,19 @@ vector<pair<std::string, ARG_TYPE>> parse_arg_types(const vector<std::string>& a
             arg_type_vec.push_back(pair<std::string, ARG_TYPE>(arg, REGISTER));
         } else if(is_pointer(arg)) {
             arg_type_vec.push_back(pair<std::string, ARG_TYPE>(arg, POINTER)); 
+        } else if(arg == "") {
+            arg_type_vec.push_back(pair<std::string, ARG_TYPE>(arg, EMPTY));
         } else {
             arg_type_vec.push_back(pair<std::string, ARG_TYPE>(arg, STRING));
         }
+    }
+    if(arg_type_vec[2].second == EMPTY) {
+        auto arg = arg_type_vec[1].first;
+        auto argt = arg_type_vec[1].second;
+        arg_type_vec[2].first = arg;
+        arg_type_vec[2].second = argt;
+        arg_type_vec[1].first = "";
+        arg_type_vec[1].second = EMPTY;
     }
     return arg_type_vec;
 }
@@ -286,7 +297,7 @@ std::string builder(const vector<pair<std::string, ARG_TYPE>>& instr) {
                     is_str_arg = true;
                 } else {
                     D = 0x0;
-                    str_arg = instr[1].first;
+                    str_arg = instr[2].first;
                     if(LABEL_MAP.find(str_arg) == LABEL_MAP.end()) {
                         LABEL_MAP.insert({str_arg, CURRENT_LABEL_VALUE});
                         int_arg = CURRENT_LABEL_VALUE++;
@@ -302,6 +313,11 @@ std::string builder(const vector<pair<std::string, ARG_TYPE>>& instr) {
                 D = str_to_reg[instr[1].first];
                 int_arg = to_int(trim(instr[2].first.substr(1, trim(instr[2].first).size() - 2)));
                 is_int_arg = true;
+                break;
+            case EMPTY: // Only ret should end up here.
+                B = reg_bits;
+                C = 0x0;
+                D = 0x0;
                 break;
             default:
                 std::cout << "Builder function didn't match a case somehow." << std::endl;
@@ -324,7 +340,7 @@ std::ostringstream gen_machine_code(const std::string& filename) {
     if(!file.is_open()) {
         std::cout << "\nError opening file: " << filename << std::endl;
         exit(1); 
-    } 
+    }
     std::string line = "";
     int line_number = 1;
     while(std::getline(file, line)) {        
@@ -333,9 +349,9 @@ std::ostringstream gen_machine_code(const std::string& filename) {
             // If its an instruction build the machine code
             if(is_instruction(line_trimmed) && !is_label(line_trimmed)) {
                 vector<std::string> instruction_vector = parse_instruction(line);
-                auto arg_type_vector = parse_arg_types(instruction_vector);
+                std::vector<std::pair<std::string, ARG_TYPE>> arg_type_vector = parse_arg_types(instruction_vector);
                 if(arg_type_vector[0].first == "lnk") {
-                    os << gen_machine_code(arg_type_vector[1].first).str();
+                    os << gen_machine_code(arg_type_vector[2].first).str();
                 } else {
                     os << builder(arg_type_vector);
                 }
@@ -404,7 +420,7 @@ std::ostringstream gen_code_from_line(std::string& line) {
             vector<std::string> instruction_vector = parse_instruction(line);
             auto arg_type_vector = parse_arg_types(instruction_vector);
             if(arg_type_vector[0].first == "lnk") {
-                os << gen_machine_code(arg_type_vector[1].first).str();
+                os << gen_machine_code(arg_type_vector[2].first).str();
             } else {
                 os << builder(arg_type_vector);
             }
