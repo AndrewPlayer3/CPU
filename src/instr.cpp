@@ -130,13 +130,13 @@ void CPU::jumping(int B, int C, int D) {
             if(C_string == D_string)    _cmp_flag = 0;
             else                        _cmp_flag = 1;
             break;
-        case 0x8: //ret?
+        case 0x8:                                           /* run 0xD800 */
             for(int i = 0x9; i >= 0; i--) pop(i);
             pop(0xC);
             jmp(regs[0xC]);
             regs[PCTR]++;
             break;
-        case 0x9: //run?
+        case 0x9:                                           /* ret 0xD900 */
             regs[0xC] = regs[PCTR];
             push(0xC);
             for(int i = 0; i < 0xA; i++) push(i);
@@ -154,23 +154,23 @@ void CPU::jumping(int B, int C, int D) {
 void CPU::input(int B, int C, int D) {
     std::string input;
     int size;
-    switch(B) {                                                /* Input:                */
-        case 0x0: regs[D] = mem[regs[PCTR]++];      break;     /* mov r[D],int  0xE0..  */
-        case 0x1: regs[C] = regs[D];                break;     /* mov r[D],int  0xE1..  */
-        case 0x2:                                              /* cin r[D],int  0xE20.  */
+    switch(B) {                                                /* Input:                 */
+        case 0x0: regs[D] = mem[regs[PCTR]++];      break;     /* mov r[D],int   0xE0..  */
+        case 0x1: regs[C] = regs[D];                break;     /* mov r[D],int   0xE1..  */
+        case 0x2:                                              /* cin r[D],int   0xE20.  */
                   std::cout << ">> "; 
                   std::cin >> regs[D];
                   std::cin.clear();
                   std::cin.ignore(INT8_MAX, '\n');  break;
-        case 0x3: regs[D] = regs[PCTR];                        /* mov r[D],str* 0xE30.  */
+        case 0x3: regs[D] = regs[PCTR];                        /* mov r[D],str*  0xE30.  */
                   while(mem[regs[PCTR] - 1] != 0x5C30) {
                     regs[PCTR]++;
                   }                                 break;
-        case 0x4: regs[C] = mem[regs[D]];           break;     /* mov r[D],mem    0xE4.. */
-        case 0x5: mem[regs[C]] = mem[regs[D]];      break;     /* mov mem, r[C]   0xE5.. */
-        case 0x6: mem[regs[D]] = mem[regs[PCTR]++]; break;     /* mov mem, r[D]   0xE6.. */
-        case 0x7: regs[D] = mem[mem[regs[PCTR]++]]; break;     /* mov mem, int    0xE7.. */
-        case 0x8: regs[D] = next_free_location;                /* mov cin, str    0xE80. */
+        case 0x4: regs[C] = mem[regs[D]];           break;     /* mov r[D],mem   0xE4..  */
+        case 0x5: mem[regs[C]] = mem[regs[D]];      break;     /* mov mem, r[C]  0xE5..  */
+        case 0x6: mem[regs[D]] = mem[regs[PCTR]++]; break;     /* mov mem, r[D]  0xE6..  */
+        case 0x7: regs[D] = mem[mem[regs[PCTR]++]]; break;     /* mov mem, int   0xE7..  */
+        case 0x8: regs[D] = next_free_location;                /* mov cin, str   0xE80.  */
                   std::cout << ">> " ;
                   std::getline(std::cin, input);
                   std::cin.clear();
@@ -180,17 +180,15 @@ void CPU::input(int B, int C, int D) {
                       regs[PCTR] = next_free_location;
                   }           
                                                     break;
-        case 0x9: size = mem[regs[PCTR]++];                    /* mov r[D],*int[] 0xE90. */
+        case 0x9: size = mem[regs[PCTR]++];                    /* mov r[D],*int[]0xE90.  */
                   regs[D] = regs[PCTR];
                   for(int i = 0; i < size-1; i++) {
                     ++regs[PCTR];
                   }                                 break;
-        case 0xA: 
-                                                    break;
-        case 0xB: push(D);                          break;
-        case 0xC: pop (D);                          break;
-        case 0xD: pusha();                          break;
-        case 0xE: popa();                           break;
+        case 0xB: push(D);                          break;     /* psh r[D]       0xEB0.  */
+        case 0xC: pop (D);                          break;     /* psh r[D]       0xEC0.  */
+        case 0xD: pusha();                          break;     /* psa            0xED00  */   
+        case 0xE: popa();                           break;     /* ppa            0xEE00  */
         default: error(regs[PCTR], 0xE, B, C, D);
     }
 }
@@ -219,10 +217,11 @@ void CPU::output(int B, int C, int D) {
             break;
         case 0x6:                                            /* new line   0xF600 */
             std::cout << std::endl; break;
-        case 0x7:
+        case 0x7:                                            /* cout [ptr] 0xF700 */
             if(loaded) std::cout << std::dec << mem[mem[regs[PCTR]++]];
             else std::cout << std::dec << mem[mem[regs[PCTR]++]] << std::endl;
-            break;                   
+            break;
+        case 0x8: stack_dump(); break;                       /* sdp        0xF800 */
         case 0xF:
             if(C == 0x1) regs[PCTR] += 2;
             break;                   

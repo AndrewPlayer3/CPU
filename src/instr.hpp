@@ -18,7 +18,7 @@
 
 /* Using defines because I think they look nicer than enums */
 #define REGISTER_COUNT 0x10
-#define MEMORY_SIZE    0x2FF
+#define MEMORY_SIZE    0xFFF
 #define STACK_SIZE     0x10
 
 /* Program Counter Register will be the last register */
@@ -60,25 +60,25 @@ public:
         loaded = false;
     }
 
-    void arithmetic(int B, int C, int D); /* 0xA... */
-    void bitwise   (int B, int C, int D); /* 0xB... */
-    void jumping   (int B, int C, int D); /* 0xD... */
-    void output    (int B, int C, int D); /* 0xF... */
-    void input     (int B, int C, int D); /* 0xE... */
-    void jmp       ();                    /* 0xD000 */
-    void jmp       (int label);           /* 0xD000 */
-    void mem_dump  (int until);           /* 0xF100 */
-    void reg_dump  ();                    /* 0xF200 */
-    void stack_dump();
+    void arithmetic (int B, int C, int D); /* 0xA... */
+    void bitwise    (int B, int C, int D); /* 0xB... */
+    void jumping    (int B, int C, int D); /* 0xD... */
+    void output     (int B, int C, int D); /* 0xF... */
+    void input      (int B, int C, int D); /* 0xE... */
+    void jmp        ();                    /* 0xD000 */
+    void jmp        (int label);           /* 0xD000 */
+    void mem_dump   (int until);           /* 0xF100 */
+    void reg_dump   ();                    /* 0xF200 */
+    void stack_dump ();                    /* 0xF800 */
+    void push       (int reg);             /* 0xEB0. */
+    void pop        (int reg);             /* 0xEC0. */
+    void pusha      ();                    /* 0xED00 */
+    void popa       ();                    /* 0xEE0. */
+    void exec       (int inst);
+    void run        ();
     bool free_memory();
     bool free_memory(int& location);
     bool free_memory(int& location, int& distance);
-    void push(int reg);
-    void pop(int reg);
-    void pusha();
-    void popa();
-    void exec      (int inst);
-    void run       ();
 };
 
 bool parse_file  (std::string& filename, int* mem, int& next_free_location, int& end_text_section);
