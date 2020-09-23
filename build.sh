@@ -17,23 +17,23 @@ rm bin/run.exe 2>/dev/null
 echo ""
 
 # Compile to bin/cpu
-c++ -std=c++2a -O3 src/cpu_main.cpp src/instr.cpp -o bin/cpu
+c++ -std=c++17 -O3 src/cpu_main.cpp src/instr.cpp -o bin/cpu
 echo "Compiled cpu to bin/cpu"
 
 # Compile to bin/assembler
-c++ -std=c++2a -O3 src/assembler_main.cpp src/assembler.cpp -o bin/assembler
+c++ -std=c++17 -O3 src/assembler_main.cpp src/assembler.cpp -o bin/assembler
 echo "Compiled assembler to bin/assembler"
 
 # Compile to bin/run
-c++ -std=c++2a -Wall -O3 src/main.cpp src/instr.cpp src/assembler.cpp -o bin/run
+c++ -std=c++17 -Wall -O3 src/main.cpp src/instr.cpp src/assembler.cpp -o bin/run
 echo "Compiled build+run to bin/run"
 
 # Compile to bin/run
-c++ -std=c++2a -Wall -O3 src/shell.cpp src/instr.cpp src/assembler.cpp -o bin/ish
+c++ -std=c++17 -Wall -O3 src/shell.cpp src/instr.cpp src/assembler.cpp -o bin/ish
 echo "Compiled test shell to bin/ish"
 
 # Compile to bin/test
-c++ -std=c++2a -Wall -O3 src/testing.cpp src/instr.cpp src/assembler.cpp -o bin/test
+#c++ -std=c++17 -Wall -O3 src/testing.cpp src/instr.cpp src/assembler.cpp -o bin/test
 
 # Print some instructions
 echo ""
