@@ -1,37 +1,36 @@
 # Collatz Function
 
 .main
-    mov r10, Enter an Integer:\0
+    mov r10 Enter an Integer:\0
     pln r10
     ini r0
-    mov r11, \0
-    mov r1, 1
+    mov r11 \0
+    mov r1 1
+    pln r11
 
     parity_test:
         out r0
         pln r11
-        cmp r0, r1
+        cmp r0 r1
         je finish_collatz
-        mov r6, r0
-        mov r7, 0
-        mod r6, 2
-        cmp r6, r7
+        mov r6 r0
+        mov r7 0
+        mod r6 2
+        cmp r6 r7
         jg odd
         jmp even
 
     even:
-        div r0, 2
+        div r0 2
         jmp parity_test
 
     odd:
-        mul r0, 3
-        add r0, 1
+        mul r0 3
+        add r0 1
         jmp parity_test
 
 
     finish_collatz:
         #we done now boys
-        mov r0, 105
-        psh r0
-        psh r0
+        mov r0 10
         psh r0

@@ -1,16 +1,7 @@
-lnk programs/data
-
 .main
-    mov r8, ' \0
-    mov r0, 50
-    mov r1, 11
-    mov r2, 105
-    run Array
-    out [50]
-    pln r8
-    out [55]
-    pln r8
-    out [59]
-    pln r8
-    out [60]
-    pln r8
+    mov r0 Enter a Number:\0
+    pln r0
+    mov r1 You Entered: \0
+    ini r2
+    put r1
+    out r2

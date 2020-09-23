@@ -11,6 +11,17 @@ int main() {
         std::getline(std::cin, input);
         if(input == "quit()") {
             break;
+        } else if(input == "h"){
+            std::cout << "r - reg dump" << std::endl;
+            std::cout << "m - mem dump" << std::endl;
+            std::cout << "n - pctr++"   << std::endl;
+            std::cout << "b - pctr--"   << std::endl;
+            std::cout << "d - cpu.exec(cpu.mem[cpu.regs[PCTR]++])" << std::endl;
+            std::cout << "s - stck dump"<< std::endl;
+            std::cout << "p - pctr = input" << std::endl;
+            std::cout << "c - continue for i iterations" << std::endl;
+            std::cout << "f - next_free_location" << std::endl;
+            continue;
         } else if(input == "r") {
             cpu.reg_dump();
             continue;
@@ -48,6 +59,9 @@ int main() {
             for(int i = 0; i < end; i++) {
                 cpu.exec(cpu.mem[cpu.regs[PCTR]++]);
             }
+            continue;
+        } else if(input == "f") {
+            std::cout << std::hex << cpu.next_free_location << std::endl;
             continue;
         }
         std::ostringstream os;

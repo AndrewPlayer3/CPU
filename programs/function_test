@@ -24,3 +24,4 @@ diffAddInts:
 
 # run should push the scratch registers [0 - 9]
 # ret should then pop them back
+# I like the .function over just labels for cleanliness

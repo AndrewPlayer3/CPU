@@ -130,13 +130,13 @@ void CPU::jumping(int B, int C, int D) {
             if(C_string == D_string)    _cmp_flag = 0;
             else                        _cmp_flag = 1;
             break;
-        case 0x8:                                           /* run 0xD800 */
+        case 0x8:                                           /* ret 0xD800 */
             for(int i = 0x9; i >= 0; i--) pop(i);
             pop(0xC);
             jmp(regs[0xC]);
             regs[PCTR]++;
             break;
-        case 0x9:                                           /* ret 0xD900 */
+        case 0x9:                                           /* run 0xD900 */
             regs[0xC] = regs[PCTR];
             push(0xC);
             for(int i = 0; i < 0xA; i++) push(i);
