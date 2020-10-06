@@ -11,6 +11,7 @@ mkdir bin -erroraction 'silentlycontinue' | Out-Null
 Remove-Item bin/cpu.exe -erroraction 'silentlycontinue'
 Remove-Item bin/assembler.exe -erroraction 'silentlycontinue'
 Remove-Item bin/run.exe -erroraction 'silentlycontinue'
+Remove-Item bin/ish.exe -erroraction 'silentlycontinue'
 
 # New Line
 Write-Output ""
@@ -30,6 +31,9 @@ Write-Output "Compiled build+run to bin/run"
 # Compile to bin/ish
 c++ -std=c++17 -Wall -O3 src/shell.cpp src/instr.cpp src/assembler.cpp -o bin/ish
 Write-Output "Compiled test shell to bin/ish"
+
+# Compile to bin/test -- secret test file
+#c++ -std=c++17 -Wall -O3 src/testing.cpp src/instr.cpp src/assembler.cpp -o bin/test
 
 # Print some instructions
 Write-Output ""

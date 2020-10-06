@@ -12,6 +12,7 @@ mkdir bin 2>/dev/null
 rm bin/cpu.exe 2>/dev/null
 rm bin/assembler.exe 2>/dev/null
 rm bin/run.exe 2>/dev/null
+rm bin/ish.exe 2>/dev/null
 
 # New Line
 echo ""
@@ -32,7 +33,7 @@ echo "Compiled build+run to bin/run"
 c++ -std=c++17 -Wall -O3 src/shell.cpp src/instr.cpp src/assembler.cpp -o bin/ish
 echo "Compiled test shell to bin/ish"
 
-# Compile to bin/test
+# Compile to bin/test -- secret testing file
 #c++ -std=c++17 -Wall -O3 src/testing.cpp src/instr.cpp src/assembler.cpp -o bin/test
 
 # Print some instructions
