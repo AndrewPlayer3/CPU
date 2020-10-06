@@ -14,8 +14,11 @@ int main(int argc, char* argv[]) {
     std::ostringstream machine_code = gen_machine_code(filename);
     std::string ofilename = filename + ".inst";
     std::ofstream out_file(ofilename);
+    std::string message = "Program Compiled Successfully. Made: " + ofilename;
     out_file << machine_code.str();
-    std::cout << "Program Compiled Successfully. Made: " << ofilename << std::endl;
+    std::cout << message << std::endl;
+    for(std::size_t i = 0; i < message.size(); i++) std::cout << "-";
+    std::cout << std::endl;
     out_file.close();
     CPU cpu;
     if(!parse_file(ofilename, &cpu.mem[0], cpu.next_free_location, cpu.end_text_section)) {
@@ -36,7 +39,10 @@ int main(int argc, char* argv[]) {
             ofile.close();
         }
     }
-    std::cout << "\nProgram Exited Successfully :)" << std::endl;
+    std::cout << std::endl;
+    for(std::size_t i = 0; i < message.size(); i++) std::cout << "-";
+    std::cout << std::endl;
+    std::cout << "Program Exited Successfully :)" << std::endl;
     std::cout << std::endl;
     return 0;
 }
