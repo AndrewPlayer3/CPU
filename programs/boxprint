@@ -95,7 +95,3 @@
 
     #Finish
     finish:
-        mov r0, 10
-        psh r0
-        pop r1
-        out r1
