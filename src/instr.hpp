@@ -26,6 +26,8 @@
 /* Stack Pointer Register */
 #define SP             0xE
 
+bool parse_file(std::string& filename, int* mem, int& next_free_location, int& end_text_section);
+
 /* 32-bit CPU emulator */
 class CPU {
 
@@ -42,7 +44,7 @@ public:
 
     /* The next free memory location to write to */
     int next_free_location;
-    
+
     /* The end of the text section. This is the   */
     /* value of next_free_location at the start   */
     int end_text_section;
@@ -58,6 +60,17 @@ public:
         next_free_location  = 0;
         _cmp_flag = 0;
         loaded = false;
+    }
+
+    CPU(std::string& filename) {
+        /* Set mem and regs to 0 */
+        for(int i = 0; i < REGISTER_COUNT; i++) { regs[i] = 0; }
+        for(int i = 0; i < MEMORY_SIZE   ; i++) { mem [i] = 0; }
+        next_free_location  = 0;
+	end_text_section = 0;
+        _cmp_flag = 0;
+	loaded = parse_file(filename, &mem[0], next_free_location, end_text_section);
+	run();
     }
 
     void arithmetic (int B, int C, int D); /* 0xA... */

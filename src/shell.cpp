@@ -71,7 +71,7 @@ int main() {
         parse_block(inst_string, &cpu.mem[0], cpu.next_free_location, cpu.end_text_section);
         cpu.exec(cpu.mem[cpu.regs[PCTR]++]);
     }
-    
+
     std::cout << std::endl;
     std::cout << "Successful..." << std::endl;
     std::cout << std::endl;

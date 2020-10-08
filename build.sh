@@ -34,7 +34,7 @@ c++ -std=c++17 -Wall -O3 src/shell.cpp src/instr.cpp src/assembler.cpp -o bin/is
 echo "Compiled test shell to bin/ish"
 
 # Compile to bin/test -- secret testing file
-#c++ -std=c++17 -Wall -O3 src/testing.cpp src/instr.cpp src/assembler.cpp -o bin/test
+c++ -std=c++17 -Wall -O3 src/testing.cpp src/instr.cpp src/assembler.cpp -o bin/test
 
 # Print some instructions
 echo ""

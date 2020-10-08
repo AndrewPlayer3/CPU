@@ -141,7 +141,7 @@ bool is_comment(const std::string& line) {
     if(line.size() > 0 && trim(line).size() > 0 && trim(line)[0] != '#')
         return false;
     return true;
-} 
+}
 
 /* returns true if line is a register */
 bool is_register(const std::string& str) {
@@ -161,7 +161,7 @@ bool is_instruction(const std::string& line) {
 bool is_pointer(const std::string& str) {
     std::string str_trimmed = trim(str);
     if(str_trimmed[0] == '[' && str_trimmed[str_trimmed.size() - 1] == ']'
-    && is_int(str_trimmed.substr(1, str_trimmed.size() - 2))) 
+    && is_int(str_trimmed.substr(1, str_trimmed.size() - 2)))
         return true;
     return false;
 }
@@ -196,13 +196,13 @@ vector<std::string> parse_instruction(const std::string& line) {
     std::string line_trimmed = trim(line);
     while(pos != line_trimmed.size() && !iswspace(line_trimmed[pos])) op += line_trimmed[pos++];
     while(pos != line_trimmed.size() && iswspace(line_trimmed[pos])) pos++;
-    while(pos != line_trimmed.size() 
-    && (!iswspace(line_trimmed[pos])) 
+    while(pos != line_trimmed.size()
+    && (!iswspace(line_trimmed[pos]))
     && line_trimmed[pos] != ',') {
         arg0 += line_trimmed[pos++];
     }
-    while(pos != line_trimmed.size() 
-    && (iswspace(line_trimmed[pos]) 
+    while(pos != line_trimmed.size()
+    && (iswspace(line_trimmed[pos])
     || line_trimmed[pos] == ',')) {
         pos++;
     }
@@ -215,12 +215,12 @@ vector<std::string> parse_instruction(const std::string& line) {
         else pos++;
     }
     if(!is_int(arg1) && !is_register(arg1) && pos != line_trimmed.size()) {
-        while(pos != line_trimmed.size() 
+        while(pos != line_trimmed.size()
         && (line_trimmed[pos-1] != '0' && line_trimmed[pos-2] != '\\')) {
             if(line_trimmed[pos] == '\\' && line_trimmed[pos+1] == '\'') {
                 arg1 += line_trimmed[++pos];
                 pos++;
-            } 
+            }
             if(line_trimmed[pos] != '\'') arg1 += line_trimmed[pos++];
             else pos++;
         }
@@ -242,7 +242,7 @@ vector<pair<std::string, ARG_TYPE>> parse_arg_types(const vector<std::string>& a
         } else if(is_register(arg)) {
             arg_type_vec.push_back(pair<std::string, ARG_TYPE>(arg, REGISTER));
         } else if(is_pointer(arg)) {
-            arg_type_vec.push_back(pair<std::string, ARG_TYPE>(arg, POINTER)); 
+            arg_type_vec.push_back(pair<std::string, ARG_TYPE>(arg, POINTER));
         } else if(arg == "") {
             arg_type_vec.push_back(pair<std::string, ARG_TYPE>(arg, EMPTY));
         } else {
@@ -275,20 +275,42 @@ std::string builder(const vector<pair<std::string, ARG_TYPE>>& instr) {
     bool is_int_arg = false;
     int int_arg = 0x0;
     bool is_str_arg = false;
+    int ptr_arg = 0x0;
+    bool is_ptr_arg = false;
     std::string str_arg = "";
     if(instr.size() == 3) {
         switch(instr[2].second) {
             case INTEGER:
-                B = int_bits;
-                C = 0x0;
-                D = str_to_reg[instr[1].first];
+		// For the ptr cases here and in register this is not robust
+		// and a better solution should be found.
+		if(instr[1].second == POINTER) {
+			B = 0x7;
+			C = 0x0;
+			D = 0x0;
+			std::istringstream is(instr[1].first.substr(1, instr[1].first.size() - 2));
+			is >> std::hex >> ptr_arg;
+			is_ptr_arg = true;
+		} else {
+                	B = int_bits;
+                	C = 0x0;
+                	D = str_to_reg[instr[1].first];
+		}
                 int_arg = to_int(instr[2].first);
                 is_int_arg = true;
                 break;
             case REGISTER:
-                B = reg_bits;
-                C = str_to_reg[instr[1].first];
-                D = str_to_reg[instr[2].first];
+                if(instr[1].second == POINTER) {
+			B = 0x6;
+			C = 0x0;
+			D = str_to_reg[instr[2].first];
+			std::istringstream is(instr[1].first.substr(1, instr[1].first.size() - 2));
+			is >> std::hex >> ptr_arg;
+			is_ptr_arg = true;
+		} else {
+			B = reg_bits;
+                	C = str_to_reg[instr[1].first];
+                	D = str_to_reg[instr[2].first];
+		}
                 break;
             case STRING:
                 B = str_bits;
@@ -329,6 +351,7 @@ std::string builder(const vector<pair<std::string, ARG_TYPE>>& instr) {
     int inst = (op_bits << 12) | (B << 8) | (C << 4) | (D << 0);
     std::ostringstream os;
     os << "0x" << std::setfill('0') << std::setw(4) << std::right << std::hex << inst << '\n';
+    if(is_ptr_arg) os << "0x" << std::setfill('0') << std::setw(4) << std::right << ptr_arg << '\n';
     if(is_int_arg) os << "0x" << std::setfill('0') << std::setw(4) << std::right << int_arg << '\n';
     if(is_str_arg && str_arg != "") os << str_arg << '\n';
     return os.str();
@@ -341,11 +364,11 @@ std::ostringstream gen_machine_code(const std::string& filename) {
     std::ifstream file(filename);
     if(!file.is_open()) {
         std::cout << "\nError opening file: " << filename << std::endl;
-        exit(1); 
+        exit(1);
     }
     std::string line = "";
     int line_number = 1;
-    while(std::getline(file, line)) {        
+    while(std::getline(file, line)) {
         if(line != "") {
             std::string line_trimmed = trim(line);
             // If its an instruction build the machine code
@@ -357,11 +380,11 @@ std::ostringstream gen_machine_code(const std::string& filename) {
                 } else {
                     os << builder(arg_type_vector);
                 }
-            } 
+            }
             // If its a comment there is nothing to do
             else if(is_comment(line)) {
                 // Do Nothing :D
-            } 
+            }
             // If its a label find/create the label number and insert it
             else if(is_label(line)) {
                 std::string label = trim_label(line);
@@ -373,12 +396,12 @@ std::ostringstream gen_machine_code(const std::string& filename) {
                 } else {
                     os << "0x" << std::setfill('0') << std::setw(4) << std::right << std::hex << LABEL_MAP.find(label)->second << '\n';
                 }
-            } 
+            }
             // If its a tag find/create the tag number and insert it
             else if(is_tag(line)) {
                 vector<std::string> args = parse_instruction(line_trimmed);
                 if(tag_to_int.find(args[0]) != tag_to_int.end()) {
-                    if(args[0] == ".main") {    
+                    if(args[0] == ".main") {
                         os << "<<<===Main===>>> " << '\n';
                     } else {
                         os << "# Function: " << args[1] << '\n';
@@ -399,13 +422,13 @@ std::ostringstream gen_machine_code(const std::string& filename) {
                     std::cout << " @ " << line_number << std::endl;
                     exit(1);
                 }
-            } 
+            }
             // Since the line didn't match anything it must be invalid
             else {
                 std::cout << "Invalid Line: ";
                 std::cout << line_trimmed;
                 std::cout << " @ " << line_number << std::endl;
-                exit(1); 
+                exit(1);
             }
         }
         ++line_number;
@@ -426,11 +449,11 @@ std::ostringstream gen_code_from_line(std::string& line) {
             } else {
                 os << builder(arg_type_vector);
             }
-        } 
+        }
         // If its a comment there is nothing to do
         else if(is_comment(line)) {
             // Do Nothing :D
-        } 
+        }
         // If its a label find/create the label number and insert it
         else if(is_label(line)) {
             std::string label = trim_label(line);
@@ -442,12 +465,12 @@ std::ostringstream gen_code_from_line(std::string& line) {
             } else {
                 os << "0x" << std::hex << LABEL_MAP.find(label)->second << '\n';
             }
-        } 
+        }
         // If its a tag find/create the tag number and insert it
         else if(is_tag(line)) {
             vector<std::string> args = parse_instruction(line_trimmed);
             if(tag_to_int.find(args[0]) != tag_to_int.end()) {
-                if(args[0] == ".main") {    
+                if(args[0] == ".main") {
                     os << "<<<===Main===>>> " << '\n';
                 } else {
                     os << "# Function: " << args[1] << '\n';
@@ -467,12 +490,12 @@ std::ostringstream gen_code_from_line(std::string& line) {
                 std::cout << line_trimmed;
                 exit(1);
             }
-        } 
+        }
         // Since the line didn't match anything it must be invalid
         else {
             std::cout << "Invalid Line: ";
             std::cout << line_trimmed;
-            exit(1); 
+            exit(1);
         }
     }
     return os;

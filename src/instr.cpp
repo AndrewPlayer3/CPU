@@ -13,20 +13,20 @@
 /* instruction function.                                             */
 void CPU::exec(int inst) {
     int A = (inst >> 12);     /* First  4 Bits 0xA... */
-    int B = (inst >> 8 )&0xF; /* Second 4 Bits 0x.B.. */    
-    int C = (inst >> 4 )&0xF; /* Third  4 Bits 0x..C. */   
+    int B = (inst >> 8 )&0xF; /* Second 4 Bits 0x.B.. */
+    int C = (inst >> 4 )&0xF; /* Third  4 Bits 0x..C. */
     int D = (inst >> 0 )&0xF; /* Fourth 4 Bits 0x...D */
     switch(A) {
-        case 0x0: /* 0x0-9 are Labels */ break;              /* 0x0... */  
-        case 0x1: /* for now          */ break;              /* 0x1... */ 
-        case 0x2: /* ...              */ break;              /* 0x2... */ 
-        case 0x3: /* ...              */ break;              /* 0x3... */ 
-        case 0x4: /* ...              */ break;              /* 0x4... */ 
-        case 0x5: /* ...              */ break;              /* 0x5... */ 
-        case 0x6: /* ...              */ break;              /* 0x6... */ 
-        case 0x7: /* ...              */ break;              /* 0x7... */ 
-        case 0x8: /* ...              */ break;              /* 0x8... */ 
-        case 0x9: /* ...              */ break;              /* 0x9... */ 
+        case 0x0: /* 0x0-9 are Labels */ break;              /* 0x0... */
+        case 0x1: /* for now          */ break;              /* 0x1... */
+        case 0x2: /* ...              */ break;              /* 0x2... */
+        case 0x3: /* ...              */ break;              /* 0x3... */
+        case 0x4: /* ...              */ break;              /* 0x4... */
+        case 0x5: /* ...              */ break;              /* 0x5... */
+        case 0x6: /* ...              */ break;              /* 0x6... */
+        case 0x7: /* ...              */ break;              /* 0x7... */
+        case 0x8: /* ...              */ break;              /* 0x8... */
+        case 0x9: /* ...              */ break;              /* 0x9... */
         case 0xA: arithmetic  (B, C, D); break;              /* 0xA... */
         case 0xB: bitwise     (B, C, D); break;              /* 0xB... */
         case 0xD: jumping     (B, C, D); break;              /* 0xD... */
@@ -73,19 +73,19 @@ void CPU::bitwise(int B, int C, int D) {
 }
 
 /* Sets program counter to the location of a label (+1) */
-void CPU::jmp() {       
+void CPU::jmp() {
     int label = mem[regs[PCTR]];
     for(int i = 0; i < MEMORY_SIZE; i++) {
         if(mem[i] == label && i != regs[PCTR] && mem[i-1]==0xDF00) {
             regs[PCTR] = i + 1; return;
         }
     }
-    std::cout << "ERROR! No label found matching " 
+    std::cout << "ERROR! No label found matching "
 	      << std::hex << mem[regs[PCTR]] << std::endl;
 }
 
 /* Sets program counter to the location of a label (+1) */
-void CPU::jmp(int location) {       
+void CPU::jmp(int location) {
     regs[PCTR] = location;
 }
 
@@ -94,34 +94,34 @@ void CPU::jumping(int B, int C, int D) {
     std::string C_string;
     std::string D_string;
     switch(B){                                              /* Jumping:   */
-        case 0x0:                                           /* jmp 0xD000 */           
+        case 0x0:                                           /* jmp 0xD000 */
             jmp();
             break;
         case 0x1:                                           /* cmp 0xD1.. */
-            if      (regs[C] == regs[D]) {_cmp_flag =  0;}  
-            else if (regs[C] <  regs[D]) {_cmp_flag = -1;}  
+            if      (regs[C] == regs[D]) {_cmp_flag =  0;}
+            else if (regs[C] <  regs[D]) {_cmp_flag = -1;}
             else if (regs[C] >  regs[D]) {_cmp_flag =  1;}
             break;
         case 0x2:                                           /* je  0xD200 */
-            if      (_cmp_flag == 0)     {jmp()       ;}                  
+            if      (_cmp_flag == 0)     {jmp()       ;}
             else                         {regs[PCTR]++;}
             break;
         case 0x3:                                           /* jl  0xD300 */
-            if      (_cmp_flag ==-1)     {jmp()       ;}       
+            if      (_cmp_flag ==-1)     {jmp()       ;}
             else                         {regs[PCTR]++;}
             break;
         case 0x4:                                           /* jg  0xD400 */
-            if      (_cmp_flag == 1)     {jmp()	      ;}       
+            if      (_cmp_flag == 1)     {jmp()	      ;}
             else                         {regs[PCTR]++;}
             break;
         case 0x5:                                           /* jle 0xD500 */
-            if      (_cmp_flag == 0 
-                    ||_cmp_flag==-1)     {jmp()       ;}      
+            if      (_cmp_flag == 0
+                    ||_cmp_flag==-1)     {jmp()       ;}
             else                         {regs[PCTR]++;}
             break;
         case 0x6:                                           /* jge 0xD600 */
-            if      (_cmp_flag == 0 
-                    || _cmp_flag==1)     {jmp()       ;}       
+            if      (_cmp_flag == 0
+                    || _cmp_flag==1)     {jmp()       ;}
             else                         {regs[PCTR]++;}
             break;
         case 0x7:                                           /* cms 0xD7.. */
@@ -158,7 +158,7 @@ void CPU::input(int B, int C, int D) {
         case 0x0: regs[D] = mem[regs[PCTR]++];      break;     /* mov r[D],int   0xE0..  */
         case 0x1: regs[C] = regs[D];                break;     /* mov r[D],int   0xE1..  */
         case 0x2:                                              /* cin r[D],int   0xE20.  */
-                  std::cout << ">> "; 
+                  std::cout << ">> ";
                   std::cin >> regs[D];
                   std::cin.clear();
                   std::cin.ignore(INT8_MAX, '\n');  break;
@@ -168,8 +168,10 @@ void CPU::input(int B, int C, int D) {
                   }                                 break;
         case 0x4: regs[C] = mem[regs[D]];           break;     /* mov r[D],mem   0xE4..  */
         case 0x5: mem[regs[C]] = mem[regs[D]];      break;     /* mov mem, r[C]  0xE5..  */
-        case 0x6: mem[regs[D]] = mem[regs[PCTR]++]; break;     /* mov mem, r[D]  0xE6..  */
-        case 0x7: regs[D] = mem[mem[regs[PCTR]++]]; break;     /* mov mem, int   0xE7..  */
+        case 0x6: mem[mem[regs[PCTR]++]] = regs[D]; break;     /* mov mem, r[D]  0xE6..  */
+        case 0x7: mem[mem[regs[PCTR]]] = mem[regs[PCTR]+1];
+		  regs[PCTR] += 2;
+						    break;     /* mov mem, int   0xE7..  */
         case 0x8: regs[D] = next_free_location;                /* mov cin, str   0xE80.  */
                   std::cout << ">> " ;
                   std::getline(std::cin, input);
@@ -178,7 +180,7 @@ void CPU::input(int B, int C, int D) {
                   parse_string(input, &mem[0], next_free_location);
                   if(!loaded) {
                       regs[PCTR] = next_free_location;
-                  }           
+                  }
                                                     break;
         case 0x9: size = mem[regs[PCTR]++];                    /* mov r[D],*int[]0xE90.  */
                   regs[D] = regs[PCTR];
@@ -187,7 +189,7 @@ void CPU::input(int B, int C, int D) {
                   }                                 break;
         case 0xB: push(D);                          break;     /* psh r[D]       0xEB0.  */
         case 0xC: pop (D);                          break;     /* psh r[D]       0xEC0.  */
-        case 0xD: pusha();                          break;     /* psa            0xED00  */   
+        case 0xD: pusha();                          break;     /* psa            0xED00  */
         case 0xE: popa();                           break;     /* ppa            0xEE00  */
         default: error(regs[PCTR], 0xE, B, C, D);
     }
@@ -224,7 +226,7 @@ void CPU::output(int B, int C, int D) {
         case 0x8: stack_dump(); break;                       /* sdp        0xF800 */
         case 0xF:
             if(C == 0x1) regs[PCTR] += 2;
-            break;                   
+            break;
         default: error(regs[PCTR], 0xF, B, C, D);
     }
 }
@@ -234,8 +236,8 @@ void CPU::mem_dump(int until) {
     if(until <= 0 || until > MEMORY_SIZE) until = MEMORY_SIZE;
     for(int i = 0; i < until; i++) {
         /* Memory[x]: y */
-        std::cout << "Memory[" << std::hex << i << "]: " 
-        << "0x" << std::setfill('0') << std::setw(8) << std::right 
+        std::cout << "Memory[" << std::hex << i << "]: "
+        << "0x" << std::setfill('0') << std::setw(8) << std::right
         << mem[i] << std::endl;
     }
 }
@@ -244,8 +246,8 @@ void CPU::mem_dump(int until) {
 void CPU::reg_dump() {
     for(int i = 0; i < REGISTER_COUNT; i++) {
         /* Register[x]: y */
-        std::cout << "Register[" << std::hex << i << "]: " 
-        << regs[i] << std::endl; 
+        std::cout << "Register[" << std::hex << i << "]: "
+        << regs[i] << std::endl;
     }
 }
 
@@ -253,8 +255,8 @@ void CPU::reg_dump() {
 void CPU::stack_dump() {
     for(int i = 0, j = MEMORY_SIZE - 1; i > regs[SP] - 1; i--, j--) {
         /* Memory[x]: y */
-        std::cout << "Memory[" << std::hex << j << "]: " 
-        << "0x" << std::setfill('0') << std::setw(8) << std::right 
+        std::cout << "Memory[" << std::hex << j << "]: "
+        << "0x" << std::setfill('0') << std::setw(8) << std::right
         << stck[i] << std::endl;
     }
 }
@@ -322,7 +324,7 @@ void parse_string(std::string& str, int* mem, int& next_free_location) {
     for(int i = 0; i < str_size; i++) {
         /* Adds \0 aka 0x5C30 to its own location in memory and return */
         if(str[i-1] == '\\' && str[i] == '0') {
-            int entry = (int) (str[i-1] << 8) | (str[i] << 0); 
+            int entry = (int) (str[i-1] << 8) | (str[i] << 0);
             mem[next_free_location++] = entry;
             return;
         }
@@ -333,8 +335,8 @@ void parse_string(std::string& str, int* mem, int& next_free_location) {
             mem[next_free_location++] = joinedChars;
             joinedChars = (int) str[i];
         } else {
-            if(joinedChars == 0) { 
-                joinedChars = (int) str[i]; 
+            if(joinedChars == 0) {
+                joinedChars = (int) str[i];
             } else {
                 joinedChars = (joinedChars << 8) | ((int) str[i] << 0);
             }
@@ -344,7 +346,7 @@ void parse_string(std::string& str, int* mem, int& next_free_location) {
 
 /* Goes through the file and puts the opcodes and strings into memory */
 bool parse_file(std::string& filename, int* mem, int& next_free_location, int& end_text_section) {
-    std::ifstream file(filename); 
+    std::ifstream file(filename);
     if(!file.is_open()) return false;
     std::string line;
     while(std::getline(file, line)) {
@@ -359,7 +361,7 @@ bool parse_file(std::string& filename, int* mem, int& next_free_location, int& e
             std::istringstream ss(line);
             if(ss >> std::hex >> opcode) {
                 mem[next_free_location++] = opcode;
-            } 
+            }
         }
         /* Strings are entered in 4 char chunks into memory */
         /* the chars are implicitly cast as ints            */
@@ -387,7 +389,7 @@ bool parse_block(std::string& code, int* mem, int& next_free_location, int& end_
             std::istringstream ss(line);
             if(ss >> std::hex >> opcode) {
                 mem[next_free_location++] = opcode;
-            } 
+            }
         }
         /* Strings are entered in 4 char chunks into memory */
         /* the chars are implicitly cast as ints            */
@@ -439,10 +441,10 @@ void CPU::popa() {
 void error(int loc, int A, int B, int C, int D) {
     int inst = (A << 12) | (B << 8) | (C << 4) | (D << 0);
     std::string err = "\n\nERROR! Invalid OPCODE:";
-    
-    std::cout  << std::hex << err << " " << inst << 
+
+    std::cout  << std::hex << err << " " << inst <<
     " at mem[" << loc << "]." << std::endl;
-    
+
     std::cout  << "Program Exited Unsuccessfully\n" << std::endl;
     exit(1);
 }
@@ -450,11 +452,10 @@ void error(int loc, int A, int B, int C, int D) {
 /* Prints the location and instruction and exits with code 1 */
 void error(int loc, int inst) {
     std::string err = "\n\nERROR! Invalid OPCODE:";
-    
-    std::cout  << std::hex << err << " " << inst << 
+
+    std::cout  << std::hex << err << " " << inst <<
     " at mem[" << loc << "]." << std::endl;
-    
+
     std::cout  << "Exiting Program with Code 1\n" << std::endl;
     exit(1);
 }
-
