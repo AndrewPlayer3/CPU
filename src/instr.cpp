@@ -167,7 +167,9 @@ void CPU::input(int B, int C, int D) {
                     regs[PCTR]++;
                   }                                 break;
         case 0x4: regs[C] = mem[regs[D]];           break;     /* mov r[D],mem   0xE4..  */
-        case 0x5: mem[regs[C]] = mem[regs[D]];      break;     /* mov mem, r[C]  0xE5..  */
+        case 0x5: mem[mem[regs[PCTR]]] = mem[mem[regs[PCTR]+1]];
+		  regs[PCTR] += 2;
+		  				    break;     /* mov mem, r[C]  0xE5..  */
         case 0x6: mem[mem[regs[PCTR]++]] = regs[D]; break;     /* mov mem, r[D]  0xE6..  */
         case 0x7: mem[mem[regs[PCTR]]] = mem[regs[PCTR]+1];
 		  regs[PCTR] += 2;
