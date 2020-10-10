@@ -17,6 +17,8 @@ void CPU::exec(int inst) {
     int C = (inst >> 4 )&0xF; /* Third  4 Bits 0x..C. */
     int D = (inst >> 0 )&0xF; /* Fourth 4 Bits 0x...D */
     switch(A) {
+	/* TODO: Look into making 0x5-0x9 ptr based functions*/
+	/* Lets do it... */
         case 0x0: /* 0x0-9 are Labels */ break;              /* 0x0... */
         case 0x1: /* for now          */ break;              /* 0x1... */
         case 0x2: /* ...              */ break;              /* 0x2... */
@@ -193,6 +195,7 @@ void CPU::input(int B, int C, int D) {
         case 0xC: pop (D);                          break;     /* psh r[D]       0xEC0.  */
         case 0xD: pusha();                          break;     /* psa            0xED00  */
         case 0xE: popa();                           break;     /* ppa            0xEE00  */
+	case 0xF: regs[D] = mem[mem[regs[PCTR]++]]; break;
         default: error(regs[PCTR], 0xE, B, C, D);
     }
 }
