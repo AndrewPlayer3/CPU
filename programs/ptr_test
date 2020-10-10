@@ -1,6 +1,13 @@
+.function intToPointer
+	mov [555], 10
+	#TODO Add Pointers to literally everything else... :(
+
 .main
 	mov [20], 100
 	mov r0, 10
 	mov [19], r0
 	mov [21], [19]
 	out r0
+	out [19]
+	out [20]
+	out [21]
