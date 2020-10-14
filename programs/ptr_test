@@ -1,3 +1,6 @@
+# This programs tests the various ways of using pointers
+# This test is not comprehensive, or a guarantee of working pointers
+
 .main
 	mov [20], 100
 	mov r0, 10
