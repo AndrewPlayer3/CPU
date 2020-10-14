@@ -14,7 +14,11 @@ rm bin/assembler.exe 2>/dev/null
 rm bin/run.exe 2>/dev/null
 rm bin/ish.exe 2>/dev/null
 
+echo ""
+echo "Compiling:"
+
 # New Line
+echo "==================================="
 echo ""
 
 # Compile to bin/cpu
@@ -36,6 +40,9 @@ echo "Compiled test shell to bin/ish"
 # Compile to bin/test -- secret testing file
 # c++ -std=c++17 -Wall -O3 src/testing.cpp src/instr.cpp src/assembler.cpp -o bin/test
 # echo "Compiled test program to bin/test"
+
+echo ""
+echo "==================================="
 
 # Print some instructions
 echo ""
