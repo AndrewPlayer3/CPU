@@ -33,3 +33,7 @@ debug.inst
 out/cpu.exe
 *.exe
 src/Notes
+bin/assembler
+bin/cpu
+bin/ish
+bin/run
