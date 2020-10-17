@@ -37,3 +37,7 @@ bin/assembler
 bin/cpu
 bin/ish
 bin/run
+assembler
+cpu
+ish
+run
