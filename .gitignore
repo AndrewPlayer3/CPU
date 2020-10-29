@@ -37,6 +37,7 @@ bin/assembler
 bin/cpu
 bin/ish
 bin/run
+bin/test
 assembler
 cpu
 ish
