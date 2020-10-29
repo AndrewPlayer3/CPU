@@ -8,10 +8,10 @@ mkdir bin -erroraction 'silentlycontinue' | Out-Null
 
 # Remove the the existing execs just because
 # Also doesn't print out their errors.
-Remove-Item bin/cpu.exe -erroraction 'silentlycontinue'
-Remove-Item bin/assembler.exe -erroraction 'silentlycontinue'
-Remove-Item bin/run.exe -erroraction 'silentlycontinue'
-Remove-Item bin/ish.exe -erroraction 'silentlycontinue'
+Remove-Item bin/cpu -erroraction 'silentlycontinue'
+Remove-Item bin/assembler -erroraction 'silentlycontinue'
+Remove-Item bin/run -erroraction 'silentlycontinue'
+Remove-Item bin/ish -erroraction 'silentlycontinue'
 
 # New Line
 Write-Output ""
