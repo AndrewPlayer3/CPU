@@ -17,8 +17,8 @@ void CPU::exec(int inst) {
     int C = (inst >> 4 )&0xF; /* Third  4 Bits 0x..C. */
     int D = (inst >> 0 )&0xF; /* Fourth 4 Bits 0x...D */
     switch(A) {
-	/* TODO: Look into making 0x5-0x9 ptr based functions*/
-	/* Lets do it... */
+  /* TODO: Look into making 0x5-0x9 ptr based functions*/
+  /* Lets do it... */
         case 0x0: /* 0x0-9 are Labels */ break;              /* 0x0... */
         case 0x1: /* for now          */ break;              /* 0x1... */
         case 0x2: /* ...              */ break;              /* 0x2... */
@@ -83,7 +83,7 @@ void CPU::jmp() {
         }
     }
     std::cout << "ERROR! No label found matching "
-	      << std::hex << mem[regs[PCTR]] << std::endl;
+        << std::hex << mem[regs[PCTR]] << std::endl;
 }
 
 /* Sets program counter to the location of a label (+1) */
@@ -113,7 +113,7 @@ void CPU::jumping(int B, int C, int D) {
             else                         {regs[PCTR]++;}
             break;
         case 0x4:                                           /* jg  0xD400 */
-            if      (_cmp_flag == 1)     {jmp()	      ;}
+            if      (_cmp_flag == 1)     {jmp()       ;}
             else                         {regs[PCTR]++;}
             break;
         case 0x5:                                           /* jle 0xD500 */
@@ -170,12 +170,12 @@ void CPU::input(int B, int C, int D) {
                   }                                 break;
         case 0x4: regs[C] = mem[regs[D]];           break;     /* mov r[D],mem   0xE4..  */
         case 0x5: mem[mem[regs[PCTR]]] = mem[mem[regs[PCTR]+1]];
-		  regs[PCTR] += 2;
-		  				    break;     /* mov mem, r[C]  0xE5..  */
+                  regs[PCTR] += 2;
+                                                    break;     /* mov mem, r[C]  0xE5..  */
         case 0x6: mem[mem[regs[PCTR]++]] = regs[D]; break;     /* mov mem, r[D]  0xE6..  */
         case 0x7: mem[mem[regs[PCTR]]] = mem[regs[PCTR]+1];
-		  regs[PCTR] += 2;
-						    break;     /* mov mem, int   0xE7..  */
+                  regs[PCTR] += 2;
+                                                    break;     /* mov mem, int   0xE7..  */
         case 0x8: regs[D] = next_free_location;                /* mov cin, str   0xE80.  */
                   std::cout << ">> " ;
                   std::getline(std::cin, input);
@@ -195,7 +195,7 @@ void CPU::input(int B, int C, int D) {
         case 0xC: pop (D);                          break;     /* psh r[D]       0xEC0.  */
         case 0xD: pusha();                          break;     /* psa            0xED00  */
         case 0xE: popa();                           break;     /* ppa            0xEE00  */
-	case 0xF: regs[D] = mem[mem[regs[PCTR]++]]; break;
+        case 0xF: regs[D] = mem[mem[regs[PCTR]++]]; break;
         default: error(regs[PCTR], 0xE, B, C, D);
     }
 }
@@ -273,7 +273,7 @@ void CPU::run() {
     while(mem[regs[PCTR]] != 0xFF00 && regs[PCTR] < prog_end) regs[PCTR]++;
     regs[PCTR]++;
     while(regs[PCTR] < prog_end) {
-        exec(mem[regs[PCTR]++]);
+      exec(mem[regs[PCTR]++]);
     }
 }
 
@@ -362,7 +362,7 @@ bool parse_file(std::string& filename, int* mem, int& next_free_location, int& e
         }
         /* Opcodes must start with a 0 */
         if(line[line_pos] == '0') {
-            int opcode;
+            unsigned int opcode;
             std::istringstream ss(line);
             if(ss >> std::hex >> opcode) {
                 mem[next_free_location++] = opcode;
@@ -390,11 +390,11 @@ bool parse_block(std::string& code, int* mem, int& next_free_location, int& end_
         }
         /* Opcodes must start with a 0 */
         if(line[line_pos] == '0') {
-            int opcode;
+            unsigned int opcode;
             std::istringstream ss(line);
             if(ss >> std::hex >> opcode) {
                 mem[next_free_location++] = opcode;
-            }
+            } 
         }
         /* Strings are entered in 4 char chunks into memory */
         /* the chars are implicitly cast as ints            */

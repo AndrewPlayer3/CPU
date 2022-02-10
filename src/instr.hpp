@@ -34,7 +34,7 @@ class CPU {
 private:
     /* Flag after cmp -> 1 for >, 0 for ==, and -1 for <   */
     /* If we need more flags, we can make a flag register. */
-    int _cmp_flag;
+    int _cmp_flag = 0;
 
 public:
     /* reg count is hardcoded to 16 to have 1 digit reg numbers */
@@ -43,15 +43,15 @@ public:
     int* stck = &mem[MEMORY_SIZE - 1];
 
     /* The next free memory location to write to */
-    int next_free_location;
+    int next_free_location = 0;
 
     /* The end of the text section. This is the   */
     /* value of next_free_location at the start   */
-    int end_text_section;
+    int end_text_section = 0;
 
     /* This can be set to true when a program has */
     /* been fully loaded into memory.             */
-    bool loaded;
+    bool loaded = false;
 
     CPU() {
         /* Set mem and regs to 0 */

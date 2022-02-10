@@ -34,8 +34,8 @@ int main() {
             cpu.regs[PCTR]++;
             continue;
         } else if(input == "b") {
-	        cpu.regs[PCTR]--;
-	        continue;
+	          cpu.regs[PCTR]--;
+	          continue;
         } else if(input == "d") {
             cpu.exec(cpu.mem[cpu.regs[PCTR]++]);
             continue;
@@ -44,7 +44,7 @@ int main() {
             continue;
         } else if(input == "p") {
             int new_value;
-            std::cout << ">> ";
+            std::cout << "Set Program Counter: ";
             std::cin >> std::hex >> new_value;
             cpu.regs[PCTR] = new_value;
             std::cin.clear();
@@ -52,7 +52,7 @@ int main() {
             continue;
         } else if(input == "c") {
             int end;
-            std::cout << ">> ";
+            std::cout << "Continue Until: ";
             std::cin >> std::hex >> end;
             std::cin.clear();
             std::cin.ignore(INT8_MAX, '\n');
@@ -62,6 +62,15 @@ int main() {
             continue;
         } else if(input == "f") {
             std::cout << std::hex << cpu.next_free_location << std::endl;
+            continue;
+        } else if(input == "ets") {
+            std::cout << cpu.end_text_section << std::endl;
+            continue;
+        } else if(input == "run") {
+            cpu.loaded = true;
+            cpu.run();
+            cpu.loaded = false;
+            cpu.regs[PCTR] = cpu.next_free_location;
             continue;
         }
         std::ostringstream os;

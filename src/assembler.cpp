@@ -280,34 +280,37 @@ std::string builder(const vector<pair<std::string, ARG_TYPE>>& instr) {
     std::string str_arg = "";
     if(instr.size() == 3) {
         switch(instr[2].second) {
+
             case INTEGER:
-		// For the ptr cases here and in register this is not robust
-		// and a better solution should be found.
-		if(instr[1].second == POINTER) {
-			B = 0x7;
-			std::istringstream is(instr[1].first.substr(1, instr[1].first.size() - 2));
-			is >> std::hex >> ptr_arg;
-			is_ptr_arg = true;
-		} else {
-                	B = int_bits;
-                	D = str_to_reg[instr[1].first];
-		}
+                // For the ptr cases here and in register this is not robust
+                // and a better solution should be found.
+                if(instr[1].second == POINTER) {
+                    B = 0x7;
+                    std::istringstream is(instr[1].first.substr(1, instr[1].first.size() - 2));
+                    is >> std::hex >> ptr_arg;
+                    is_ptr_arg = true;
+                } else {
+                    B = int_bits;
+                    D = str_to_reg[instr[1].first];
+                }
                 int_arg = to_int(instr[2].first);
                 is_int_arg = true;
                 break;
+
             case REGISTER:
                 if(instr[1].second == POINTER) {
-			B = 0x6;
-			D = str_to_reg[instr[2].first];
-			std::istringstream is(instr[1].first.substr(1, instr[1].first.size() - 2));
-			is >> std::hex >> ptr_arg;
-			is_ptr_arg = true;
-		} else {
-			B = reg_bits;
-                	C = str_to_reg[instr[1].first];
-                	D = str_to_reg[instr[2].first];
-		}
+                    B = 0x6;
+                    D = str_to_reg[instr[2].first];
+                    std::istringstream is(instr[1].first.substr(1, instr[1].first.size() - 2));
+                    is >> std::hex >> ptr_arg;
+                    is_ptr_arg = true;
+                } else {
+                    B = reg_bits;
+                    C = str_to_reg[instr[1].first];
+                    D = str_to_reg[instr[2].first];
+                }
                 break;
+
             case STRING:
                 B = str_bits;
                 if(op_bits != 0xD) {
@@ -325,23 +328,26 @@ std::string builder(const vector<pair<std::string, ARG_TYPE>>& instr) {
                     is_int_arg = true;
                 }
                 break;
+
             case POINTER:
                 if(instr[1].second == POINTER) {
-			B = 0x5;
-			std::istringstream is(instr[1].first.substr(1, instr[1].first.size() - 2));
-			is >> std::hex >> ptr_arg;
-			is_ptr_arg = true;
-		} else {
-			B = ptr_bits;
-                	D = str_to_reg[instr[1].first];
-		}
-		{std::istringstream is(instr[2].first.substr(1, instr[2].first.size() - 2));
-		is >> std::hex >> int_arg;}
-		is_int_arg = true;
+                    B = 0x5;
+                    std::istringstream is(instr[1].first.substr(1, instr[1].first.size() - 2));
+                    is >> std::hex >> ptr_arg;
+                    is_ptr_arg = true;
+                } else {
+                    B = ptr_bits;
+                            D = str_to_reg[instr[1].first];
+                }
+                {std::istringstream is(instr[2].first.substr(1, instr[2].first.size() - 2));
+                is >> std::hex >> int_arg;}
+                is_int_arg = true;
                 break;
+
             case EMPTY: // Only ret should end up here. 🤞
                 B = reg_bits;
                 break;
+
             default:
                 std::cout << "Builder function didn't match a case somehow." << std::endl;
                 exit(1);
